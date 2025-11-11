@@ -1,0 +1,22 @@
+# Cursor ignore file
+# Files and directories to ignore in Cursor
+
+# Build artifacts
+DerivedData/
+build/
+*.xcworkspace/
+xcuserdata/
+
+# Xcode
+*.xcodeproj/project.xcworkspace/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# macOS
+.DS_Store
+
+# Documentation (optional - remove if you want them indexed)
+# *.md
+
+
+
