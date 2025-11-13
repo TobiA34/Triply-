@@ -256,7 +256,6 @@ struct SettingsView: View {
     
     private func themeIcon(for theme: AppTheme) -> String {
         switch theme {
-        case .dark: return "moon.fill"
         case .light: return "sun.max.fill"
         case .system: return "circle.lefthalf.filled"
         case .custom: return "paintpalette.fill"

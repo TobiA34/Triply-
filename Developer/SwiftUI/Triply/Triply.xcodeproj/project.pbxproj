@@ -525,7 +525,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.newtriply.app;
+				PRODUCT_BUNDLE_IDENTIFIER = "-";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -549,7 +549,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.newtriply.app;
+				PRODUCT_BUNDLE_IDENTIFIER = "-";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";

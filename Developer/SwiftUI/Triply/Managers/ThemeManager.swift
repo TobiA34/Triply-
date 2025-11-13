@@ -11,17 +11,15 @@ import SwiftData
 enum AppTheme: String, CaseIterable {
     case system = "System"
     case light = "Light"
-    case dark = "Dark"
     case custom = "Custom"
     
     var isCustom: Bool { self == .custom }
     
     var colorScheme: ColorScheme? {
         switch self {
-        case .system: return nil
+        case .system: return .light // Force light mode
         case .light: return .light
-        case .dark: return .dark
-        case .custom: return nil
+        case .custom: return .light // Force light mode for custom themes too
         }
     }
 }
@@ -45,25 +43,19 @@ enum DefaultPalette: String, CaseIterable, Identifiable {
     }
     
     func palette(for scheme: ColorScheme) -> CustomTheme.Palette {
+        // Always use light mode colors
         switch self {
         case .classic:
-            return scheme == .dark
-            ? .init(accent: .blue, background: .black, text: .white, secondaryText: .gray)
-            : .init(accent: .blue, background: .white, text: .primary, secondaryText: .secondary)
+            return .init(accent: .blue, background: .white, text: .primary, secondaryText: .secondary)
         case .ocean:
-            return scheme == .dark
-            ? .init(accent: .teal, background: Color(red: 0.06, green: 0.09, blue: 0.11), text: .white, secondaryText: .gray)
-            : .init(accent: .teal, background: Color(red: 0.95, green: 0.98, blue: 1.0), text: .black, secondaryText: .gray)
+            return .init(accent: .teal, background: Color(red: 0.95, green: 0.98, blue: 1.0), text: .black, secondaryText: .gray)
         case .forest:
-            return scheme == .dark
-            ? .init(accent: .green, background: Color(red: 0.07, green: 0.10, blue: 0.08), text: .white, secondaryText: .gray)
-            : .init(accent: .green, background: Color(red: 0.95, green: 0.99, blue: 0.96), text: .black, secondaryText: .gray)
+            return .init(accent: .green, background: Color(red: 0.95, green: 0.99, blue: 0.96), text: .black, secondaryText: .gray)
         case .sunset:
-            return scheme == .dark
-            ? .init(accent: .orange, background: Color(red: 0.12, green: 0.07, blue: 0.06), text: .white, secondaryText: .gray)
-            : .init(accent: .orange, background: Color(red: 1.0, green: 0.97, blue: 0.95), text: .black, secondaryText: .gray)
+            return .init(accent: .orange, background: Color(red: 1.0, green: 0.97, blue: 0.95), text: .black, secondaryText: .gray)
         case .midnight:
-            return .init(accent: .indigo, background: .black, text: .white, secondaryText: .gray)
+            // Keep dark for midnight theme but force light mode
+            return .init(accent: .indigo, background: Color(red: 0.95, green: 0.95, blue: 0.98), text: .black, secondaryText: .gray)
         }
     }
 }
@@ -99,13 +91,8 @@ class ThemeManager: ObservableObject {
     }
     
     private var resolvedColorScheme: ColorScheme {
-        if let explicit = currentTheme.colorScheme {
-            return explicit
-        }
-        // Fallback to system appearance
-        // Use UITraitCollection to detect, safe on main actor
-        let isDark = UITraitCollection.current.userInterfaceStyle == .dark
-        return isDark ? .dark : .light
+        // Always return light mode
+        return .light
     }
     
     private let themeKey = "app_theme"
@@ -119,9 +106,16 @@ class ThemeManager: ObservableObject {
     }
     
     func loadTheme() {
-        if let savedTheme = UserDefaults.standard.string(forKey: themeKey),
-           let theme = AppTheme(rawValue: savedTheme) {
-            currentTheme = theme
+        if let savedTheme = UserDefaults.standard.string(forKey: themeKey) {
+            // Migrate old dark mode preference to light mode
+            if savedTheme == "Dark" {
+                currentTheme = .light
+                UserDefaults.standard.set("Light", forKey: themeKey)
+            } else if let theme = AppTheme(rawValue: savedTheme) {
+                currentTheme = theme
+            } else {
+                currentTheme = .light // Default to light
+            }
         }
         
         if let colorData = UserDefaults.standard.data(forKey: accentColorKey),
