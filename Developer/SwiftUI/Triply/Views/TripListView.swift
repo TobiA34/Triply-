@@ -66,9 +66,10 @@ struct TripListView: View {
                             // Category Filter
                             CategoryFilterView(selectedCategory: $selectedCategory, categories: categories)
                             
-                            // Statistics Card
+                            // Statistics Card with animation
                             StatisticsCardView(trips: trips)
                                 .padding(.horizontal)
+                                .transition(.move(edge: .top).combined(with: .opacity))
                             
                             // Current Trips
                             if !currentTrips.isEmpty {
@@ -114,7 +115,9 @@ struct TripListView: View {
                 }
             }
             .sheet(isPresented: $showingAddTrip) {
-                AddTripView()
+                NavigationStack {
+                    AddTripView()
+                }
             }
             .sheet(isPresented: $showingStats) {
                 StatisticsView(trips: trips)
@@ -128,9 +131,11 @@ struct TripListView: View {
                 SettingsView()
             }
             .onAppear {
-                // Ensure settings are loaded
-                settingsManager.createDefaultSettings(in: modelContext)
-                settingsManager.loadSettings(from: modelContext)
+                // Load settings asynchronously (non-blocking)
+                Task {
+                    settingsManager.createDefaultSettings(in: modelContext)
+                    settingsManager.loadSettings(from: modelContext)
+                }
             }
             .refreshOnLanguageChange()
         }
@@ -250,6 +255,12 @@ struct TripSectionView: View {
     let title: String
     let trips: [TripModel]
     let modelContext: ModelContext
+    @State private var selectedTripForMap: TripModel? = nil
+    @State private var selectedTripForCalendar: TripModel? = nil
+    @State private var selectedTripForVoiceNotes: TripModel? = nil
+    @State private var showMap = false
+    @State private var showCalendar = false
+    @State private var showVoiceNotes = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -258,17 +269,58 @@ struct TripSectionView: View {
                 .fontWeight(.semibold)
                 .padding(.horizontal)
             
-            ForEach(trips) { trip in
+            ForEach(Array(trips.enumerated()), id: \.element.id) { index, trip in
                 NavigationLink(destination: TripDetailView(trip: trip)) {
-                    TripRowView(trip: trip)
-                        .padding(.horizontal)
+                    EnhancedTripCard(
+                        trip: trip,
+                        onMapTap: {
+                            selectedTripForMap = trip
+                            showMap = true
+                        },
+                        onCalendarTap: {
+                            selectedTripForCalendar = trip
+                            showCalendar = true
+                        },
+                        onVoiceNotesTap: {
+                            selectedTripForVoiceNotes = trip
+                            showVoiceNotes = true
+                        }
+                    )
+                    .padding(.horizontal)
                 }
                 .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                     Button(role: .destructive) {
                         deleteTrip(trip)
+                        HapticManager.shared.error()
                     } label: {
                         Label("common.delete".localized, systemImage: "trash")
                     }
+                }
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .scale.combined(with: .opacity)
+                ))
+                .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(Double(index) * 0.1), value: trips.count)
+            }
+        }
+        .sheet(isPresented: $showMap) {
+            if let trip = selectedTripForMap {
+                NavigationStack {
+                    TripMapView(trip: trip)
+                }
+            }
+        }
+        .sheet(isPresented: $showCalendar) {
+            if let trip = selectedTripForCalendar {
+                NavigationStack {
+                    TripCalendarView(trip: trip)
+                }
+            }
+        }
+        .sheet(isPresented: $showVoiceNotes) {
+            if let trip = selectedTripForVoiceNotes {
+                NavigationStack {
+                    VoiceNotesView(trip: trip)
                 }
             }
         }

@@ -7,63 +7,116 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		00A8A2DD0E54E2239A16F53B /* EnhancedTripCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD878B6C2511CA5A53ECCA8C /* EnhancedTripCard.swift */; };
 		02513660BFBE73778A462D40 /* ThemeLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7935093A8D0BBB2B2231C508 /* ThemeLibraryView.swift */; };
+		025A20961ED47503DBC89F62 /* DocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B10CD3686F05D1C26B3E1 /* DocumentsView.swift */; };
 		04279ED3576D880EDE286A98 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB99C52F71A6C5BC22FA447C /* ContentView.swift */; };
 		069FE91D59F89A8F6BD360A9 /* WeatherForecastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B99584071C6518D102B00 /* WeatherForecastView.swift */; };
+		074110B4427595472FE68FF9 /* EditDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935AD0C76D56FBD1B1B88F09 /* EditDocumentView.swift */; };
+		0C8729DF322654700D65931A /* PaywallGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C63D80A36E0547D8DCB96D3B /* PaywallGateView.swift */; };
+		0F6AF55AC0F9381BF118649C /* AIExpenseInsightsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6282A767D294EFF4BBD9CF6 /* AIExpenseInsightsCard.swift */; };
+		105B249609B662D689B63760 /* TripMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C48E163080E96C7DD71C13F /* TripMemory.swift */; };
 		1114D876D46EF052C8583FDE /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F1327BB5A72DDE33A7D50CD /* SettingsView.swift */; };
 		11402E4E81DCF48BAF2639A9 /* StatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50043E0FEC4A557F6DF7E58D /* StatisticsView.swift */; };
+		1B2AD4B6ADB27E31A4B0D600 /* FolderDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C940702D68E31A194AB3EC1 /* FolderDetailView.swift */; };
 		1C0F6450B6C2FDA35C0FE792 /* TripExportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A34C27E5D89C8B78A0A9577 /* TripExportView.swift */; };
+		2313AC9414787F38A4EFF3CF /* DocumentFolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 468CD8FE792646B2B57AC55E /* DocumentFolder.swift */; };
+		24013841CC4BB6A6CCA8DCE8 /* ProFeaturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A41B65CDCBFA2978F8AD2281 /* ProFeaturesView.swift */; };
+		246F4EBFF6FB9489C6F7E68D /* VoiceNotesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3994A2CD12E1BC070C65597D /* VoiceNotesView.swift */; };
 		25AFA44CA5C7DBE282D685E6 /* run.sh in Resources */ = {isa = PBXBuildFile; fileRef = F8445DA514ED9C0599ECD54E /* run.sh */; };
+		2789D4052D4B1E21BBF2ECC0 /* AITripPlanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3EE86B69309D4C8E265B331 /* AITripPlanner.swift */; };
 		285EC96D29B555F25BDCD6F2 /* WeatherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83D400BB8F1088273E7FEB7E /* WeatherManager.swift */; };
+		28AB1A0266154CAD9228F6F3 /* EmergencyAssistanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA28927B4F25437ABA2B3714 /* EmergencyAssistanceView.swift */; };
+		2A594FE58766CB717D682F18 /* BudgetRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECBE2AE2A042AE962AE27C5 /* BudgetRow.swift */; };
 		2ABB01324CA5466B0C7C350D /* build.log in Resources */ = {isa = PBXBuildFile; fileRef = D92110C2DE2E5843175E7935 /* build.log */; };
 		2B0DE46C639769D34A80D932 /* verify_features.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14F35DFB62B19E19E395886 /* verify_features.swift */; };
+		2D42192754531D250FF88CC3 /* AIStructuredResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B76F7472BAB752FC43090B7 /* AIStructuredResponse.swift */; };
+		2DF21B2854BBB6BE6B7D4F8B /* TagFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65C3499F03576BEAF5BD46B6 /* TagFlowLayout.swift */; };
 		344BAEC5498A7B8077F4433F /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98BBA4D7C5383F45E787814C /* ThemeManager.swift */; };
 		35054CB6230BA726FC8D9E0C /* FeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFEDD1F93F42D48E7F4EE452 /* FeatureTests.swift */; };
 		35CACFBCB1A9B890525E38A3 /* CurrencyConverterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5FBCF1068C0669BB9992BFA /* CurrencyConverterView.swift */; };
+		391B0080B460EA10A9A1A856 /* AIInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCB4C8FB48082AF7D854817F /* AIInsightsView.swift */; };
+		396531C997EB7B5B6463576B /* AddTripIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2511D7E013709149BAB5832 /* AddTripIntent.swift */; };
 		3FEAD5ADB67836E9297DC3D0 /* Expense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8A3D88731226EA25C66BD6 /* Expense.swift */; };
+		463FB5790B814320EF7E6975 /* BatchTicketScanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA324737044E2E46AEEE1DB /* BatchTicketScanView.swift */; };
+		46A1D629FE1FF7FC16BF99BB /* BudgetInsightsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 455E66CF39AC0465605C0D32 /* BudgetInsightsView.swift */; };
 		47EA3127AD06E5A33FE4CF3B /* AddTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D1E97F7BEB814218D8A2EB /* AddTripView.swift */; };
+		49A74702DBF5A5A3EB01908D /* TripMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AD5058C0849E3FD5EF28F71 /* TripMapView.swift */; };
+		4A3D6B6701D6CE369707998E /* auto_run_simple.sh in Resources */ = {isa = PBXBuildFile; fileRef = 43B7EE763C2FFB7863276283 /* auto_run_simple.sh */; };
 		4A49AFAB57F011534608FE4D /* TripRemindersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B297A6C28B5FF690E16C0917 /* TripRemindersView.swift */; };
 		4B5B6DE808BB29AC49B0A8F5 /* ItineraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB36EB619A2B95939F960E0 /* ItineraryView.swift */; };
 		4E365254D51A872325A40C0B /* TripOptimizerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A761B236A01E81E3ABE3196E /* TripOptimizerView.swift */; };
 		4F157BD0343368BAD5446A3E /* CurrencyPickerLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD67A85DD759DFB3362C786A /* CurrencyPickerLibrary.swift */; };
 		57EF01A8EB795F7ACB5822FD /* LocalizedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8FCC838768ECA3549DE208E /* LocalizedString.swift */; };
+		58173FC39AC8173B2B38B56B /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4203E2E9325DD6B7AEC2B38 /* OnboardingView.swift */; };
 		6195DDAC7A09DA8AE409228D /* DestinationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB99C88977555267F8FBDC11 /* DestinationModel.swift */; };
+		63223F046090F708FCE2546A /* PermissionRequestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 662EACE8C14EB56988EC10CB /* PermissionRequestView.swift */; };
+		63C807D8F745224699F38C46 /* MoveToFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356378DD87A13A3BC76E5BF2 /* MoveToFolderView.swift */; };
 		65F469EEDEFC39F22C37D010 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4772AB318A5B81547914B3C /* NotificationManager.swift */; };
 		6662B0188BF6DCA961077914 /* CurrencySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7EB20EE15C1038EBFA1F5F6 /* CurrencySelectionView.swift */; };
 		66C416D85132B98A7D1A4584 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C460AB6858FC52EB40D57AC2 /* PaywallView.swift */; };
 		6E2E6DB4D548D0A253B539A6 /* DestinationSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E9BCA0C7364B8E8C6CAB750 /* DestinationSearchView.swift */; };
 		7354ADE4B7189F8FEF8FA63A /* PackingItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91611E144203AD46C0B826D8 /* PackingItem.swift */; };
+		735C56A82CE09E7439698994 /* quick_run.sh in Resources */ = {isa = PBXBuildFile; fileRef = 504FAF16FAFBF8AAA077C452 /* quick_run.sh */; };
 		73A444C38D462B958641303E /* run_device.sh in Resources */ = {isa = PBXBuildFile; fileRef = 1A478709BE7CF18B6BB1D0A7 /* run_device.sh */; };
 		7440BBE3143C2905372C2D06 /* CurrencyConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DA6F247A7F6A52CED26AFDC /* CurrencyConverter.swift */; };
 		76DC94C356480791D73E5C78 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82F510EAC4B72B73850861CF /* DatabaseManager.swift */; };
 		7A69EC14F3F9317CE01759A2 /* LanguagePickerLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4902BE3BA7B41D088CB49680 /* LanguagePickerLibrary.swift */; };
 		7B16690DA116EF393DD17F5B /* ReceiptOCRManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6F06866D6BE24CBA26FDC73 /* ReceiptOCRManager.swift */; };
+		7B47ACB3C191ABEE5F1FBD20 /* ExpenseSplittingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8262B3DE7DFD87CB6AAC1775 /* ExpenseSplittingView.swift */; };
+		7CB0B8C87B8B355A51898888 /* VoiceNotesManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECF476C2145D1792691E8A68 /* VoiceNotesManager.swift */; };
 		7CC0B040950253A00213A4E4 /* TripListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59FAF81420171AF5F8E053D4 /* TripListView.swift */; };
 		8047B3ABD4E59CAF5A481B2E /* PackingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6FC0B8B4D9D106FC578DCC3 /* PackingListView.swift */; };
+		80A31028E58D5C741CCF4854 /* TEST_PLAN.csv in Resources */ = {isa = PBXBuildFile; fileRef = 69C510D6133EDB7078B07F3C /* TEST_PLAN.csv */; };
 		813E3A5AB3F3CE8309181B99 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 78C181629C46F7C91E743924 /* Localizable.strings */; };
 		8151B70D1BC693EB595450CA /* ExportManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFFF4120D4EEFC2ECE037C5 /* ExportManager.swift */; };
+		818348B8D495C92AE1C2911E /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C81529F9C4EA4EA0E8942E /* HapticManager.swift */; };
 		82A743E5E9D95691AD26421E /* LanguageAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 369069DEF836F45DDBDCF166 /* LanguageAdapter.swift */; };
+		84E44754E4E2E9F843EF76D7 /* AnimatedBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 158FBDB42F582060509AC836 /* AnimatedBackgroundView.swift */; };
 		8630E376FA2728BACCF47BDC /* TripDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28E872F265F5109FB5A1989F /* TripDetailView.swift */; };
 		89E7E256246BAAC72A2C7CBA /* IAPManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23405345E41C3901B1A7FC6D /* IAPManager.swift */; };
 		8CB955DB773B6403A02881C2 /* AddDestinationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AA5529F2B1684B1380ED809 /* AddDestinationView.swift */; };
 		8DB760B2DD36712408A612D4 /* ThemeCreatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 463B9E69E3A6E4E9C807AF3B /* ThemeCreatorView.swift */; };
+		937834FAF537040EE94416C9 /* TriplyWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83A759D641C00B6251C1FAD7 /* TriplyWidget.swift */; };
 		95C72FC9634B737ABA638FED /* LanguageSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2404EDFD4CCFF54DD267980F /* LanguageSelectionView.swift */; };
 		9695F449635B7CD40850AB06 /* ExpenseTrackingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E17115DE5A07C6B6617D6B /* ExpenseTrackingView.swift */; };
 		9991AAD8327497452661DD85 /* TriplyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA9C3909C07733A90086974 /* TriplyApp.swift */; };
+		9ACA89FB0C806B08E5E5A3A8 /* PermissionRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B4B258B19EF90D9DC84175 /* PermissionRequestManager.swift */; };
+		9E0BC9F28A98B4FBF51AC961 /* PlanGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B0E9C9B163F0A53711C63A3 /* PlanGeneratorView.swift */; };
+		9FA1865ED9C44D5FC18EDDE4 /* SmartPackingGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AC69FB689FD6F13729DB1AC /* SmartPackingGeneratorView.swift */; };
 		9FEF310A51D1FB2BB311D3E9 /* ThemeDefaultsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E69511B21F2DE98CC01335D8 /* ThemeDefaultsView.swift */; };
+		A37CF44029B965DE2E277A38 /* TripEnums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3419202AD769EA6030453DFF /* TripEnums.swift */; };
+		A909929E814D735B16EA5E06 /* AIQuickActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D20C01F92E99674EE5EAC3D /* AIQuickActionsView.swift */; };
+		AA3B7849A787C7FECE4E002A /* ExpenseSplit.swift in Sources */ = {isa = PBXBuildFile; fileRef = E47E82F0DF552BA17F2631DD /* ExpenseSplit.swift */; };
+		ADE4DA4CE3161589EFDE7C0E /* AppleAIFoundation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CA6D9267ADCB9A9D84B0396 /* AppleAIFoundation.swift */; };
+		B01B49A7489A51FB82D09F91 /* FloatingActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = A369598206722D1F06FFBD90 /* FloatingActionButton.swift */; };
+		B0BCC96B9191F952396694FE /* CollaborativeTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C770EB3286349EF795596AE /* CollaborativeTripView.swift */; };
+		B11929B35E43BE6C9C9DABEE /* CameraPermissionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F5C4771DF85A56C62A493B9 /* CameraPermissionManager.swift */; };
 		B1C12A3B5A644E26654E8385 /* build.sh in Resources */ = {isa = PBXBuildFile; fileRef = BFA34B149663EA7791B73A44 /* build.sh */; };
+		B1E88FD8483C8D70FCB16ED2 /* TripTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCAA9EA16F59AD8C43ADC156 /* TripTemplates.swift */; };
+		B2108F1DAB024E01A333A19D /* auto_run.sh in Resources */ = {isa = PBXBuildFile; fileRef = AE0CA9BCE0430F37F9F9CBF6 /* auto_run.sh */; };
 		B2CDA81E63E686CF315CC10F /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFA5A650E9E110E63744BFF /* AppSettings.swift */; };
 		B33FCDBD5287C2FC69972EDD /* TripDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E3E7DBFB75EFD5BFC01BEBC /* TripDataManager.swift */; };
 		B8BF839856155F43761A0D48 /* AnalyticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CA61A1DDB965E4EDEF8AEA0 /* AnalyticsView.swift */; };
 		B91FFC23D554AD50E54E039F /* watch.sh in Resources */ = {isa = PBXBuildFile; fileRef = E5C5A4169891A3A816CA4276 /* watch.sh */; };
+		BCE744C305C0F750DB37E470 /* CreateFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E685A80A4A5A77214F6926E7 /* CreateFolderView.swift */; };
 		BDC26AB8B3029ED450E64FD4 /* ItineraryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADB6E0E40391A9320FDB037 /* ItineraryItem.swift */; };
 		BE2939D60CF76ED62CC9724F /* CurrencyAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1B582390C867717FB7448 /* CurrencyAdapter.swift */; };
+		BED3C4CEC262AB9AB3FEBBD5 /* AITripAssistantView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5030CA06FECB0185974CBB55 /* AITripAssistantView.swift */; };
 		BF6205A2F3AE1C2EC7B05493 /* SettingsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D297F4B00D7283FC2216D15 /* SettingsManager.swift */; };
 		C1F09EC1E0D659A90FD68161 /* PackingAssistant.swift in Sources */ = {isa = PBXBuildFile; fileRef = A226F74F23BD2E936800A8F0 /* PackingAssistant.swift */; };
+		C27F76A0A167D4DA22716760 /* ExpenseChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5378541DE3A34C1120C03B71 /* ExpenseChartView.swift */; };
 		C4877C7D9C55E82EC57FC955 /* EditTripView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2DA3792824BA2D52212A92B /* EditTripView.swift */; };
+		C63833E7707782B0A19C42CC /* TripCollaborator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46737B118A138D8CA0397419 /* TripCollaborator.swift */; };
 		C8AAEB8F1D445D45165CFEDB /* TripOptimizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1393F4D72DA772ED5D30A63B /* TripOptimizer.swift */; };
+		CE511BEBBA7E7CE50476D743 /* AIChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E2FB63B18FB8727F7036EC5 /* AIChatView.swift */; };
+		CE89C0AE0D02E7F60995E5EF /* StructuredDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11215A4DAC09F77A302EAA3 /* StructuredDataManager.swift */; };
+		D3EE32BF6975BC5AFDB5B4BE /* LocalizationStringsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F909D348BE818FB839350E2 /* LocalizationStringsManager.swift */; };
+		D45EE1981385C9A70EAAACCE /* ScanningAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6008E7AB80F6AF57417A518 /* ScanningAnimationView.swift */; };
+		D4BD24E5BE24EEBE8289E153 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3A4AA01909993745144CEC7 /* LocationManager.swift */; };
 		DC50EB9DBC1299C4CF5FF973 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB9835398D1300E37113D57F /* Assets.xcassets */; };
 		E0DDBE151FBF9EA1F32215BF /* LocalizationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100AF67B63252A16292AAE64 /* LocalizationManager.swift */; };
+		E2B9BC1B605DC7C1FF214F9D /* TicketScannerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7855F73F9FF35EB7507D9F32 /* TicketScannerManager.swift */; };
 		E31FD865EF005051A51F906B /* Triply.storekit in Resources */ = {isa = PBXBuildFile; fileRef = AF6A2F1534692D60D8F6D569 /* Triply.storekit */; };
 		E36B76200E37BEC84EBBC10F /* CustomTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E23252DA2606BA77244A752 /* CustomTheme.swift */; };
 		EA4857B54A3B893C793DA5FD /* run_iphone.sh in Resources */ = {isa = PBXBuildFile; fileRef = 86E20C18D131CBB58CFFA108 /* run_iphone.sh */; };
@@ -72,78 +125,139 @@
 		EDD4D76E7E0CB83D9A061236 /* DestinationSearchManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 584A5624CC82A51B2B6D585E /* DestinationSearchManager.swift */; };
 		F34C8B2C9749A95FFC723A05 /* TripModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3F360FD1659BA3B43ED96CE /* TripModel.swift */; };
 		F48B13325FD3573091AB391C /* quick_build.sh in Resources */ = {isa = PBXBuildFile; fileRef = B33640EA0977D51F82B279F5 /* quick_build.sh */; };
+		F57446E01E0740A7C1D3BAF5 /* CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEF30935D134A25181812306 /* CalendarManager.swift */; };
+		F6D424A666E59567B8E35929 /* TripCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E8F3FC8C7268571BF4848AD /* TripCalendarView.swift */; };
 		F8F22F162D255E6928E39446 /* View+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56EF81D0F4791CCCAAA73EE9 /* View+Localization.swift */; };
+		FB576931AC3FEF99F53A232B /* create_icon.sh in Resources */ = {isa = PBXBuildFile; fileRef = A0C6551482E1277FCE5BBB49 /* create_icon.sh */; };
+		FE7CE5E530DB035A72AE146A /* TripDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DC493631F741F96C1075F73 /* TripDocument.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0A22333DBCE3EBBE982195CB /* Triply.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Triply.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0DA324737044E2E46AEEE1DB /* BatchTicketScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatchTicketScanView.swift; sourceTree = "<group>"; };
+		0F909D348BE818FB839350E2 /* LocalizationStringsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationStringsManager.swift; sourceTree = "<group>"; };
 		100AF67B63252A16292AAE64 /* LocalizationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizationManager.swift; sourceTree = "<group>"; };
+		10C81529F9C4EA4EA0E8942E /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
 		1393F4D72DA772ED5D30A63B /* TripOptimizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripOptimizer.swift; sourceTree = "<group>"; };
+		158FBDB42F582060509AC836 /* AnimatedBackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimatedBackgroundView.swift; sourceTree = "<group>"; };
 		1A478709BE7CF18B6BB1D0A7 /* run_device.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = run_device.sh; sourceTree = "<group>"; };
 		1D297F4B00D7283FC2216D15 /* SettingsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsManager.swift; sourceTree = "<group>"; };
 		1E3E7DBFB75EFD5BFC01BEBC /* TripDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDataManager.swift; sourceTree = "<group>"; };
 		23405345E41C3901B1A7FC6D /* IAPManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IAPManager.swift; sourceTree = "<group>"; };
 		2404EDFD4CCFF54DD267980F /* LanguageSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageSelectionView.swift; sourceTree = "<group>"; };
 		28E872F265F5109FB5A1989F /* TripDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDetailView.swift; sourceTree = "<group>"; };
+		2CA6D9267ADCB9A9D84B0396 /* AppleAIFoundation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleAIFoundation.swift; sourceTree = "<group>"; };
 		2E23252DA2606BA77244A752 /* CustomTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTheme.swift; sourceTree = "<group>"; };
+		2F5C4771DF85A56C62A493B9 /* CameraPermissionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPermissionManager.swift; sourceTree = "<group>"; };
 		2FB36EB619A2B95939F960E0 /* ItineraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItineraryView.swift; sourceTree = "<group>"; };
+		3419202AD769EA6030453DFF /* TripEnums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripEnums.swift; sourceTree = "<group>"; };
+		356378DD87A13A3BC76E5BF2 /* MoveToFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveToFolderView.swift; sourceTree = "<group>"; };
 		369069DEF836F45DDBDCF166 /* LanguageAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageAdapter.swift; sourceTree = "<group>"; };
+		3994A2CD12E1BC070C65597D /* VoiceNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceNotesView.swift; sourceTree = "<group>"; };
 		3A34C27E5D89C8B78A0A9577 /* TripExportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripExportView.swift; sourceTree = "<group>"; };
+		3B0E9C9B163F0A53711C63A3 /* PlanGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanGeneratorView.swift; sourceTree = "<group>"; };
+		3D20C01F92E99674EE5EAC3D /* AIQuickActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIQuickActionsView.swift; sourceTree = "<group>"; };
+		43B7EE763C2FFB7863276283 /* auto_run_simple.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = auto_run_simple.sh; sourceTree = "<group>"; };
+		455E66CF39AC0465605C0D32 /* BudgetInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetInsightsView.swift; sourceTree = "<group>"; };
 		463B9E69E3A6E4E9C807AF3B /* ThemeCreatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeCreatorView.swift; sourceTree = "<group>"; };
+		46737B118A138D8CA0397419 /* TripCollaborator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCollaborator.swift; sourceTree = "<group>"; };
+		468CD8FE792646B2B57AC55E /* DocumentFolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentFolder.swift; sourceTree = "<group>"; };
 		4902BE3BA7B41D088CB49680 /* LanguagePickerLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerLibrary.swift; sourceTree = "<group>"; };
 		4AA5529F2B1684B1380ED809 /* AddDestinationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddDestinationView.swift; sourceTree = "<group>"; };
 		4CA61A1DDB965E4EDEF8AEA0 /* AnalyticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsView.swift; sourceTree = "<group>"; };
 		4DA6F247A7F6A52CED26AFDC /* CurrencyConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyConverter.swift; sourceTree = "<group>"; };
+		4E8F3FC8C7268571BF4848AD /* TripCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripCalendarView.swift; sourceTree = "<group>"; };
 		50043E0FEC4A557F6DF7E58D /* StatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsView.swift; sourceTree = "<group>"; };
+		5030CA06FECB0185974CBB55 /* AITripAssistantView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AITripAssistantView.swift; sourceTree = "<group>"; };
+		504FAF16FAFBF8AAA077C452 /* quick_run.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = quick_run.sh; sourceTree = "<group>"; };
 		50D1E97F7BEB814218D8A2EB /* AddTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTripView.swift; sourceTree = "<group>"; };
+		5378541DE3A34C1120C03B71 /* ExpenseChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseChartView.swift; sourceTree = "<group>"; };
 		56EF81D0F4791CCCAAA73EE9 /* View+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Localization.swift"; sourceTree = "<group>"; };
 		584A5624CC82A51B2B6D585E /* DestinationSearchManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationSearchManager.swift; sourceTree = "<group>"; };
 		59FAF81420171AF5F8E053D4 /* TripListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripListView.swift; sourceTree = "<group>"; };
+		5AC69FB689FD6F13729DB1AC /* SmartPackingGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmartPackingGeneratorView.swift; sourceTree = "<group>"; };
+		5C48E163080E96C7DD71C13F /* TripMemory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripMemory.swift; sourceTree = "<group>"; };
+		5DC493631F741F96C1075F73 /* TripDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripDocument.swift; sourceTree = "<group>"; };
+		65C3499F03576BEAF5BD46B6 /* TagFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagFlowLayout.swift; sourceTree = "<group>"; };
+		662EACE8C14EB56988EC10CB /* PermissionRequestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionRequestView.swift; sourceTree = "<group>"; };
+		69C510D6133EDB7078B07F3C /* TEST_PLAN.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = TEST_PLAN.csv; sourceTree = "<group>"; };
+		6AD5058C0849E3FD5EF28F71 /* TripMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripMapView.swift; sourceTree = "<group>"; };
+		6B76F7472BAB752FC43090B7 /* AIStructuredResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIStructuredResponse.swift; sourceTree = "<group>"; };
+		7855F73F9FF35EB7507D9F32 /* TicketScannerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TicketScannerManager.swift; sourceTree = "<group>"; };
 		78C181629C46F7C91E743924 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		7935093A8D0BBB2B2231C508 /* ThemeLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeLibraryView.swift; sourceTree = "<group>"; };
 		7C5B99584071C6518D102B00 /* WeatherForecastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherForecastView.swift; sourceTree = "<group>"; };
+		7E2FB63B18FB8727F7036EC5 /* AIChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatView.swift; sourceTree = "<group>"; };
 		7F1327BB5A72DDE33A7D50CD /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		8262B3DE7DFD87CB6AAC1775 /* ExpenseSplittingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseSplittingView.swift; sourceTree = "<group>"; };
 		82F510EAC4B72B73850861CF /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		83A759D641C00B6251C1FAD7 /* TriplyWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriplyWidget.swift; sourceTree = "<group>"; };
 		83D400BB8F1088273E7FEB7E /* WeatherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherManager.swift; sourceTree = "<group>"; };
 		83E17115DE5A07C6B6617D6B /* ExpenseTrackingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseTrackingView.swift; sourceTree = "<group>"; };
 		86E20C18D131CBB58CFFA108 /* run_iphone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = run_iphone.sh; sourceTree = "<group>"; };
+		8C770EB3286349EF795596AE /* CollaborativeTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollaborativeTripView.swift; sourceTree = "<group>"; };
+		8C940702D68E31A194AB3EC1 /* FolderDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderDetailView.swift; sourceTree = "<group>"; };
+		90B4B258B19EF90D9DC84175 /* PermissionRequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionRequestManager.swift; sourceTree = "<group>"; };
 		91611E144203AD46C0B826D8 /* PackingItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackingItem.swift; sourceTree = "<group>"; };
+		935AD0C76D56FBD1B1B88F09 /* EditDocumentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditDocumentView.swift; sourceTree = "<group>"; };
 		98BBA4D7C5383F45E787814C /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		9E9BCA0C7364B8E8C6CAB750 /* DestinationSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationSearchView.swift; sourceTree = "<group>"; };
 		9F8A3D88731226EA25C66BD6 /* Expense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Expense.swift; sourceTree = "<group>"; };
+		A0C6551482E1277FCE5BBB49 /* create_icon.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = create_icon.sh; sourceTree = "<group>"; };
 		A226F74F23BD2E936800A8F0 /* PackingAssistant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackingAssistant.swift; sourceTree = "<group>"; };
 		A2DA3792824BA2D52212A92B /* EditTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTripView.swift; sourceTree = "<group>"; };
+		A369598206722D1F06FFBD90 /* FloatingActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingActionButton.swift; sourceTree = "<group>"; };
+		A41B65CDCBFA2978F8AD2281 /* ProFeaturesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProFeaturesView.swift; sourceTree = "<group>"; };
 		A761B236A01E81E3ABE3196E /* TripOptimizerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripOptimizerView.swift; sourceTree = "<group>"; };
 		A7EB20EE15C1038EBFA1F5F6 /* CurrencySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionView.swift; sourceTree = "<group>"; };
 		AB99C52F71A6C5BC22FA447C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		AB99C88977555267F8FBDC11 /* DestinationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DestinationModel.swift; sourceTree = "<group>"; };
+		AE0CA9BCE0430F37F9F9CBF6 /* auto_run.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = auto_run.sh; sourceTree = "<group>"; };
 		AEFD0ED05AF98F6AE8144009 /* .cursorignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .cursorignore; sourceTree = "<group>"; };
 		AF6A2F1534692D60D8F6D569 /* Triply.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Triply.storekit; sourceTree = "<group>"; };
 		AFEDD1F93F42D48E7F4EE452 /* FeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureTests.swift; sourceTree = "<group>"; };
 		B0B2C2CB656859BEA1F97E03 /* ExpenseInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseInsightsView.swift; sourceTree = "<group>"; };
+		B2511D7E013709149BAB5832 /* AddTripIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTripIntent.swift; sourceTree = "<group>"; };
 		B297A6C28B5FF690E16C0917 /* TripRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripRemindersView.swift; sourceTree = "<group>"; };
 		B33640EA0977D51F82B279F5 /* quick_build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = quick_build.sh; sourceTree = "<group>"; };
 		B3BBC9634A9464DF9EBD7570 /* run_cursor.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = run_cursor.sh; sourceTree = "<group>"; };
+		B3EE86B69309D4C8E265B331 /* AITripPlanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AITripPlanner.swift; sourceTree = "<group>"; };
+		B4203E2E9325DD6B7AEC2B38 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		BA28927B4F25437ABA2B3714 /* EmergencyAssistanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmergencyAssistanceView.swift; sourceTree = "<group>"; };
 		BDFA5A650E9E110E63744BFF /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		BFA34B149663EA7791B73A44 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		C3A3CA107E50CDD3BC7F7F05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C3A4AA01909993745144CEC7 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		C3F360FD1659BA3B43ED96CE /* TripModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripModel.swift; sourceTree = "<group>"; };
 		C460AB6858FC52EB40D57AC2 /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		C4772AB318A5B81547914B3C /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		C5FBCF1068C0669BB9992BFA /* CurrencyConverterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyConverterView.swift; sourceTree = "<group>"; };
+		C63D80A36E0547D8DCB96D3B /* PaywallGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallGateView.swift; sourceTree = "<group>"; };
+		CCAA9EA16F59AD8C43ADC156 /* TripTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TripTemplates.swift; sourceTree = "<group>"; };
+		CEF30935D134A25181812306 /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarManager.swift; sourceTree = "<group>"; };
+		D6282A767D294EFF4BBD9CF6 /* AIExpenseInsightsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIExpenseInsightsCard.swift; sourceTree = "<group>"; };
 		D6FC0B8B4D9D106FC578DCC3 /* PackingListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PackingListView.swift; sourceTree = "<group>"; };
 		D92110C2DE2E5843175E7935 /* build.log */ = {isa = PBXFileReference; lastKnownFileType = text; path = build.log; sourceTree = "<group>"; };
 		DADB6E0E40391A9320FDB037 /* ItineraryItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItineraryItem.swift; sourceTree = "<group>"; };
+		E11215A4DAC09F77A302EAA3 /* StructuredDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StructuredDataManager.swift; sourceTree = "<group>"; };
+		E13B10CD3686F05D1C26B3E1 /* DocumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentsView.swift; sourceTree = "<group>"; };
+		E47E82F0DF552BA17F2631DD /* ExpenseSplit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseSplit.swift; sourceTree = "<group>"; };
 		E5C5A4169891A3A816CA4276 /* watch.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = watch.sh; sourceTree = "<group>"; };
+		E6008E7AB80F6AF57417A518 /* ScanningAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanningAnimationView.swift; sourceTree = "<group>"; };
+		E685A80A4A5A77214F6926E7 /* CreateFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateFolderView.swift; sourceTree = "<group>"; };
 		E69511B21F2DE98CC01335D8 /* ThemeDefaultsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeDefaultsView.swift; sourceTree = "<group>"; };
 		E6F06866D6BE24CBA26FDC73 /* ReceiptOCRManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptOCRManager.swift; sourceTree = "<group>"; };
 		E8FCC838768ECA3549DE208E /* LocalizedString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalizedString.swift; sourceTree = "<group>"; };
+		ECF476C2145D1792691E8A68 /* VoiceNotesManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceNotesManager.swift; sourceTree = "<group>"; };
+		EECBE2AE2A042AE962AE27C5 /* BudgetRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BudgetRow.swift; sourceTree = "<group>"; };
 		F14F35DFB62B19E19E395886 /* verify_features.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = verify_features.swift; sourceTree = "<group>"; };
 		F3B1B582390C867717FB7448 /* CurrencyAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyAdapter.swift; sourceTree = "<group>"; };
 		F8445DA514ED9C0599ECD54E /* run.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = run.sh; sourceTree = "<group>"; };
 		FAA9C3909C07733A90086974 /* TriplyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TriplyApp.swift; sourceTree = "<group>"; };
 		FB9835398D1300E37113D57F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FCB4C8FB48082AF7D854817F /* AIInsightsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIInsightsView.swift; sourceTree = "<group>"; };
 		FD67A85DD759DFB3362C786A /* CurrencyPickerLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyPickerLibrary.swift; sourceTree = "<group>"; };
+		FD878B6C2511CA5A53ECCA8C /* EnhancedTripCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnhancedTripCard.swift; sourceTree = "<group>"; };
 		FFFFF4120D4EEFC2ECE037C5 /* ExportManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -153,28 +267,60 @@
 			children = (
 				4AA5529F2B1684B1380ED809 /* AddDestinationView.swift */,
 				50D1E97F7BEB814218D8A2EB /* AddTripView.swift */,
+				7E2FB63B18FB8727F7036EC5 /* AIChatView.swift */,
+				D6282A767D294EFF4BBD9CF6 /* AIExpenseInsightsCard.swift */,
+				FCB4C8FB48082AF7D854817F /* AIInsightsView.swift */,
+				3D20C01F92E99674EE5EAC3D /* AIQuickActionsView.swift */,
+				5030CA06FECB0185974CBB55 /* AITripAssistantView.swift */,
 				4CA61A1DDB965E4EDEF8AEA0 /* AnalyticsView.swift */,
+				158FBDB42F582060509AC836 /* AnimatedBackgroundView.swift */,
+				0DA324737044E2E46AEEE1DB /* BatchTicketScanView.swift */,
+				455E66CF39AC0465605C0D32 /* BudgetInsightsView.swift */,
+				EECBE2AE2A042AE962AE27C5 /* BudgetRow.swift */,
+				8C770EB3286349EF795596AE /* CollaborativeTripView.swift */,
 				AB99C52F71A6C5BC22FA447C /* ContentView.swift */,
+				E685A80A4A5A77214F6926E7 /* CreateFolderView.swift */,
 				C5FBCF1068C0669BB9992BFA /* CurrencyConverterView.swift */,
 				A7EB20EE15C1038EBFA1F5F6 /* CurrencySelectionView.swift */,
 				9E9BCA0C7364B8E8C6CAB750 /* DestinationSearchView.swift */,
+				E13B10CD3686F05D1C26B3E1 /* DocumentsView.swift */,
+				935AD0C76D56FBD1B1B88F09 /* EditDocumentView.swift */,
 				A2DA3792824BA2D52212A92B /* EditTripView.swift */,
+				BA28927B4F25437ABA2B3714 /* EmergencyAssistanceView.swift */,
+				FD878B6C2511CA5A53ECCA8C /* EnhancedTripCard.swift */,
+				5378541DE3A34C1120C03B71 /* ExpenseChartView.swift */,
 				B0B2C2CB656859BEA1F97E03 /* ExpenseInsightsView.swift */,
+				8262B3DE7DFD87CB6AAC1775 /* ExpenseSplittingView.swift */,
 				83E17115DE5A07C6B6617D6B /* ExpenseTrackingView.swift */,
+				A369598206722D1F06FFBD90 /* FloatingActionButton.swift */,
+				8C940702D68E31A194AB3EC1 /* FolderDetailView.swift */,
 				2FB36EB619A2B95939F960E0 /* ItineraryView.swift */,
 				2404EDFD4CCFF54DD267980F /* LanguageSelectionView.swift */,
+				356378DD87A13A3BC76E5BF2 /* MoveToFolderView.swift */,
+				B4203E2E9325DD6B7AEC2B38 /* OnboardingView.swift */,
 				D6FC0B8B4D9D106FC578DCC3 /* PackingListView.swift */,
+				C63D80A36E0547D8DCB96D3B /* PaywallGateView.swift */,
 				C460AB6858FC52EB40D57AC2 /* PaywallView.swift */,
+				662EACE8C14EB56988EC10CB /* PermissionRequestView.swift */,
+				3B0E9C9B163F0A53711C63A3 /* PlanGeneratorView.swift */,
+				A41B65CDCBFA2978F8AD2281 /* ProFeaturesView.swift */,
+				E6008E7AB80F6AF57417A518 /* ScanningAnimationView.swift */,
 				7F1327BB5A72DDE33A7D50CD /* SettingsView.swift */,
+				5AC69FB689FD6F13729DB1AC /* SmartPackingGeneratorView.swift */,
 				50043E0FEC4A557F6DF7E58D /* StatisticsView.swift */,
+				65C3499F03576BEAF5BD46B6 /* TagFlowLayout.swift */,
 				463B9E69E3A6E4E9C807AF3B /* ThemeCreatorView.swift */,
 				E69511B21F2DE98CC01335D8 /* ThemeDefaultsView.swift */,
 				7935093A8D0BBB2B2231C508 /* ThemeLibraryView.swift */,
+				4E8F3FC8C7268571BF4848AD /* TripCalendarView.swift */,
 				28E872F265F5109FB5A1989F /* TripDetailView.swift */,
 				3A34C27E5D89C8B78A0A9577 /* TripExportView.swift */,
 				59FAF81420171AF5F8E053D4 /* TripListView.swift */,
+				6AD5058C0849E3FD5EF28F71 /* TripMapView.swift */,
 				A761B236A01E81E3ABE3196E /* TripOptimizerView.swift */,
 				B297A6C28B5FF690E16C0917 /* TripRemindersView.swift */,
+				CCAA9EA16F59AD8C43ADC156 /* TripTemplates.swift */,
+				3994A2CD12E1BC070C65597D /* VoiceNotesView.swift */,
 				7C5B99584071C6518D102B00 /* WeatherForecastView.swift */,
 			);
 			path = Views;
@@ -205,15 +351,30 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		34509DE281FA63EB0E054CAA /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				83A759D641C00B6251C1FAD7 /* TriplyWidget.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
 		3F571ED92BAC4BFEA2CB6D43 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				6B76F7472BAB752FC43090B7 /* AIStructuredResponse.swift */,
 				BDFA5A650E9E110E63744BFF /* AppSettings.swift */,
 				2E23252DA2606BA77244A752 /* CustomTheme.swift */,
 				AB99C88977555267F8FBDC11 /* DestinationModel.swift */,
+				468CD8FE792646B2B57AC55E /* DocumentFolder.swift */,
 				9F8A3D88731226EA25C66BD6 /* Expense.swift */,
+				E47E82F0DF552BA17F2631DD /* ExpenseSplit.swift */,
 				DADB6E0E40391A9320FDB037 /* ItineraryItem.swift */,
 				91611E144203AD46C0B826D8 /* PackingItem.swift */,
+				46737B118A138D8CA0397419 /* TripCollaborator.swift */,
+				5DC493631F741F96C1075F73 /* TripDocument.swift */,
+				3419202AD769EA6030453DFF /* TripEnums.swift */,
+				5C48E163080E96C7DD71C13F /* TripMemory.swift */,
 				C3F360FD1659BA3B43ED96CE /* TripModel.swift */,
 			);
 			path = Models;
@@ -231,6 +392,7 @@
 			isa = PBXGroup;
 			children = (
 				2D2F377EFFAB90EC58B3E450 /* Extensions */,
+				B7E0CAF3E6B3A12E996ED4A9 /* Intents */,
 				B8ACAF5732306DFF34066BA0 /* Libraries */,
 				64C15EF923D5FDAE1E4122EF /* Managers */,
 				3F571ED92BAC4BFEA2CB6D43 /* Models */,
@@ -238,6 +400,7 @@
 				2B116260EF2369B777BDFC31 /* Tests */,
 				B7F266B8945F21B59D645EC8 /* Triply */,
 				194260C2AD961DB9F3A8DB5F /* Views */,
+				34509DE281FA63EB0E054CAA /* Widgets */,
 				4FD49B0E87717D5EFE0868ED /* Products */,
 			);
 			sourceTree = "<group>";
@@ -254,22 +417,41 @@
 		64C15EF923D5FDAE1E4122EF /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				B3EE86B69309D4C8E265B331 /* AITripPlanner.swift */,
+				2CA6D9267ADCB9A9D84B0396 /* AppleAIFoundation.swift */,
+				CEF30935D134A25181812306 /* CalendarManager.swift */,
+				2F5C4771DF85A56C62A493B9 /* CameraPermissionManager.swift */,
 				4DA6F247A7F6A52CED26AFDC /* CurrencyConverter.swift */,
 				82F510EAC4B72B73850861CF /* DatabaseManager.swift */,
 				584A5624CC82A51B2B6D585E /* DestinationSearchManager.swift */,
 				FFFFF4120D4EEFC2ECE037C5 /* ExportManager.swift */,
+				10C81529F9C4EA4EA0E8942E /* HapticManager.swift */,
 				23405345E41C3901B1A7FC6D /* IAPManager.swift */,
 				100AF67B63252A16292AAE64 /* LocalizationManager.swift */,
+				0F909D348BE818FB839350E2 /* LocalizationStringsManager.swift */,
+				C3A4AA01909993745144CEC7 /* LocationManager.swift */,
 				C4772AB318A5B81547914B3C /* NotificationManager.swift */,
 				A226F74F23BD2E936800A8F0 /* PackingAssistant.swift */,
+				90B4B258B19EF90D9DC84175 /* PermissionRequestManager.swift */,
 				E6F06866D6BE24CBA26FDC73 /* ReceiptOCRManager.swift */,
 				1D297F4B00D7283FC2216D15 /* SettingsManager.swift */,
+				E11215A4DAC09F77A302EAA3 /* StructuredDataManager.swift */,
 				98BBA4D7C5383F45E787814C /* ThemeManager.swift */,
+				7855F73F9FF35EB7507D9F32 /* TicketScannerManager.swift */,
 				1E3E7DBFB75EFD5BFC01BEBC /* TripDataManager.swift */,
 				1393F4D72DA772ED5D30A63B /* TripOptimizer.swift */,
+				ECF476C2145D1792691E8A68 /* VoiceNotesManager.swift */,
 				83D400BB8F1088273E7FEB7E /* WeatherManager.swift */,
 			);
 			path = Managers;
+			sourceTree = "<group>";
+		};
+		B7E0CAF3E6B3A12E996ED4A9 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				B2511D7E013709149BAB5832 /* AddTripIntent.swift */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 		B7F266B8945F21B59D645EC8 /* Triply */ = {
@@ -277,14 +459,19 @@
 			children = (
 				AEFD0ED05AF98F6AE8144009 /* .cursorignore */,
 				FB9835398D1300E37113D57F /* Assets.xcassets */,
+				43B7EE763C2FFB7863276283 /* auto_run_simple.sh */,
+				AE0CA9BCE0430F37F9F9CBF6 /* auto_run.sh */,
 				D92110C2DE2E5843175E7935 /* build.log */,
 				BFA34B149663EA7791B73A44 /* build.sh */,
+				A0C6551482E1277FCE5BBB49 /* create_icon.sh */,
 				C3A3CA107E50CDD3BC7F7F05 /* Info.plist */,
 				B33640EA0977D51F82B279F5 /* quick_build.sh */,
+				504FAF16FAFBF8AAA077C452 /* quick_run.sh */,
 				B3BBC9634A9464DF9EBD7570 /* run_cursor.sh */,
 				1A478709BE7CF18B6BB1D0A7 /* run_device.sh */,
 				86E20C18D131CBB58CFFA108 /* run_iphone.sh */,
 				F8445DA514ED9C0599ECD54E /* run.sh */,
+				69C510D6133EDB7078B07F3C /* TEST_PLAN.csv */,
 				AF6A2F1534692D60D8F6D569 /* Triply.storekit */,
 				FAA9C3909C07733A90086974 /* TriplyApp.swift */,
 				F14F35DFB62B19E19E395886 /* verify_features.swift */,
@@ -367,10 +554,15 @@
 			files = (
 				DC50EB9DBC1299C4CF5FF973 /* Assets.xcassets in Resources */,
 				813E3A5AB3F3CE8309181B99 /* Localizable.strings in Resources */,
+				80A31028E58D5C741CCF4854 /* TEST_PLAN.csv in Resources */,
 				E31FD865EF005051A51F906B /* Triply.storekit in Resources */,
+				B2108F1DAB024E01A333A19D /* auto_run.sh in Resources */,
+				4A3D6B6701D6CE369707998E /* auto_run_simple.sh in Resources */,
 				2ABB01324CA5466B0C7C350D /* build.log in Resources */,
 				B1C12A3B5A644E26654E8385 /* build.sh in Resources */,
+				FB576931AC3FEF99F53A232B /* create_icon.sh in Resources */,
 				F48B13325FD3573091AB391C /* quick_build.sh in Resources */,
+				735C56A82CE09E7439698994 /* quick_run.sh in Resources */,
 				25AFA44CA5C7DBE282D685E6 /* run.sh in Resources */,
 				EC2C099800F1507969FF408D /* run_cursor.sh in Resources */,
 				73A444C38D462B958641303E /* run_device.sh in Resources */,
@@ -386,11 +578,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CE511BEBBA7E7CE50476D743 /* AIChatView.swift in Sources */,
+				0F6AF55AC0F9381BF118649C /* AIExpenseInsightsCard.swift in Sources */,
+				391B0080B460EA10A9A1A856 /* AIInsightsView.swift in Sources */,
+				A909929E814D735B16EA5E06 /* AIQuickActionsView.swift in Sources */,
+				2D42192754531D250FF88CC3 /* AIStructuredResponse.swift in Sources */,
+				BED3C4CEC262AB9AB3FEBBD5 /* AITripAssistantView.swift in Sources */,
+				2789D4052D4B1E21BBF2ECC0 /* AITripPlanner.swift in Sources */,
 				8CB955DB773B6403A02881C2 /* AddDestinationView.swift in Sources */,
+				396531C997EB7B5B6463576B /* AddTripIntent.swift in Sources */,
 				47EA3127AD06E5A33FE4CF3B /* AddTripView.swift in Sources */,
 				B8BF839856155F43761A0D48 /* AnalyticsView.swift in Sources */,
+				84E44754E4E2E9F843EF76D7 /* AnimatedBackgroundView.swift in Sources */,
 				B2CDA81E63E686CF315CC10F /* AppSettings.swift in Sources */,
+				ADE4DA4CE3161589EFDE7C0E /* AppleAIFoundation.swift in Sources */,
+				463FB5790B814320EF7E6975 /* BatchTicketScanView.swift in Sources */,
+				46A1D629FE1FF7FC16BF99BB /* BudgetInsightsView.swift in Sources */,
+				2A594FE58766CB717D682F18 /* BudgetRow.swift in Sources */,
+				F57446E01E0740A7C1D3BAF5 /* CalendarManager.swift in Sources */,
+				B11929B35E43BE6C9C9DABEE /* CameraPermissionManager.swift in Sources */,
+				B0BCC96B9191F952396694FE /* CollaborativeTripView.swift in Sources */,
 				04279ED3576D880EDE286A98 /* ContentView.swift in Sources */,
+				BCE744C305C0F750DB37E470 /* CreateFolderView.swift in Sources */,
 				BE2939D60CF76ED62CC9724F /* CurrencyAdapter.swift in Sources */,
 				7440BBE3143C2905372C2D06 /* CurrencyConverter.swift in Sources */,
 				35CACFBCB1A9B890525E38A3 /* CurrencyConverterView.swift in Sources */,
@@ -401,12 +610,23 @@
 				6195DDAC7A09DA8AE409228D /* DestinationModel.swift in Sources */,
 				EDD4D76E7E0CB83D9A061236 /* DestinationSearchManager.swift in Sources */,
 				6E2E6DB4D548D0A253B539A6 /* DestinationSearchView.swift in Sources */,
+				2313AC9414787F38A4EFF3CF /* DocumentFolder.swift in Sources */,
+				025A20961ED47503DBC89F62 /* DocumentsView.swift in Sources */,
+				074110B4427595472FE68FF9 /* EditDocumentView.swift in Sources */,
 				C4877C7D9C55E82EC57FC955 /* EditTripView.swift in Sources */,
+				28AB1A0266154CAD9228F6F3 /* EmergencyAssistanceView.swift in Sources */,
+				00A8A2DD0E54E2239A16F53B /* EnhancedTripCard.swift in Sources */,
 				3FEAD5ADB67836E9297DC3D0 /* Expense.swift in Sources */,
+				C27F76A0A167D4DA22716760 /* ExpenseChartView.swift in Sources */,
 				ECD9EA7BE1B5BE7582CDED6C /* ExpenseInsightsView.swift in Sources */,
+				AA3B7849A787C7FECE4E002A /* ExpenseSplit.swift in Sources */,
+				7B47ACB3C191ABEE5F1FBD20 /* ExpenseSplittingView.swift in Sources */,
 				9695F449635B7CD40850AB06 /* ExpenseTrackingView.swift in Sources */,
 				8151B70D1BC693EB595450CA /* ExportManager.swift in Sources */,
 				35054CB6230BA726FC8D9E0C /* FeatureTests.swift in Sources */,
+				B01B49A7489A51FB82D09F91 /* FloatingActionButton.swift in Sources */,
+				1B2AD4B6ADB27E31A4B0D600 /* FolderDetailView.swift in Sources */,
+				818348B8D495C92AE1C2911E /* HapticManager.swift in Sources */,
 				89E7E256246BAAC72A2C7CBA /* IAPManager.swift in Sources */,
 				BDC26AB8B3029ED450E64FD4 /* ItineraryItem.swift in Sources */,
 				4B5B6DE808BB29AC49B0A8F5 /* ItineraryView.swift in Sources */,
@@ -414,30 +634,54 @@
 				7A69EC14F3F9317CE01759A2 /* LanguagePickerLibrary.swift in Sources */,
 				95C72FC9634B737ABA638FED /* LanguageSelectionView.swift in Sources */,
 				E0DDBE151FBF9EA1F32215BF /* LocalizationManager.swift in Sources */,
+				D3EE32BF6975BC5AFDB5B4BE /* LocalizationStringsManager.swift in Sources */,
 				57EF01A8EB795F7ACB5822FD /* LocalizedString.swift in Sources */,
+				D4BD24E5BE24EEBE8289E153 /* LocationManager.swift in Sources */,
+				63C807D8F745224699F38C46 /* MoveToFolderView.swift in Sources */,
 				65F469EEDEFC39F22C37D010 /* NotificationManager.swift in Sources */,
+				58173FC39AC8173B2B38B56B /* OnboardingView.swift in Sources */,
 				C1F09EC1E0D659A90FD68161 /* PackingAssistant.swift in Sources */,
 				7354ADE4B7189F8FEF8FA63A /* PackingItem.swift in Sources */,
 				8047B3ABD4E59CAF5A481B2E /* PackingListView.swift in Sources */,
+				0C8729DF322654700D65931A /* PaywallGateView.swift in Sources */,
 				66C416D85132B98A7D1A4584 /* PaywallView.swift in Sources */,
+				9ACA89FB0C806B08E5E5A3A8 /* PermissionRequestManager.swift in Sources */,
+				63223F046090F708FCE2546A /* PermissionRequestView.swift in Sources */,
+				9E0BC9F28A98B4FBF51AC961 /* PlanGeneratorView.swift in Sources */,
+				24013841CC4BB6A6CCA8DCE8 /* ProFeaturesView.swift in Sources */,
 				7B16690DA116EF393DD17F5B /* ReceiptOCRManager.swift in Sources */,
+				D45EE1981385C9A70EAAACCE /* ScanningAnimationView.swift in Sources */,
 				BF6205A2F3AE1C2EC7B05493 /* SettingsManager.swift in Sources */,
 				1114D876D46EF052C8583FDE /* SettingsView.swift in Sources */,
+				9FA1865ED9C44D5FC18EDDE4 /* SmartPackingGeneratorView.swift in Sources */,
 				11402E4E81DCF48BAF2639A9 /* StatisticsView.swift in Sources */,
+				CE89C0AE0D02E7F60995E5EF /* StructuredDataManager.swift in Sources */,
+				2DF21B2854BBB6BE6B7D4F8B /* TagFlowLayout.swift in Sources */,
 				8DB760B2DD36712408A612D4 /* ThemeCreatorView.swift in Sources */,
 				9FEF310A51D1FB2BB311D3E9 /* ThemeDefaultsView.swift in Sources */,
 				02513660BFBE73778A462D40 /* ThemeLibraryView.swift in Sources */,
 				344BAEC5498A7B8077F4433F /* ThemeManager.swift in Sources */,
+				E2B9BC1B605DC7C1FF214F9D /* TicketScannerManager.swift in Sources */,
+				F6D424A666E59567B8E35929 /* TripCalendarView.swift in Sources */,
+				C63833E7707782B0A19C42CC /* TripCollaborator.swift in Sources */,
 				B33FCDBD5287C2FC69972EDD /* TripDataManager.swift in Sources */,
 				8630E376FA2728BACCF47BDC /* TripDetailView.swift in Sources */,
+				FE7CE5E530DB035A72AE146A /* TripDocument.swift in Sources */,
+				A37CF44029B965DE2E277A38 /* TripEnums.swift in Sources */,
 				1C0F6450B6C2FDA35C0FE792 /* TripExportView.swift in Sources */,
 				7CC0B040950253A00213A4E4 /* TripListView.swift in Sources */,
+				49A74702DBF5A5A3EB01908D /* TripMapView.swift in Sources */,
+				105B249609B662D689B63760 /* TripMemory.swift in Sources */,
 				F34C8B2C9749A95FFC723A05 /* TripModel.swift in Sources */,
 				C8AAEB8F1D445D45165CFEDB /* TripOptimizer.swift in Sources */,
 				4E365254D51A872325A40C0B /* TripOptimizerView.swift in Sources */,
 				4A49AFAB57F011534608FE4D /* TripRemindersView.swift in Sources */,
+				B1E88FD8483C8D70FCB16ED2 /* TripTemplates.swift in Sources */,
 				9991AAD8327497452661DD85 /* TriplyApp.swift in Sources */,
+				937834FAF537040EE94416C9 /* TriplyWidget.swift in Sources */,
 				F8F22F162D255E6928E39446 /* View+Localization.swift in Sources */,
+				7CB0B8C87B8B355A51898888 /* VoiceNotesManager.swift in Sources */,
+				246F4EBFF6FB9489C6F7E68D /* VoiceNotesView.swift in Sources */,
 				069FE91D59F89A8F6BD360A9 /* WeatherForecastView.swift in Sources */,
 				285EC96D29B555F25BDCD6F2 /* WeatherManager.swift in Sources */,
 				2B0DE46C639769D34A80D932 /* verify_features.swift in Sources */,
@@ -525,7 +769,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "-";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -549,7 +793,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "-";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";

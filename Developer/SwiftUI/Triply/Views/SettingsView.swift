@@ -41,6 +41,8 @@ struct SettingsView: View {
                 aboutSection
                 proSection
             }
+            .scrollContentBackground(.hidden) // Hide default Form background
+            .background(ThemeManager.shared.themeBackground) // Use theme background
             .navigationTitle("settings.title".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -72,7 +74,16 @@ struct SettingsView: View {
             .onChange(of: localizationManager.currentLanguage) { oldValue, newValue in
                 // Update selected language when manager changes
                 selectedLanguage = newValue
-                refreshID = UUID()
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    refreshID = UUID()
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .languageChanged)) { _ in
+                // Also listen to notification for immediate updates
+                selectedLanguage = localizationManager.currentLanguage
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    refreshID = UUID()
+                }
             }
             .id(refreshID) // Force refresh on language change
         }
@@ -401,14 +412,9 @@ struct SettingsView: View {
         // Update theme and language
         themeManager.setTheme(selectedTheme)
         
-        // Update language - this will trigger UI refresh
+        // Update language - this will trigger UI refresh immediately
         if localizationManager.currentLanguage != selectedLanguage {
             localizationManager.setLanguage(selectedLanguage)
-            // Force immediate UI update
-            DispatchQueue.main.async {
-                // Trigger view refresh by updating a published property
-                self.localizationManager.objectWillChange.send()
-            }
         }
         
         // Save context to ensure persistence

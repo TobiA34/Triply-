@@ -22,6 +22,8 @@ final class ItineraryItem {
     var bookingReference: String
     var reminderDate: Date?
     
+    @Relationship(deleteRule: .nullify) var documents: [TripDocument]?
+    
     init(
         id: UUID = UUID(),
         day: Int,

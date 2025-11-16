@@ -40,5 +40,19 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>We need access to your camera to take photos of travel documents like tickets, receipts, and passports.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to select travel documents, tickets, and receipts for your trips.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need permission to save photos to your library.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show trip destinations on maps and provide location-based services.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We need speech recognition to convert your voice notes into text for your trip planning.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We need microphone access to record voice notes for your trips.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>We need calendar access to add your trip itinerary and events to your calendar.</string>
 </dict>
 </plist>

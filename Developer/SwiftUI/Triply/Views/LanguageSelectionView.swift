@@ -25,7 +25,7 @@ struct LanguageSelectionView: View {
                 // Convert back to legacy SupportedLanguage when selection changes
                 if let legacy = newValue.legacy {
                     selectedLanguage = legacy
-                    // Immediately update the language manager
+                    // Immediately update the language manager - this triggers app-wide refresh
                     LocalizationManager.shared.setLanguage(legacy)
                     print("✅ Selected language: \(newValue.code) (\(newValue.nativeName))")
                 } else {
@@ -41,6 +41,7 @@ struct LanguageSelectionView: View {
                 // Ensure binding is updated when view disappears
                 if let legacy = enhancedLanguage.legacy {
                     selectedLanguage = legacy
+                    // Update language one more time to ensure it's saved
                     LocalizationManager.shared.setLanguage(legacy)
                 }
             }

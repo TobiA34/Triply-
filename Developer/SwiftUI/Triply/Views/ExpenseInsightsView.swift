@@ -52,13 +52,13 @@ struct ExpenseInsightsView: View {
             VStack(spacing: 24) {
                 // Summary Cards
                 HStack(spacing: 16) {
-                    SummaryCard(
+                    ExpenseSummaryCard(
                         title: "Total Spent",
                         value: settingsManager.formatAmount(totalSpent),
                         icon: "creditcard.fill",
                         color: .red
                     )
-                    SummaryCard(
+                    ExpenseSummaryCard(
                         title: "Daily Average",
                         value: settingsManager.formatAmount(averageDailySpend),
                         icon: "calendar",
@@ -160,6 +160,31 @@ struct ExpenseInsightsView: View {
         }
         .navigationTitle("Expense Insights")
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct ExpenseSummaryCard: View {
+    let title: String
+    let value: String
+    let icon: String
+    let color: Color
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(color)
+            Text(value)
+                .font(.title3)
+                .fontWeight(.bold)
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(12)
     }
 }
 

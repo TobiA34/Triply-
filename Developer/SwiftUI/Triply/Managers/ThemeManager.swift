@@ -73,21 +73,30 @@ class ThemeManager: ObservableObject {
     @Published var userTier: UserTier = .free
     @Published var defaultPalette: DefaultPalette = .classic
     
-    // Computed palette considering theme selection
+    // Computed palette considering theme selection - thread-safe with fallback
     var currentPalette: CustomTheme.Palette {
-        if currentTheme.isCustom, let activeID = activeCustomThemeID,
-           let theme = customThemes.first(where: { $0.id == activeID }) {
-            return theme.palette
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            // Fallback palette if accessed from wrong thread
+            return defaultPalette.palette(for: .light)
         }
-        // Use selected default palette for light/dark/system, but keep accent override
-        var base = defaultPalette.palette(for: resolvedColorScheme)
-        base = CustomTheme.Palette(
+        
+        // Try custom theme first
+        if currentTheme.isCustom, let activeID = activeCustomThemeID {
+            if let theme = customThemes.first(where: { $0.id == activeID }) {
+                return theme.palette
+            }
+            // If custom theme not found, fall back to default
+        }
+        
+        // Use selected default palette
+        let base = defaultPalette.palette(for: resolvedColorScheme)
+        return CustomTheme.Palette(
             accent: customAccentColor, // user default accent dominates
             background: base.background,
             text: base.text,
             secondaryText: base.secondaryText
         )
-        return base
     }
     
     private var resolvedColorScheme: ColorScheme {
@@ -146,6 +155,8 @@ class ThemeManager: ObservableObject {
         currentTheme = theme
         UserDefaults.standard.set(theme.rawValue, forKey: themeKey)
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
     
     func setAccentColor(_ color: Color) {
@@ -155,6 +166,8 @@ class ThemeManager: ObservableObject {
             UserDefaults.standard.set(colorData, forKey: accentColorKey)
         }
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
     
     func setUserTier(_ tier: UserTier) {
@@ -166,16 +179,28 @@ class ThemeManager: ObservableObject {
         defaultPalette = palette
         UserDefaults.standard.set(palette.rawValue, forKey: defaultPaletteKey)
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
     
     func reloadCustomThemes() {
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in
+                self?.reloadCustomThemes()
+            }
+            return
+        }
+        
         guard let context = DatabaseManager.shared.mainContext else {
             customThemes = []
             return
         }
+        
         let descriptor = FetchDescriptor<CustomTheme>(sortBy: [SortDescriptor(\.updatedAt, order: .reverse)])
         if let results = try? context.fetch(descriptor) {
             customThemes = results
+            objectWillChange.send()
         } else {
             customThemes = []
         }
@@ -189,6 +214,15 @@ class ThemeManager: ObservableObject {
         text: Color,
         secondaryText: Color
     ) -> CustomTheme? {
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            var result: CustomTheme?
+            DispatchQueue.main.sync {
+                result = createOrUpdateTheme(id: id, name: name, accent: accent, background: background, text: text, secondaryText: secondaryText)
+            }
+            return result
+        }
+        
         guard let context = DatabaseManager.shared.mainContext else { return nil }
         
         // Enforce tier limits on creation
@@ -210,6 +244,8 @@ class ThemeManager: ObservableObject {
             existing.updatedAt = Date()
             try? context.save()
             reloadCustomThemes()
+            objectWillChange.send()
+            NotificationCenter.default.post(name: .themeChanged, object: nil)
             return existing
         } else {
             let theme = CustomTheme(
@@ -222,11 +258,21 @@ class ThemeManager: ObservableObject {
             context.insert(theme)
             try? context.save()
             reloadCustomThemes()
+            objectWillChange.send()
+            NotificationCenter.default.post(name: .themeChanged, object: nil)
             return theme
         }
     }
     
     func deleteTheme(id: UUID) {
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in
+                self?.deleteTheme(id: id)
+            }
+            return
+        }
+        
         guard let context = DatabaseManager.shared.mainContext else { return }
         if let theme = customThemes.first(where: { $0.id == id }) {
             context.delete(theme)
@@ -236,6 +282,8 @@ class ThemeManager: ObservableObject {
                 UserDefaults.standard.removeObject(forKey: activeCustomThemeKey)
             }
             reloadCustomThemes()
+            objectWillChange.send()
+            NotificationCenter.default.post(name: .themeChanged, object: nil)
         }
     }
     
@@ -246,6 +294,8 @@ class ThemeManager: ObservableObject {
             setTheme(.custom)
         }
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
 }
 

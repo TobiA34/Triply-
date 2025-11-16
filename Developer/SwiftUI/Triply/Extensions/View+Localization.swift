@@ -22,11 +22,16 @@ struct LanguageChangeModifier: ViewModifier {
         content
             .id(refreshID)
             .onReceive(NotificationCenter.default.publisher(for: .languageChanged)) { _ in
-                // Force view refresh when language changes
-                refreshID = UUID()
+                // Force view refresh when language changes with smooth animation
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    refreshID = UUID()
+                }
             }
             .onChange(of: localizationManager.currentLanguage) { oldValue, newValue in
-                refreshID = UUID()
+                // Force refresh when language changes
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    refreshID = UUID()
+                }
             }
     }
 }

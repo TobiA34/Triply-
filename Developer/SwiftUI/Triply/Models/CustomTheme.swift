@@ -57,11 +57,19 @@ final class CustomTheme {
 }
 
 extension CustomTheme {
-    struct Palette {
+    struct Palette: Equatable {
         let accent: Color
         let background: Color
         let text: Color
         let secondaryText: Color
+        
+        // Equatable conformance by comparing hex values
+        static func == (lhs: Palette, rhs: Palette) -> Bool {
+            return lhs.accent.hexRGBA == rhs.accent.hexRGBA &&
+                   lhs.background.hexRGBA == rhs.background.hexRGBA &&
+                   lhs.text.hexRGBA == rhs.text.hexRGBA &&
+                   lhs.secondaryText.hexRGBA == rhs.secondaryText.hexRGBA
+        }
     }
     
     var palette: Palette {
@@ -99,8 +107,8 @@ extension Color {
         let rr = Int(round(r * 255))
         let gg = Int(round(g * 255))
         let bb = Int(round(b * 255))
-        let aa = Int(round(a * 255))
-        return String(format: "#%02X%02X%02X%02X", rr, gg, bb, aa)
+        // For folder colors, we only need RGB (no alpha), matching the format used
+        return String(format: "#%02X%02X%02X", rr, gg, bb)
     }
 }
 

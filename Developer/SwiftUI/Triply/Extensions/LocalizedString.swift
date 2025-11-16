@@ -12,31 +12,23 @@ extension String {
     /// Returns a localized string using the current language from LocalizationManager
     /// Thread-safe: UserDefaults is thread-safe for reading
     var localized: String {
-        // UserDefaults is thread-safe for reading, so we can access it directly
+        // Get current language from UserDefaults
         let languageCode = UserDefaults.standard.string(forKey: "app_language") ?? "en"
         
-        // Always use main bundle's Localizable.strings for now
-        // The main bundle contains the base English strings
-        let mainBundleString = NSLocalizedString(self, comment: "")
-        
-        // If translation found in main bundle, return it
-        if mainBundleString != self {
-            return mainBundleString
+        // Try to load from Localizable.strings file directly
+        if let path = Bundle.main.path(forResource: "Localizable", ofType: "strings"),
+           let dict = NSDictionary(contentsOfFile: path) as? [String: String],
+           let value = dict[self] {
+            return value
         }
         
-        // If we have a language bundle for the selected language, try it
-        if languageCode != "en" {
-            if let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
-               let bundle = Bundle(path: path) {
-                let localizedString = bundle.localizedString(forKey: self, value: nil, table: nil)
-                // Only return if we got a different string (translation found)
-                if localizedString != self {
-                    return localizedString
-                }
-            }
+        // Fallback: try NSLocalizedString (works with .lproj bundles if they exist)
+        let localizedString = NSLocalizedString(self, comment: "")
+        if localizedString != self {
+            return localizedString
         }
         
-        // Fallback: return the key itself if no translation found
+        // Final fallback: return key itself
         return self
     }
     
@@ -81,24 +73,85 @@ extension LocalizationManager {
 // MARK: - Theme Application
 extension View {
     func applyAppTheme() -> some View {
-        let manager = ThemeManager.shared
-        return self
-            .tint(manager.currentPalette.accent)
-            .foregroundStyle(manager.currentPalette.text)
-            .background(manager.currentPalette.background.ignoresSafeArea())
-            .id(themeRefreshID(from: manager))
+        // Use environment objects to avoid crashes from singleton access
+        return AppThemeWrapper(content: self)
+    }
+}
+
+// Helper view to properly observe theme and language changes
+private struct AppThemeWrapper<Content: View>: View {
+    let content: Content
+    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject var localizationManager: LocalizationManager
+    @State private var refreshID = UUID()
+    
+    // Safe palette access with fallback
+    private var safePalette: CustomTheme.Palette {
+        // Ensure we're on main thread and have valid palette
+        guard Thread.isMainThread else {
+            return CustomTheme.Palette(
+                accent: .blue,
+                background: .white,
+                text: .primary,
+                secondaryText: .secondary
+            )
+        }
+        return themeManager.currentPalette
     }
     
-    private func themeRefreshID(from manager: ThemeManager) -> String {
-        let themeKey = manager.currentTheme.rawValue
-        let customID = manager.activeCustomThemeID?.uuidString ?? "none"
-        let paletteKey = [
-            manager.currentPalette.accent.hexRGBA,
-            manager.currentPalette.background.hexRGBA,
-            manager.currentPalette.text.hexRGBA,
-            manager.currentPalette.secondaryText.hexRGBA
-        ].joined(separator: "|")
-        return themeKey + ":" + customID + ":" + paletteKey
+    var body: some View {
+        content
+            .tint(safePalette.accent)
+            .foregroundStyle(safePalette.text)
+            .scrollContentBackground(.hidden) // Hide default Form/List backgrounds
+            .id(refreshID)
+            .onReceive(NotificationCenter.default.publisher(for: .languageChanged)) { _ in
+                // Force refresh when language changes
+                refreshID = UUID()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .themeChanged)) { _ in
+                // Force refresh when theme changes
+                refreshID = UUID()
+            }
+            .onChange(of: themeManager.currentTheme) { _, _ in
+                // Force refresh when theme changes
+                refreshID = UUID()
+            }
+            .onChange(of: themeManager.defaultPalette) { _, _ in
+                // Force refresh when default palette changes
+                refreshID = UUID()
+            }
+            .onChange(of: themeManager.activeCustomThemeID) { _, _ in
+                // Force refresh when custom theme changes
+                refreshID = UUID()
+            }
+            .onChange(of: localizationManager.currentLanguage) { _, _ in
+                // Force refresh when language changes
+                refreshID = UUID()
+            }
+    }
+}
+
+// MARK: - Theme Color Helpers
+extension ThemeManager {
+    /// Get the current theme background color
+    var themeBackground: Color {
+        currentPalette.background
+    }
+    
+    /// Get the current theme accent color
+    var themeAccent: Color {
+        currentPalette.accent
+    }
+    
+    /// Get the current theme text color
+    var themeText: Color {
+        currentPalette.text
+    }
+    
+    /// Get the current theme secondary text color
+    var themeSecondaryText: Color {
+        currentPalette.secondaryText
     }
 }
 

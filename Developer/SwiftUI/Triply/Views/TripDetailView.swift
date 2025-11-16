@@ -71,6 +71,35 @@ struct TripDetailView: View {
                 )
             )
             
+            // AI Assistant Button - Prominent with animation
+            NavigationLink(destination: AITripAssistantView(trip: trip)) {
+                HStack {
+                    Image(systemName: "brain.head.profile")
+                        .font(.title2)
+                        .foregroundColor(.white)
+                        .symbolEffect(.pulse, options: .repeating)
+                    Text("AI Assistant")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.white.opacity(0.7))
+                }
+                .padding()
+                .background(
+                    LinearGradient(
+                        colors: [Color.purple, Color.blue],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(12)
+                .shadow(color: .purple.opacity(0.3), radius: 5, x: 0, y: 2)
+            }
+            .padding(.horizontal)
+            .padding(.top, 8)
+            .transition(.move(edge: .top).combined(with: .opacity))
+            
             // Tab Selector
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 12) {
@@ -88,6 +117,9 @@ struct TripDetailView: View {
                     }
                     TabButton(title: "Packing", icon: "suitcase", isSelected: selectedTab == 4) {
                         selectedTab = 4
+                    }
+                    TabButton(title: "Map", icon: "map", isSelected: selectedTab == 5) {
+                        selectedTab = 5
                     }
                 }
                 .padding(.horizontal)
@@ -124,13 +156,33 @@ struct TripDetailView: View {
                             }
                         }
                         
+                        // AI Quick Actions
+                        AIQuickActionsView(trip: trip)
+                            .padding(.horizontal)
+                        
                         // Notes Section
                         if !trip.notes.isEmpty {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Notes")
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .padding(.horizontal)
+                                HStack {
+                                    Text("Notes")
+                                        .font(.title2)
+                                        .fontWeight(.semibold)
+                                    Spacer()
+                                    NavigationLink(destination: AITripAssistantView(trip: trip)) {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "brain.head.profile")
+                                                .font(.caption)
+                                            Text("AI Analyze")
+                                                .font(.caption)
+                                        }
+                                        .foregroundColor(.purple)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.purple.opacity(0.1))
+                                        .cornerRadius(8)
+                                    }
+                                }
+                                .padding(.horizontal)
                                 
                                 Text(trip.notes)
                                     .font(.body)
@@ -164,6 +216,12 @@ struct TripDetailView: View {
                 // Packing List Tab
                 PackingListView(trip: trip)
                     .tag(4)
+                
+                // Map Tab
+                NavigationStack {
+                    TripMapView(trip: trip)
+                }
+                    .tag(5)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
         }
@@ -171,6 +229,9 @@ struct TripDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Menu {
+                    NavigationLink(destination: AITripAssistantView(trip: trip)) {
+                        Label("AI Assistant", systemImage: "brain.head.profile")
+                    }
                     Button(action: { showingEditTrip = true }) {
                         Label("Edit Trip", systemImage: "pencil")
                     }
@@ -180,8 +241,35 @@ struct TripDetailView: View {
                     NavigationLink(destination: TripRemindersView(trip: trip)) {
                         Label("Set Reminders", systemImage: "bell")
                     }
+                    NavigationLink(destination: TripCalendarView(trip: trip)) {
+                        Label("Add to Calendar", systemImage: "calendar.badge.plus")
+                    }
+                    NavigationLink(destination: VoiceNotesView(trip: trip)) {
+                        Label("Voice Notes", systemImage: "mic.fill")
+                    }
+                    NavigationLink(destination: TripMapView(trip: trip)) {
+                        Label("View Map", systemImage: "map")
+                    }
                     NavigationLink(destination: TripExportView(trip: trip)) {
                         Label("Export Trip", systemImage: "square.and.arrow.up")
+                    }
+                    NavigationLink(destination: DocumentsView(trip: trip)) {
+                        Label("Documents", systemImage: "doc.fill")
+                    }
+                    NavigationLink(destination: PlanGeneratorView(trip: trip)) {
+                        Label("Get Plan", systemImage: "calendar.badge.clock")
+                    }
+                    NavigationLink(destination: CollaborativeTripView(trip: trip)) {
+                        Label("Collaborate", systemImage: "person.2.fill")
+                    }
+                    NavigationLink(destination: ExpenseSplittingView(trip: trip)) {
+                        Label("Split Expenses", systemImage: "dollarsign.circle.fill")
+                    }
+                    NavigationLink(destination: EmergencyAssistanceView()) {
+                        Label("Emergency Assistance", systemImage: "cross.case.fill")
+                    }
+                    NavigationLink(destination: SmartPackingGeneratorView(trip: trip)) {
+                        Label("Smart Packing", systemImage: "suitcase.fill")
                     }
                 } label: {
                     Image(systemName: "ellipsis.circle")
@@ -198,7 +286,10 @@ struct TripDetailView: View {
             ShareSheet(items: [tripShareText()])
         }
         .onAppear {
-            settingsManager.loadSettings(from: modelContext)
+            // Load settings asynchronously (non-blocking)
+            Task {
+                settingsManager.loadSettings(from: modelContext)
+            }
         }
     }
     
