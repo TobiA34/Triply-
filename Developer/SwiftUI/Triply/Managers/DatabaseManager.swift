@@ -32,7 +32,6 @@ class DatabaseManager {
                 AppSettings.self,
                 CustomTheme.self,
                 TripMemory.self,
-                ExpenseSplit.self,
                 TripCollaborator.self,
                 TripDocument.self
             ])
@@ -84,7 +83,6 @@ class DatabaseManager {
                     AppSettings.self,
                     CustomTheme.self,
                     TripMemory.self,
-                    ExpenseSplit.self,
                     TripCollaborator.self,
                     TripDocument.self,
                     DocumentFolder.self

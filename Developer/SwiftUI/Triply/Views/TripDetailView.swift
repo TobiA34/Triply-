@@ -262,12 +262,6 @@ struct TripDetailView: View {
                     NavigationLink(destination: CollaborativeTripView(trip: trip)) {
                         Label("Collaborate", systemImage: "person.2.fill")
                     }
-                    NavigationLink(destination: ExpenseSplittingView(trip: trip)) {
-                        Label("Split Expenses", systemImage: "dollarsign.circle.fill")
-                    }
-                    NavigationLink(destination: EmergencyAssistanceView()) {
-                        Label("Emergency Assistance", systemImage: "cross.case.fill")
-                    }
                     NavigationLink(destination: SmartPackingGeneratorView(trip: trip)) {
                         Label("Smart Packing", systemImage: "suitcase.fill")
                     }

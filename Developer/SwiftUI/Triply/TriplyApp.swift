@@ -35,7 +35,6 @@ struct TriplyApp: App {
                 AppSettings.self,
                 CustomTheme.self,
                 TripMemory.self,
-                ExpenseSplit.self,
                 TripCollaborator.self,
                 TripDocument.self,
                 DocumentFolder.self

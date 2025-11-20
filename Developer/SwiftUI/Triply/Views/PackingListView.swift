@@ -14,6 +14,7 @@ struct PackingListView: View {
     @StateObject private var packingAssistant = PackingAssistant.shared
     @StateObject private var weatherManager = WeatherManager.shared
     @State private var showingSuggestions = false
+    @State private var showingAddItem = false
     @State private var selectedCategory: String? = nil
     
     var packingItems: [PackingItem] {
@@ -81,7 +82,7 @@ struct PackingListView: View {
                         .cornerRadius(12)
                     }
                     
-                    Button(action: { addCustomItem() }) {
+                    Button(action: { showingAddItem = true }) {
                         HStack {
                             Image(systemName: "plus.circle.fill")
                             Text("Add Item")
@@ -145,6 +146,9 @@ struct PackingListView: View {
         .sheet(isPresented: $showingSuggestions) {
             PackingSuggestionsView(trip: trip, weatherForecasts: weatherManager.forecasts)
         }
+        .sheet(isPresented: $showingAddItem) {
+            AddPackingItemView(trip: trip)
+        }
         .onAppear {
             // Load weather for suggestions
             if let firstDestination = trip.destinations?.first {
@@ -159,25 +163,6 @@ struct PackingListView: View {
         }
     }
     
-    private func addCustomItem() {
-        let newItem = PackingItem(
-            name: "New Item",
-            isPacked: false,
-            category: "General",
-            order: trip.packingList?.count ?? 0
-        )
-        modelContext.insert(newItem)
-        
-        if trip.packingList == nil {
-            trip.packingList = []
-        }
-        trip.packingList?.append(newItem)
-        
-        // Update a property to trigger SwiftData change detection
-        trip.notes = trip.notes // Force change detection
-        
-        try? modelContext.save()
-    }
 }
 
 struct CircularProgressView: View {
@@ -377,6 +362,76 @@ struct SuggestionSection: View {
             trip.notes = trip.notes // Force change detection
             
             try? modelContext.save()
+        }
+    }
+}
+
+struct AddPackingItemView: View {
+    @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var modelContext
+    @Bindable var trip: TripModel
+    
+    @State private var name: String = ""
+    @State private var category: String = "General"
+    @State private var isPacked: Bool = false
+    
+    private let categories = ["Clothing", "Electronics", "Toiletries", "Documents", "Health", "Accessories", "Footwear", "Essentials", "General"]
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("Item Details") {
+                    TextField("Item Name", text: $name)
+                        .textInputAutocapitalization(.words)
+                    
+                    Picker("Category", selection: $category) {
+                        ForEach(categories, id: \.self) { cat in
+                            Text(cat).tag(cat)
+                        }
+                    }
+                    
+                    Toggle("Mark as Packed", isOn: $isPacked)
+                }
+            }
+            .navigationTitle("Add Item")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Add") {
+                        let existingItems = trip.packingList ?? []
+                        let newItem = PackingItem(
+                            name: name,
+                            isPacked: isPacked,
+                            category: category,
+                            order: existingItems.count
+                        )
+                        modelContext.insert(newItem)
+                        
+                        if trip.packingList == nil {
+                            trip.packingList = []
+                        }
+                        trip.packingList?.append(newItem)
+                        
+                        // Update a property to trigger SwiftData change detection
+                        trip.notes = trip.notes
+                        
+                        do {
+                            try modelContext.save()
+                            HapticManager.shared.success()
+                        } catch {
+                            print("Failed to save packing item: \(error)")
+                            HapticManager.shared.error()
+                        }
+                        dismiss()
+                    }
+                    .disabled(name.isEmpty)
+                }
+            }
         }
     }
 }
