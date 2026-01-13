@@ -17,9 +17,13 @@ struct TripDetailView: View {
     @State private var showingAddDestination = false
     @State private var showingShareSheet = false
     @State private var showingImagePicker = false
+    @State private var showingSocialImport = false
+    @State private var showingPaywall = false
     @State private var selectedTab = 0
     @State private var scrollOffset: CGFloat = 0
     @StateObject private var settingsManager = SettingsManager.shared
+    @StateObject private var destinationSearchManager = DestinationSearchManager()
+    @State private var searchSelectedDestinations: [SearchResult] = []
     
     var body: some View {
         GeometryReader { geometry in
@@ -80,7 +84,7 @@ struct TripDetailView: View {
                         }
                     )
                     
-                    // Tab Selector - Simplified to 4 core tabs
+                    // Tab Selector - 4 core tabs
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
                             TabButton(title: "Overview", icon: "list.bullet", isSelected: selectedTab == 0) {
@@ -140,7 +144,7 @@ struct TripDetailView: View {
                                 SnapshotTilesGrid(trip: trip, selectedTab: $selectedTab)
                                     .padding(.horizontal, 16)
 
-                                // Quick Links Grid
+                                // Quick Links Grid (Itinerary / Expenses / Packing)
                                 TripQuickLinksGrid(selectedTab: $selectedTab)
                                     .padding(.horizontal, 16)
 
@@ -154,6 +158,38 @@ struct TripDetailView: View {
                                     onEdit: { showingEditTrip = true },
                                     onAddDestination: { showingAddDestination = true }
                                 )
+                                .padding(.horizontal, 16)
+                                
+                                // Social Media Import Button (Pro Feature)
+                                Button {
+                                    let check = ProLimiter.shared.canAccessSocialMediaImport()
+                                    if check.allowed {
+                                        showingSocialImport = true
+                                    } else {
+                                        showingPaywall = true
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "camera.fill")
+                                        Text("Import from Instagram/TikTok")
+                                        if !ProLimiter.shared.isPro {
+                                            Image(systemName: "crown.fill")
+                                                .font(.caption)
+                                        }
+                                    }
+                                    .font(.subheadline)
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 10)
+                                    .background(
+                                        LinearGradient(
+                                            colors: [Color.purple, Color.pink],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    )
+                                    .cornerRadius(10)
+                                }
                                 .padding(.horizontal, 16)
                                 
                                 // Destinations Section
@@ -253,8 +289,11 @@ struct TripDetailView: View {
         .fullScreenCover(isPresented: $showingEditTrip) {
             EditTripView(trip: trip)
         }
-        .fullScreenCover(isPresented: $showingAddDestination) {
-            AddDestinationView(trip: trip)
+        .fullScreenCover(isPresented: $showingAddDestination, onDismiss: applySelectedDestinationsFromSearch) {
+            DestinationSearchView(
+                searchManager: destinationSearchManager,
+                selectedDestinations: $searchSelectedDestinations
+            )
         }
         .sheet(isPresented: $showingShareSheet) {
             ShareSheet(items: [tripShareText()])
@@ -267,6 +306,14 @@ struct TripDetailView: View {
                 }
             })
         }
+        .sheet(isPresented: $showingPaywall) {
+            NavigationStack {
+                PaywallView()
+            }
+        }
+        .sheet(isPresented: $showingSocialImport) {
+            SocialMediaImportView(trip: trip)
+        }
         .onAppear {
             // Load settings asynchronously (non-blocking)
             Task {
@@ -275,6 +322,51 @@ struct TripDetailView: View {
         }
     }
     
+    // MARK: - Destination Helpers
+    
+    /// Apply destinations selected from `DestinationSearchView` to the current trip.
+    private func applySelectedDestinationsFromSearch() {
+        guard !searchSelectedDestinations.isEmpty else { return }
+        
+        // Respect Pro limits
+        let currentCount = trip.destinations?.count ?? 0
+        let maxDestinations = ProLimiter.shared.getMaxDestinationsPerTrip()
+        let remainingSlots = max(0, maxDestinations - currentCount)
+        guard remainingSlots > 0 else {
+            searchSelectedDestinations.removeAll()
+            return
+        }
+        
+        let newSelections = Array(searchSelectedDestinations.prefix(remainingSlots))
+        
+        if trip.destinations == nil {
+            trip.destinations = []
+        }
+        
+        let startOrder = trip.destinations?.count ?? 0
+        
+        for (offset, result) in newSelections.enumerated() {
+            let destination = DestinationModel(
+                name: result.name,
+                address: result.address,
+                notes: "",
+                order: startOrder + offset,
+                latitude: result.coordinates?.latitude,
+                longitude: result.coordinates?.longitude
+            )
+            modelContext.insert(destination)
+            trip.destinations?.append(destination)
+        }
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to save destinations from search: \(error)")
+        }
+        
+        searchSelectedDestinations.removeAll()
+    }
+
     private func tripShareText() -> String {
         var text = "\(trip.name)\n"
         text += "\(trip.formattedDateRange)\n"
@@ -468,6 +560,90 @@ struct DestinationCardView: View {
                         .foregroundColor(.secondary)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
+                }
+            }
+            
+            // Why Saved section (Roamy feature)
+            if let whySaved = destination.whySaved, !whySaved.isEmpty {
+                Divider()
+                    .padding(.vertical, 8)
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Image(systemName: "heart.fill")
+                            .foregroundColor(.pink)
+                            .font(.caption)
+                        Text("Why I saved this")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Text(whySaved)
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                }
+            }
+            
+            // Tips section (Roamy feature)
+            if let tips = destination.tips, !tips.isEmpty {
+                Divider()
+                    .padding(.vertical, 8)
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Image(systemName: "lightbulb.fill")
+                            .foregroundColor(.yellow)
+                            .font(.caption)
+                        Text("Tips & Prep Notes")
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.secondary)
+                    }
+                    
+                    Text(tips)
+                        .font(.subheadline)
+                        .foregroundColor(.primary)
+                }
+            }
+            
+            // Source Links section (Roamy feature)
+            if destination.savedFromSocial || destination.sourceURL != nil || destination.reviewURL != nil {
+                Divider()
+                    .padding(.vertical, 8)
+                
+                HStack(spacing: 12) {
+                    if let sourceURL = destination.sourceURL, !sourceURL.isEmpty {
+                        Link(destination: URL(string: sourceURL)!) {
+                            HStack(spacing: 6) {
+                                Image(systemName: destination.sourceURL?.contains("instagram") == true ? "camera.fill" : "music.note")
+                                    .font(.caption)
+                                Text("View Original Post")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.blue)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.blue.opacity(0.1))
+                            .cornerRadius(8)
+                        }
+                    }
+                    
+                    if let reviewURL = destination.reviewURL, !reviewURL.isEmpty {
+                        Link(destination: URL(string: reviewURL)!) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "star.fill")
+                                    .font(.caption)
+                                Text("Reviews")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.orange)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.orange.opacity(0.1))
+                            .cornerRadius(8)
+                        }
+                    }
                 }
             }
             

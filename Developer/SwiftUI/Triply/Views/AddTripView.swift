@@ -8,12 +8,22 @@
 import SwiftUI
 import SwiftData
 import UserNotifications
+import WidgetKit
 
 struct AddTripView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     @StateObject private var searchManager = DestinationSearchManager()
-    @StateObject private var settingsManager = SettingsManager.shared
+    @StateObject private var proLimiter = ProLimiter.shared
+    @StateObject private var templateManager = SmartTemplateManager.shared
+    private let settingsManager = SettingsManager.shared
+    
+    // Optional template to pre-fill the form
+    let selectedTemplate: SmartTripTemplate?
+    
+    init(selectedTemplate: SmartTripTemplate? = nil) {
+        self.selectedTemplate = selectedTemplate
+    }
     
     // Basic Info
     @State private var tripName = ""
@@ -32,6 +42,10 @@ struct AddTripView: View {
     // Destinations
     @State private var selectedDestinations: [SearchResult] = []
     @State private var showingDestinationSearch = false
+    @State private var showingTemplateLibrary = false
+    @State private var showingPaywall = false
+    @State private var limitAlertMessage: String?
+    @State private var showLimitAlert = false
     
     // Additional Fields
     @State private var travelCompanions: Int = 1
@@ -48,12 +62,11 @@ struct AddTripView: View {
     @State private var expandedSections: Set<String> = ["basic", "destinations"]
     @State private var showingCategoryPicker = false
     @State private var showingPriorityPicker = false
-    @State private var showSuccessAlert = false
-    @State private var showErrorAlert = false
     @State private var errorMessage = ""
     @State private var isSaving = false
     @State private var showTemplates = true  // Show templates by default
     @State private var showTips = true  // Show tips by default
+    @State private var fieldErrors: [String: String] = [:]
     
     private let categories = ["General", "Adventure", "Business", "Relaxation", "Family", "Romantic", "Solo", "Group"]
     
@@ -71,9 +84,81 @@ struct AddTripView: View {
     }
     
     var isFormValid: Bool {
-        !tripName.trimmingCharacters(in: .whitespaces).isEmpty &&
-        endDate >= startDate &&
-        duration >= 0
+        validateForm().isValid
+    }
+    
+    private func validateForm() -> ValidationResult {
+        // Validate trip name
+        let nameResult = FormValidator.validateTripName(tripName)
+        if !nameResult.isValid {
+            return nameResult
+        }
+        
+        // Validate dates
+        let dateResult = FormValidator.validateTripDates(startDate: startDate, endDate: endDate)
+        if !dateResult.isValid {
+            return dateResult
+        }
+        
+        // Validate total budget (mandatory)
+        if budget.isEmpty {
+            return .invalid("Please enter a total trip budget.")
+        } else {
+            let budgetResult = FormValidator.validateBudget(budget)
+            if !budgetResult.isValid {
+                return budgetResult
+            }
+        }
+        
+        if !accommodationBudget.isEmpty {
+            let result = FormValidator.validateBudget(accommodationBudget)
+            if !result.isValid { return result }
+        }
+        
+        if !foodBudget.isEmpty {
+            let result = FormValidator.validateBudget(foodBudget)
+            if !result.isValid { return result }
+        }
+        
+        if !activitiesBudget.isEmpty {
+            let result = FormValidator.validateBudget(activitiesBudget)
+            if !result.isValid { return result }
+        }
+        
+        if !transportationBudget.isEmpty {
+            let result = FormValidator.validateBudget(transportationBudget)
+            if !result.isValid { return result }
+        }
+        
+        // Validate travel companions
+        let companionsResult = FormValidator.validateTravelCompanions(travelCompanions)
+        if !companionsResult.isValid {
+            return companionsResult
+        }
+        
+        // Validate tags
+        let tagsResult = FormValidator.validateTags(tags)
+        if !tagsResult.isValid {
+            return tagsResult
+        }
+        
+        // Validate notes
+        let notesResult = FormValidator.validateTripNotes(notes)
+        if !notesResult.isValid {
+            return notesResult
+        }
+        
+        return .valid
+    }
+    
+    // Helper function to validate dates
+    private func validateDates() {
+        let result = FormValidator.validateTripDates(startDate: startDate, endDate: endDate)
+        if result.isValid {
+            fieldErrors.removeValue(forKey: "dates")
+        } else {
+            fieldErrors["dates"] = result.errorMessage
+        }
     }
     
     var formCompletionPercentage: Int {
@@ -129,40 +214,63 @@ struct AddTripView: View {
             statsPreviewSection
         }
         .formStyle(.grouped)
-        .navigationTitle("trips.new".localized)
+        .navigationTitle("New Trip")
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button("common.cancel".localized) {
-                    dismiss()
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: { dismiss() }) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                    .foregroundColor(.blue)
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("common.save".localized) {
+                Button("Save") {
                     saveTrip()
                 }
                 .disabled(!isFormValid || isSaving)
                 .fontWeight(.semibold)
             }
         }
-        .sheet(isPresented: $showingDestinationSearch) {
+        .alert("Limit Reached", isPresented: $showLimitAlert) {
+            Button("Upgrade to Pro") {
+                showingPaywall = true
+            }
+            Button("Cancel", role: .cancel) { }
+        } message: {
+            if let message = limitAlertMessage {
+                Text(message)
+            }
+        }
+        .sheet(isPresented: $showingPaywall) {
+            NavigationStack {
+                PaywallView()
+            }
+        }
+        .dismissKeyboard()
+        .keyboardDoneButton()
+        .fullScreenCover(isPresented: $showingTemplateLibrary) {
+            SmartTemplateLibraryView { template in
+                applySmartTemplate(template)
+            }
+        }
+        .fullScreenCover(isPresented: $showingDestinationSearch) {
             DestinationSearchView(
                 searchManager: searchManager,
                 selectedDestinations: $selectedDestinations
             )
         }
-        .alert("Success", isPresented: $showSuccessAlert) {
-            Button("OK") {
-                dismiss()
+        .task {
+            // Apply template if provided (using task for async safety)
+            if let template = selectedTemplate {
+                // Small delay to ensure view is fully initialized
+                try? await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+                applySmartTemplate(template)
             }
-        } message: {
-            Text("Trip created successfully!")
         }
-        .alert("Error", isPresented: $showErrorAlert) {
-            Button("OK") { }
-        } message: {
-            Text(errorMessage)
-        }
+        // Cool animated alerts are now handled by AlertManager
     }
     
     // MARK: - Quick Templates Section
@@ -183,9 +291,24 @@ struct AddTripView: View {
                 
                 if showTemplates {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Tap a template to quickly fill in common trip details")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                        HStack {
+                            Text("Tap a template to quickly fill in common trip details")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            
+                            Spacer()
+                            
+                            Button {
+                                showingTemplateLibrary = true
+                            } label: {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "square.grid.2x2")
+                                    Text("Browse All")
+                                }
+                                .font(.caption)
+                                .foregroundColor(.blue)
+                            }
+                        }
                         
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 12) {
@@ -294,7 +417,7 @@ struct AddTripView: View {
                         if selectedDestinations.isEmpty && totalBudget == 0 {
                             TipRow(
                                 icon: "arrow.right.circle.fill",
-                                text: "Start by adding a destination or setting a budget to get personalized suggestions",
+                                text: "Start planning your trip by adding destinations and setting a budget",
                                 color: .blue
                             )
                         }
@@ -343,7 +466,7 @@ struct AddTripView: View {
                         
                         StatCard(
                             icon: "mappin.circle.fill",
-                            label: "Destinations",
+                            label: "destinations",
                             value: "\(selectedDestinations.count)",
                             color: .orange
                         )
@@ -386,6 +509,44 @@ struct AddTripView: View {
             return "Stay connected with family. Share your itinerary and check in regularly."
         default:
             return "Add destinations and set a budget to get personalized AI suggestions for your trip."
+        }
+    }
+    
+    private func applySmartTemplate(_ template: SmartTripTemplate) {
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+            // Basic info
+            tripName = template.name
+            selectedCategory = template.category
+            notes = template.details
+            
+            // Dates - set end date based on suggested duration
+            let newEndDate = Calendar.current.date(byAdding: .day, value: template.suggestedDuration - 1, to: startDate) ?? endDate
+            endDate = newEndDate
+            
+            // Budget
+            if let budget = template.suggestedBudget, budget > 0 {
+                self.budget = String(format: "%.0f", budget)
+            }
+            
+            // Tags and reminders
+            tags = template.tags
+            reminderDaysBefore = max(1, template.suggestedDuration / 2)
+            
+            // Apply suggested destinations if available
+            if !template.suggestedDestinations.isEmpty {
+                // Convert destination names to SearchResult objects
+                selectedDestinations = template.suggestedDestinations.map { name in
+                    SearchResult(
+                        id: UUID().uuidString,
+                        name: name,
+                        address: "",
+                        country: "",
+                        coordinates: nil,
+                        displayName: name,
+                        placeType: "Destination"
+                    )
+                }
+            }
         }
     }
     
@@ -529,11 +690,44 @@ struct AddTripView: View {
                     Label("Trip Name", systemImage: "text.book.closed.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    TextField("e.g., Summer Europe Adventure", text: $tripName)
-                        .textFieldStyle(.roundedBorder)
+                    TextField("", text: $tripName)
+                        .textFieldStyle(.plain)
+                        .foregroundColor(.primary)
+                        .font(.system(size: 17))
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 20)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.systemGray6))
+                        )
                         .textInputAutocapitalization(.words)
+                        .onChange(of: tripName) { oldValue, newValue in
+                            if ContentFilter.containsBlockedContent(newValue) {
+                                tripName = oldValue
+                                // Trigger haptic feedback
+                                let generator = UINotificationFeedbackGenerator()
+                                generator.notificationOccurred(.warning)
+                            }
+                        }
+                        .onChange(of: tripName) { _, newValue in
+                            let result = FormValidator.validateTripName(newValue)
+                            if result.isValid {
+                                fieldErrors.removeValue(forKey: "tripName")
+                            } else {
+                                fieldErrors["tripName"] = result.errorMessage
+                            }
+                        }
                     
-                    if tripName.isEmpty {
+                    if let error = fieldErrors["tripName"] {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.red)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                    } else if tripName.isEmpty {
                         HStack(spacing: 4) {
                             Image(systemName: "info.circle")
                                 .font(.caption2)
@@ -555,7 +749,7 @@ struct AddTripView: View {
                                 selectedCategory = category
                             } label: {
                                 HStack {
-                                    Text("category.\(category.lowercased())".localized)
+                                    Text(category)
                                     if selectedCategory == category {
                                         Image(systemName: "checkmark")
                                     }
@@ -564,7 +758,7 @@ struct AddTripView: View {
                         }
                     } label: {
                         HStack {
-                            Text("category.\(selectedCategory.lowercased())".localized)
+                            Text(selectedCategory)
                             Spacer()
                             Image(systemName: "chevron.down")
                                 .font(.caption)
@@ -578,18 +772,33 @@ struct AddTripView: View {
                 
                 // Dates
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("Travel Dates", systemImage: "calendar")
+                    Label("Start Date", systemImage: "calendar")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
                     DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
+                        .onChange(of: startDate) { _, _ in
+                            validateDates()
+                        }
                     
                     DatePicker("End Date", selection: $endDate, in: startDate..., displayedComponents: .date)
                         .datePickerStyle(.compact)
+                        .onChange(of: endDate) { _, _ in
+                            validateDates()
+                        }
                     
                     // Date validation warning
-                    if endDate < startDate {
+                    if let error = fieldErrors["dates"] {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.red)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.top, 4)
+                    } else if endDate < startDate {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.orange)
@@ -612,7 +821,15 @@ struct AddTripView: View {
     private var destinationsSection: some View {
         Section {
             VStack(spacing: 12) {
-                Button(action: { showingDestinationSearch = true }) {
+                Button(action: {
+                    let check = proLimiter.canAddDestination(currentDestinationCount: selectedDestinations.count, tripName: tripName.isEmpty ? "New Trip" : tripName)
+                    if check.allowed {
+                        showingDestinationSearch = true
+                    } else {
+                        limitAlertMessage = check.reason
+                        showLimitAlert = true
+                    }
+                }) {
                     HStack {
                         Image(systemName: "magnifyingglass")
                             .foregroundColor(.blue)
@@ -687,7 +904,7 @@ struct AddTripView: View {
             }
             .padding(.vertical, 8)
         } header: {
-            Text("Destinations")
+            Text("destinations")
                 .font(.headline)
         }
     }
@@ -705,14 +922,35 @@ struct AddTripView: View {
                         Text(settingsManager.currentCurrency.symbol)
                             .foregroundColor(.secondary)
                             .font(.title3)
-                        TextField("0.00", text: $budget)
+                        TextField("", text: $budget)
+                            .foregroundColor(.primary)
                             .keyboardType(.decimalPad)
                             .font(.title3)
                             .fontWeight(.semibold)
+                            .onChange(of: budget) { _, newValue in
+                                let result = FormValidator.validateBudget(newValue)
+                                if result.isValid {
+                                    fieldErrors.removeValue(forKey: "budget")
+                                } else {
+                                    fieldErrors["budget"] = result.errorMessage
+                                }
+                            }
                     }
                     .padding()
                     .background(Color(.systemGray6))
                     .cornerRadius(10)
+                    
+                    if let error = fieldErrors["budget"] {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.red)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.top, 4)
+                    }
                 }
                 
                 // Budget Breakdown
@@ -722,10 +960,77 @@ struct AddTripView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
                     
-                    BudgetRow(icon: "bed.double.fill", label: "Accommodation", amount: $accommodationBudget, currency: settingsManager.currentCurrency.symbol)
-                    BudgetRow(icon: "fork.knife", label: "Food & Dining", amount: $foodBudget, currency: settingsManager.currentCurrency.symbol)
-                    BudgetRow(icon: "figure.walk", label: "Activities", amount: $activitiesBudget, currency: settingsManager.currentCurrency.symbol)
-                    BudgetRow(icon: "airplane", label: "Transportation", amount: $transportationBudget, currency: settingsManager.currentCurrency.symbol)
+                    VStack(alignment: .leading, spacing: 4) {
+                        BudgetRow(icon: "bed.double.fill", label: "Accommodation", amount: $accommodationBudget, currency: settingsManager.currentCurrency.symbol)
+                            .onChange(of: accommodationBudget) { _, newValue in
+                                let result = FormValidator.validateBudget(newValue)
+                                if result.isValid {
+                                    fieldErrors.removeValue(forKey: "accommodationBudget")
+                                } else {
+                                    fieldErrors["accommodationBudget"] = result.errorMessage
+                                }
+                            }
+                        if let error = fieldErrors["accommodationBudget"] {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .padding(.leading, 36)
+                        }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        BudgetRow(icon: "fork.knife", label: "Food", amount: $foodBudget, currency: settingsManager.currentCurrency.symbol)
+                            .onChange(of: foodBudget) { _, newValue in
+                                let result = FormValidator.validateBudget(newValue)
+                                if result.isValid {
+                                    fieldErrors.removeValue(forKey: "foodBudget")
+                                } else {
+                                    fieldErrors["foodBudget"] = result.errorMessage
+                                }
+                            }
+                        if let error = fieldErrors["foodBudget"] {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .padding(.leading, 36)
+                        }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        BudgetRow(icon: "figure.walk", label: "Activities", amount: $activitiesBudget, currency: settingsManager.currentCurrency.symbol)
+                            .onChange(of: activitiesBudget) { _, newValue in
+                                let result = FormValidator.validateBudget(newValue)
+                                if result.isValid {
+                                    fieldErrors.removeValue(forKey: "activitiesBudget")
+                                } else {
+                                    fieldErrors["activitiesBudget"] = result.errorMessage
+                                }
+                            }
+                        if let error = fieldErrors["activitiesBudget"] {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .padding(.leading, 36)
+                        }
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        BudgetRow(icon: "airplane", label: "Transportation", amount: $transportationBudget, currency: settingsManager.currentCurrency.symbol)
+                            .onChange(of: transportationBudget) { _, newValue in
+                                let result = FormValidator.validateBudget(newValue)
+                                if result.isValid {
+                                    fieldErrors.removeValue(forKey: "transportationBudget")
+                                } else {
+                                    fieldErrors["transportationBudget"] = result.errorMessage
+                                }
+                            }
+                        if let error = fieldErrors["transportationBudget"] {
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                                .padding(.leading, 36)
+                        }
+                    }
                 }
                 
                 if totalBudget > 0 {
@@ -757,12 +1062,32 @@ struct AddTripView: View {
                     Label("Travel Companions", systemImage: "person.2.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Stepper(value: $travelCompanions, in: 1...20) {
+                    Stepper(value: $travelCompanions, in: 1...50) {
                         HStack {
                             Text("\(travelCompanions) \(travelCompanions == 1 ? "person" : "people")")
                                 .fontWeight(.medium)
                             Spacer()
                         }
+                    }
+                    .onChange(of: travelCompanions) { _, newValue in
+                        let result = FormValidator.validateTravelCompanions(newValue)
+                        if result.isValid {
+                            fieldErrors.removeValue(forKey: "travelCompanions")
+                        } else {
+                            fieldErrors["travelCompanions"] = result.errorMessage
+                        }
+                    }
+                    
+                    if let error = fieldErrors["travelCompanions"] {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.red)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.top, 4)
                     }
                 }
                 
@@ -822,7 +1147,7 @@ struct AddTripView: View {
                     Label("Weather Preference", systemImage: "cloud.sun.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Picker("Weather", selection: $weatherPreference) {
+                    Picker("Weather Preference", selection: $weatherPreference) {
                         ForEach([WeatherPreference.any, .sunny, .moderate, .cold], id: \.self) { pref in
                             Text(pref.displayName).tag(pref)
                         }
@@ -849,14 +1174,50 @@ struct AddTripView: View {
                     
                     // Add Tag
                     HStack {
-                        TextField("Add tag (e.g., beach, hiking)", text: $newTag)
-                            .textFieldStyle(.roundedBorder)
+                        TextField("", text: $newTag)
+                            .onChange(of: newTag) { oldValue, newValue in
+                                if ContentFilter.containsBlockedContent(newValue) {
+                                    newTag = oldValue
+                                }
+                            }
+                            .textFieldStyle(.plain)
+                            .foregroundColor(.primary)
+                            .font(.system(size: 17))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color(.systemGray6))
+                            )
                         Button(action: addTag) {
                             Image(systemName: "plus.circle.fill")
                                 .font(.title2)
                                 .foregroundColor(.blue)
                         }
                         .disabled(newTag.isEmpty)
+                    
+                    if let error = fieldErrors["newTag"] {
+                        HStack(spacing: 4) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .font(.caption2)
+                                .foregroundColor(.red)
+                            Text(error)
+                                .font(.caption)
+                                .foregroundColor(.red)
+                        }
+                        .padding(.top, 4)
+                    }
+                    
+                    if tags.count >= 10 {
+                        HStack(spacing: 4) {
+                            Image(systemName: "info.circle")
+                                .font(.caption2)
+                            Text("Maximum 10 tags allowed")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.orange)
+                        .padding(.top, 4)
+                    }
                     }
                     
                     // Display Tags
@@ -872,7 +1233,7 @@ struct AddTripView: View {
                         .foregroundColor(.secondary)
                     Stepper(value: $reminderDaysBefore, in: 0...30) {
                         HStack {
-                            Text("Remind me \(reminderDaysBefore) \(reminderDaysBefore == 1 ? "day" : "days") before")
+                            Text(String(format: "Remind me %d %@ before", reminderDaysBefore, reminderDaysBefore == 1 ? "day" : "days"))
                                 .fontWeight(.medium)
                             Spacer()
                         }
@@ -905,28 +1266,41 @@ struct AddTripView: View {
                     .foregroundColor(.secondary)
                 
                 TextEditor(text: $notes)
-                    .frame(minHeight: 100)
-                    .padding(8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
-                    .overlay(
-                        Group {
-                            if notes.isEmpty {
-                                VStack {
-                                    HStack {
-                                        Text("Add any additional notes, ideas, or reminders for your trip...")
-                                            .foregroundColor(.secondary)
-                                            .font(.subheadline)
-                                            .padding(.leading, 12)
-                                            .padding(.top, 16)
-                                        Spacer()
-                                    }
-                                    Spacer()
-                                }
-                            }
-                        },
-                        alignment: .topLeading
+                    .onChange(of: notes) { oldValue, newValue in
+                        if ContentFilter.containsBlockedContent(newValue) {
+                            notes = oldValue
+                        }
+                    }
+                    .foregroundColor(.primary)
+                    .font(.system(size: 17))
+                    .frame(minHeight: 150)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 16)
+                    .scrollContentBackground(.hidden)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(.systemGray6))
                     )
+                    .onChange(of: notes) { _, newValue in
+                        let result = FormValidator.validateTripNotes(newValue)
+                        if result.isValid {
+                            fieldErrors.removeValue(forKey: "notes")
+                        } else {
+                            fieldErrors["notes"] = result.errorMessage
+                        }
+                    }
+                
+                if let error = fieldErrors["notes"] {
+                    HStack(spacing: 4) {
+                        Image(systemName: "exclamationmark.circle.fill")
+                            .font(.caption2)
+                            .foregroundColor(.red)
+                        Text(error)
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                    .padding(.top, 4)
+                }
                 
                 if notes.isEmpty {
                     HStack(spacing: 4) {
@@ -969,16 +1343,17 @@ struct AddTripView: View {
     }
     
     private func saveTrip() {
-        // Validation
-        guard isFormValid else {
-            if tripName.trimmingCharacters(in: .whitespaces).isEmpty {
-                errorMessage = "Please enter a trip name"
-            } else if endDate < startDate {
-                errorMessage = "End date must be after start date"
-            } else {
-                errorMessage = "Please check your trip details"
-            }
-            showErrorAlert = true
+        // Comprehensive validation
+        let validation = validateForm()
+        guard validation.isValid else {
+            errorMessage = validation.errorMessage ?? "Please check your trip details"
+            
+            // Show cool animated error alert
+            AlertManager.shared.showError(
+                "Validation Error",
+                message: errorMessage,
+                duration: 3.0
+            )
             return
         }
         
@@ -1039,7 +1414,9 @@ struct AddTripView: View {
                     name: searchResult.name,
                     address: searchResult.address,
                     notes: "",
-                    order: index
+                    order: index,
+                    latitude: searchResult.coordinates?.latitude,
+                    longitude: searchResult.coordinates?.longitude
                 )
                 // Insert destination into context
                 modelContext.insert(destination)
@@ -1051,11 +1428,23 @@ struct AddTripView: View {
         // Save all changes
         do {
             try modelContext.save()
+            #if DEBUG
             print("✅ Trip saved successfully: \(newTrip.name)")
             print("   Destinations: \(newTrip.destinations?.count ?? 0)")
             print("   Budget: \(budgetValue ?? 0)")
             print("   Duration: \(duration) days")
             print("   Completion: \(formCompletionPercentage)%")
+            #endif
+            
+            // Sync to widgets immediately
+            Task { @MainActor in
+                let allTrips = try? modelContext.fetch(FetchDescriptor<TripModel>())
+                if let trips = allTrips {
+                    WidgetDataSync.shared.syncTrips(trips)
+                    // Reload widgets
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
+            }
             
             // Schedule reminder
             Task {
@@ -1069,14 +1458,33 @@ struct AddTripView: View {
             // Haptic feedback
             HapticManager.shared.success()
             
-            // Show success and dismiss
-            showSuccessAlert = true
+            // Show cool animated success alert
+            AlertManager.shared.showSuccess(
+                "Trip Created!",
+                message: "\(newTrip.name) has been added to your trips",
+                duration: 2.0
+            )
+            
+            // Dismiss after a short delay
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                dismiss()
+            }
+            
             isSaving = false
         } catch {
+            #if DEBUG
             print("❌ Failed to save trip: \(error)")
             print("   Error details: \(error.localizedDescription)")
+            #endif
             errorMessage = "Failed to save trip. Please try again."
-            showErrorAlert = true
+            
+            // Show cool animated error alert
+            AlertManager.shared.showError(
+                "Save Failed",
+                message: errorMessage,
+                duration: 3.0
+            )
+            
             isSaving = false
             HapticManager.shared.error()
         }
@@ -1087,3 +1495,13 @@ struct AddTripView: View {
     AddTripView()
         .modelContainer(for: [TripModel.self, DestinationModel.self], inMemory: true)
 }
+
+
+
+//
+//  Created on 2024
+//
+
+import SwiftUI
+import SwiftData
+import UserNotifications
