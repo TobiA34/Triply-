@@ -23,6 +23,8 @@ final class TripModel {
     @Relationship(deleteRule: .cascade) var itinerary: [ItineraryItem]?
     @Relationship(deleteRule: .cascade) var expenses: [Expense]?
     @Relationship(deleteRule: .cascade) var packingList: [PackingItem]?
+    @Relationship(deleteRule: .cascade) var documents: [TripDocument]?
+    @Relationship(deleteRule: .cascade) var documentFolders: [DocumentFolder]?
     
     init(
         id: UUID = UUID(),

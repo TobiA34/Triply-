@@ -19,6 +19,8 @@ final class Expense {
     var receiptImageData: Data?
     var currencyCode: String
     
+    @Relationship(deleteRule: .nullify) var documents: [TripDocument]?
+    
     init(
         id: UUID = UUID(),
         title: String,

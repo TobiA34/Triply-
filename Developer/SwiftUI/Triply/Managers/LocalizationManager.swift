@@ -90,17 +90,18 @@ class LocalizationManager: ObservableObject {
     func setLanguage(_ language: SupportedLanguage) {
         guard currentLanguage != language else { return }
         
-        // Update UserDefaults first
+        // Update UserDefaults first (thread-safe)
         UserDefaults.standard.set(language.rawValue, forKey: languageKey)
         UserDefaults.standard.synchronize()
         
-        // Update current language (this will trigger didSet and objectWillChange)
+        // Update current language immediately on main thread
         currentLanguage = language
         
         // Force UI update by sending notification
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(name: .languageChanged, object: nil)
-        }
+        NotificationCenter.default.post(name: .languageChanged, object: nil)
+        
+        // Also trigger objectWillChange to ensure all observers update
+        objectWillChange.send()
         
         print("🌐 Language changed to: \(language.rawValue)")
     }
@@ -112,5 +113,6 @@ class LocalizationManager: ObservableObject {
 
 extension Notification.Name {
     static let languageChanged = Notification.Name("languageChanged")
+    static let themeChanged = Notification.Name("themeChanged")
 }
 

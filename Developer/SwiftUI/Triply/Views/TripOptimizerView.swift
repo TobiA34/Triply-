@@ -13,10 +13,25 @@ struct TripOptimizerView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var optimizer = TripOptimizer.shared
     @StateObject private var settingsManager = SettingsManager.shared
+    @StateObject private var iap = IAPManager.shared
     @State private var suggestions: [OptimizationSuggestion] = []
     @State private var optimalBudget: Double?
     
     var body: some View {
+        if !iap.isPro {
+            PaywallGateView(
+                featureName: "Itinerary Optimizer",
+                featureDescription: "Optimize your trip itinerary with AI-powered suggestions for routes, timing, and activities.",
+                icon: "calendar.badge.clock",
+                iconColor: .indigo
+            )
+            .navigationTitle("Optimize Itinerary")
+        } else {
+            optimizerContent
+        }
+    }
+    
+    private var optimizerContent: some View {
         ScrollView {
             VStack(spacing: 24) {
                 // Optimal Budget Card

@@ -12,6 +12,7 @@ struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var iap = IAPManager.shared
     @State private var isPurchasing = false
+    @State private var showFeatures = false
     
     var body: some View {
         ScrollView {
@@ -25,15 +26,33 @@ struct PaywallView: View {
                     .font(.largeTitle).bold()
                 
                 VStack(alignment: .leading, spacing: 12) {
+                    featureRow("AI Chat Assistant", "message.fill")
+                    featureRow("Smart Suggestions", "lightbulb.fill")
+                    featureRow("Trip Analysis", "brain.head.profile")
+                    featureRow("Receipt Scanner", "doc.text.viewfinder")
+                    featureRow("Budget Insights", "chart.pie.fill")
+                    featureRow("Itinerary Optimizer", "calendar.badge.clock")
+                    featureRow("AI Plan Generator", "calendar.badge.plus")
                     featureRow("Unlimited custom themes", "paintpalette.fill")
-                    featureRow("Priority enhancements", "bolt.fill")
-                    featureRow("All future Pro features", "lock.open.fill")
-                    featureRow("Support development", "heart.fill")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
                 .background(.ultraThinMaterial)
                 .cornerRadius(16)
+                
+                Button {
+                    showFeatures = true
+                } label: {
+                    HStack {
+                        Text("View All Pro Features")
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.blue)
+                }
+                .padding(.horizontal)
                 
                 if let pro = iap.products.first(where: { $0.id == IAPManager.ProductID.pro.rawValue }) {
                     Text(pro.displayPrice)
@@ -98,6 +117,11 @@ struct PaywallView: View {
             .padding()
         }
         .navigationTitle("Upgrade to Pro")
+        .sheet(isPresented: $showFeatures) {
+            NavigationStack {
+                ProFeaturesView()
+            }
+        }
         .task {
             await iap.loadProducts()
             iap.observeTransactions()

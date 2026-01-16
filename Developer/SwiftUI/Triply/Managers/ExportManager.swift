@@ -115,5 +115,68 @@ class ExportManager: ObservableObject {
         let text = exportTripToPDF(trip: trip)
         return [text]
     }
+    
+    func exportTestPlan() -> URL? {
+        guard let testPlanPath = Bundle.main.path(forResource: "TEST_PLAN", ofType: "csv") else {
+            // If not in bundle, try to read from project directory
+            let fileManager = FileManager.default
+            let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let testPlanURL = documentsPath.appendingPathComponent("TEST_PLAN.csv")
+            
+            // Try to copy from bundle to documents if it exists
+            if let bundlePath = Bundle.main.path(forResource: "TEST_PLAN", ofType: "csv"),
+               let bundleURL = URL(string: "file://\(bundlePath)") {
+                do {
+                    try fileManager.copyItem(at: bundleURL, to: testPlanURL)
+                    return testPlanURL
+                } catch {
+                    print("Failed to copy test plan: \(error)")
+                }
+            }
+            
+            // If still not found, create it from the CSV content
+            return createTestPlanFile()
+        }
+        
+        return URL(fileURLWithPath: testPlanPath)
+    }
+    
+    private func createTestPlanFile() -> URL? {
+        let fileManager = FileManager.default
+        let documentsPath = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let testPlanURL = documentsPath.appendingPathComponent("TEST_PLAN.csv")
+        
+        // Read the CSV content from the project file
+        let projectPath = Bundle.main.bundlePath.components(separatedBy: "/").dropLast().joined(separator: "/")
+        if let csvContent = try? String(contentsOfFile: "\(projectPath)/TEST_PLAN.csv", encoding: .utf8) {
+            do {
+                try csvContent.write(to: testPlanURL, atomically: true, encoding: .utf8)
+                return testPlanURL
+            } catch {
+                print("Failed to write test plan: \(error)")
+                return nil
+            }
+        }
+        
+        // Fallback: return a URL that can be created with share sheet
+        return testPlanURL
+    }
+    
+    func getTestPlanContent() -> String {
+        // Try to read from bundle first
+        if let bundlePath = Bundle.main.path(forResource: "TEST_PLAN", ofType: "csv"),
+           let content = try? String(contentsOfFile: bundlePath, encoding: .utf8) {
+            return content
+        }
+        
+        // Try to read from project directory
+        let projectPath = Bundle.main.bundlePath.components(separatedBy: "/").dropLast().joined(separator: "/")
+        if let content = try? String(contentsOfFile: "\(projectPath)/TEST_PLAN.csv", encoding: .utf8) {
+            return content
+        }
+        
+        // Return empty string if not found (shouldn't happen if file is in project)
+        return ""
+    }
 }
 

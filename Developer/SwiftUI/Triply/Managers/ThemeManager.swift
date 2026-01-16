@@ -11,17 +11,15 @@ import SwiftData
 enum AppTheme: String, CaseIterable {
     case system = "System"
     case light = "Light"
-    case dark = "Dark"
     case custom = "Custom"
     
     var isCustom: Bool { self == .custom }
     
     var colorScheme: ColorScheme? {
         switch self {
-        case .system: return nil
+        case .system: return .light // Force light mode
         case .light: return .light
-        case .dark: return .dark
-        case .custom: return nil
+        case .custom: return .light // Force light mode for custom themes too
         }
     }
 }
@@ -45,25 +43,19 @@ enum DefaultPalette: String, CaseIterable, Identifiable {
     }
     
     func palette(for scheme: ColorScheme) -> CustomTheme.Palette {
+        // Always use light mode colors
         switch self {
         case .classic:
-            return scheme == .dark
-            ? .init(accent: .blue, background: .black, text: .white, secondaryText: .gray)
-            : .init(accent: .blue, background: .white, text: .primary, secondaryText: .secondary)
+            return .init(accent: .blue, background: .white, text: .primary, secondaryText: .secondary)
         case .ocean:
-            return scheme == .dark
-            ? .init(accent: .teal, background: Color(red: 0.06, green: 0.09, blue: 0.11), text: .white, secondaryText: .gray)
-            : .init(accent: .teal, background: Color(red: 0.95, green: 0.98, blue: 1.0), text: .black, secondaryText: .gray)
+            return .init(accent: .teal, background: Color(red: 0.95, green: 0.98, blue: 1.0), text: .black, secondaryText: .gray)
         case .forest:
-            return scheme == .dark
-            ? .init(accent: .green, background: Color(red: 0.07, green: 0.10, blue: 0.08), text: .white, secondaryText: .gray)
-            : .init(accent: .green, background: Color(red: 0.95, green: 0.99, blue: 0.96), text: .black, secondaryText: .gray)
+            return .init(accent: .green, background: Color(red: 0.95, green: 0.99, blue: 0.96), text: .black, secondaryText: .gray)
         case .sunset:
-            return scheme == .dark
-            ? .init(accent: .orange, background: Color(red: 0.12, green: 0.07, blue: 0.06), text: .white, secondaryText: .gray)
-            : .init(accent: .orange, background: Color(red: 1.0, green: 0.97, blue: 0.95), text: .black, secondaryText: .gray)
+            return .init(accent: .orange, background: Color(red: 1.0, green: 0.97, blue: 0.95), text: .black, secondaryText: .gray)
         case .midnight:
-            return .init(accent: .indigo, background: .black, text: .white, secondaryText: .gray)
+            // Keep dark for midnight theme but force light mode
+            return .init(accent: .indigo, background: Color(red: 0.95, green: 0.95, blue: 0.98), text: .black, secondaryText: .gray)
         }
     }
 }
@@ -81,31 +73,35 @@ class ThemeManager: ObservableObject {
     @Published var userTier: UserTier = .free
     @Published var defaultPalette: DefaultPalette = .classic
     
-    // Computed palette considering theme selection
+    // Computed palette considering theme selection - thread-safe with fallback
     var currentPalette: CustomTheme.Palette {
-        if currentTheme.isCustom, let activeID = activeCustomThemeID,
-           let theme = customThemes.first(where: { $0.id == activeID }) {
-            return theme.palette
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            // Fallback palette if accessed from wrong thread
+            return defaultPalette.palette(for: .light)
         }
-        // Use selected default palette for light/dark/system, but keep accent override
-        var base = defaultPalette.palette(for: resolvedColorScheme)
-        base = CustomTheme.Palette(
+        
+        // Try custom theme first
+        if currentTheme.isCustom, let activeID = activeCustomThemeID {
+            if let theme = customThemes.first(where: { $0.id == activeID }) {
+                return theme.palette
+            }
+            // If custom theme not found, fall back to default
+        }
+        
+        // Use selected default palette
+        let base = defaultPalette.palette(for: resolvedColorScheme)
+        return CustomTheme.Palette(
             accent: customAccentColor, // user default accent dominates
             background: base.background,
             text: base.text,
             secondaryText: base.secondaryText
         )
-        return base
     }
     
     private var resolvedColorScheme: ColorScheme {
-        if let explicit = currentTheme.colorScheme {
-            return explicit
-        }
-        // Fallback to system appearance
-        // Use UITraitCollection to detect, safe on main actor
-        let isDark = UITraitCollection.current.userInterfaceStyle == .dark
-        return isDark ? .dark : .light
+        // Always return light mode
+        return .light
     }
     
     private let themeKey = "app_theme"
@@ -119,9 +115,16 @@ class ThemeManager: ObservableObject {
     }
     
     func loadTheme() {
-        if let savedTheme = UserDefaults.standard.string(forKey: themeKey),
-           let theme = AppTheme(rawValue: savedTheme) {
-            currentTheme = theme
+        if let savedTheme = UserDefaults.standard.string(forKey: themeKey) {
+            // Migrate old dark mode preference to light mode
+            if savedTheme == "Dark" {
+                currentTheme = .light
+                UserDefaults.standard.set("Light", forKey: themeKey)
+            } else if let theme = AppTheme(rawValue: savedTheme) {
+                currentTheme = theme
+            } else {
+                currentTheme = .light // Default to light
+            }
         }
         
         if let colorData = UserDefaults.standard.data(forKey: accentColorKey),
@@ -152,6 +155,8 @@ class ThemeManager: ObservableObject {
         currentTheme = theme
         UserDefaults.standard.set(theme.rawValue, forKey: themeKey)
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
     
     func setAccentColor(_ color: Color) {
@@ -161,6 +166,8 @@ class ThemeManager: ObservableObject {
             UserDefaults.standard.set(colorData, forKey: accentColorKey)
         }
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
     
     func setUserTier(_ tier: UserTier) {
@@ -172,16 +179,28 @@ class ThemeManager: ObservableObject {
         defaultPalette = palette
         UserDefaults.standard.set(palette.rawValue, forKey: defaultPaletteKey)
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
     
     func reloadCustomThemes() {
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in
+                self?.reloadCustomThemes()
+            }
+            return
+        }
+        
         guard let context = DatabaseManager.shared.mainContext else {
             customThemes = []
             return
         }
+        
         let descriptor = FetchDescriptor<CustomTheme>(sortBy: [SortDescriptor(\.updatedAt, order: .reverse)])
         if let results = try? context.fetch(descriptor) {
             customThemes = results
+            objectWillChange.send()
         } else {
             customThemes = []
         }
@@ -195,6 +214,15 @@ class ThemeManager: ObservableObject {
         text: Color,
         secondaryText: Color
     ) -> CustomTheme? {
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            var result: CustomTheme?
+            DispatchQueue.main.sync {
+                result = createOrUpdateTheme(id: id, name: name, accent: accent, background: background, text: text, secondaryText: secondaryText)
+            }
+            return result
+        }
+        
         guard let context = DatabaseManager.shared.mainContext else { return nil }
         
         // Enforce tier limits on creation
@@ -216,6 +244,8 @@ class ThemeManager: ObservableObject {
             existing.updatedAt = Date()
             try? context.save()
             reloadCustomThemes()
+            objectWillChange.send()
+            NotificationCenter.default.post(name: .themeChanged, object: nil)
             return existing
         } else {
             let theme = CustomTheme(
@@ -228,11 +258,21 @@ class ThemeManager: ObservableObject {
             context.insert(theme)
             try? context.save()
             reloadCustomThemes()
+            objectWillChange.send()
+            NotificationCenter.default.post(name: .themeChanged, object: nil)
             return theme
         }
     }
     
     func deleteTheme(id: UUID) {
+        // Ensure we're on main thread
+        guard Thread.isMainThread else {
+            DispatchQueue.main.async { [weak self] in
+                self?.deleteTheme(id: id)
+            }
+            return
+        }
+        
         guard let context = DatabaseManager.shared.mainContext else { return }
         if let theme = customThemes.first(where: { $0.id == id }) {
             context.delete(theme)
@@ -242,6 +282,8 @@ class ThemeManager: ObservableObject {
                 UserDefaults.standard.removeObject(forKey: activeCustomThemeKey)
             }
             reloadCustomThemes()
+            objectWillChange.send()
+            NotificationCenter.default.post(name: .themeChanged, object: nil)
         }
     }
     
@@ -252,6 +294,8 @@ class ThemeManager: ObservableObject {
             setTheme(.custom)
         }
         objectWillChange.send()
+        // Force immediate UI update
+        NotificationCenter.default.post(name: .themeChanged, object: nil)
     }
 }
 

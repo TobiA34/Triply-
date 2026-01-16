@@ -7,20 +7,37 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 struct TripListView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
     @Query(sort: \TripModel.startDate, order: .forward) private var trips: [TripModel]
+    @StateObject private var proLimiter = ProLimiter.shared
     @State private var searchText = ""
     @State private var selectedCategory: String? = nil
     @State private var showingAddTrip = false
-    @State private var showingStats = false
-    @State private var showingAnalytics = false
     @State private var showingSettings = false
-    @StateObject private var settingsManager = SettingsManager.shared
-    @StateObject private var localizationManager = LocalizationManager.shared
+    @State private var selectedTripForDetail: TripModel?
+    @State private var showingPaywall = false
+    @State private var limitAlertMessage: String?
+    @State private var showLimitAlert = false
     
-    private let categories = ["All", "Adventure", "Business", "Relaxation", "Family", "General"]
+    private var categories: [String] {
+        ["All", "Adventure", "Business", "Relaxation", "Family", "General"]
+    }
+    
+    // Computed property that ensures reactivity by accessing published properties
+    private var themeBackgroundColor: Color {
+        // Access published properties to ensure SwiftUI tracks changes
+        let _ = themeManager.currentTheme
+        let _ = themeManager.defaultPalette
+        let _ = themeManager.activeCustomThemeID
+        let _ = themeManager.customThemes
+        let _ = themeManager.customAccentColor
+        
+        return themeManager.currentPalette.background
+    }
     
     var filteredTrips: [TripModel] {
         var result = trips
@@ -55,6 +72,11 @@ struct TripListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                // Theme background - reactive to theme changes
+                // Access published properties to ensure reactivity
+                themeBackgroundColor
+                    .ignoresSafeArea()
+                
                 if trips.isEmpty {
                     EmptyStateView()
                 } else {
@@ -63,76 +85,120 @@ struct TripListView: View {
                             // Search Bar
                             SearchBar(text: $searchText)
                             
-                            // Category Filter
-                            CategoryFilterView(selectedCategory: $selectedCategory, categories: categories)
-                            
-                            // Statistics Card
-                            StatisticsCardView(trips: trips)
+                            // Enhanced Stats Card
+                            EnhancedStatsCardView(trips: trips)
                                 .padding(.horizontal)
                             
                             // Current Trips
                             if !currentTrips.isEmpty {
-                                TripSectionView(title: "trips.current".localized, trips: currentTrips, modelContext: modelContext)
+                                TripSectionView(title: "Current Trips", trips: currentTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
                             }
                             
                             // Upcoming Trips
                             if !upcomingTrips.isEmpty {
-                                TripSectionView(title: "trips.upcoming".localized, trips: upcomingTrips, modelContext: modelContext)
+                                TripSectionView(title: "Upcoming", trips: upcomingTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
                             }
                             
                             // Past Trips
                             if !pastTrips.isEmpty {
-                                TripSectionView(title: "trips.past".localized, trips: pastTrips, modelContext: modelContext)
+                                TripSectionView(title: "Past Trips", trips: pastTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
                             }
                         }
                         .padding(.vertical)
                     }
                 }
             }
-            .navigationTitle("trips.title".localized)
+            .navigationTitle("My Trips")
+            .background(themeBackgroundColor)
+            .observeLanguage()
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Menu {
-                        Button(action: { showingStats = true }) {
-                            Label("statistics.title".localized, systemImage: "chart.bar")
-                        }
-                        Button(action: { showingAnalytics = true }) {
-                            Label("analytics.title".localized, systemImage: "chart.line.uptrend.xyaxis")
-                        }
-                        Button(action: { showingSettings = true }) {
-                            Label("settings.title".localized, systemImage: "gearshape")
-                        }
-                    } label: {
-                        Image(systemName: "ellipsis.circle")
-                    }
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: { showingAddTrip = true }) {
+                    Button(action: {
+                        let check = proLimiter.canCreateTrip(currentTripCount: trips.count)
+                        if check.allowed {
+                            showingAddTrip = true
+                        } else {
+                            limitAlertMessage = check.reason
+                            showLimitAlert = true
+                        }
+                    }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
                     }
                 }
             }
-            .sheet(isPresented: $showingAddTrip) {
-                AddTripView()
-            }
-            .sheet(isPresented: $showingStats) {
-                StatisticsView(trips: trips)
-            }
-            .sheet(isPresented: $showingAnalytics) {
+            .fullScreenCover(isPresented: $showingAddTrip) {
                 NavigationStack {
-                    AnalyticsView()
+                    AddTripView()
                 }
             }
-            .sheet(isPresented: $showingSettings) {
-                SettingsView()
+            .fullScreenCover(isPresented: $showingSettings) {
+                NavigationStack {
+                    SettingsView()
+                        .environmentObject(themeManager)
+                }
             }
             .onAppear {
-                // Ensure settings are loaded
-                settingsManager.createDefaultSettings(in: modelContext)
-                settingsManager.loadSettings(from: modelContext)
+                // Load settings asynchronously (non-blocking)
+                Task {
+                    SettingsManager.shared.createDefaultSettings(in: modelContext)
+                    SettingsManager.shared.loadSettings(from: modelContext)
+                }
+                
+                // Sync trips to widgets on appear
+                Task { @MainActor in
+                    let allTrips = try? modelContext.fetch(FetchDescriptor<TripModel>())
+                    if let trips = allTrips {
+                        WidgetDataSync.shared.syncTrips(trips)
+                    }
+                }
             }
-            .refreshOnLanguageChange()
+            .onChange(of: trips.count) { _, _ in
+                // Sync whenever trips change
+                Task { @MainActor in
+                    WidgetDataSync.shared.syncTrips(trips)
+                    WidgetCenter.shared.reloadAllTimelines()
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToTrip"))) { notification in
+                if let userInfo = notification.userInfo,
+                   let tripIdString = userInfo["tripId"] as? String,
+                   let tripId = UUID(uuidString: tripIdString),
+                   let trip = trips.first(where: { $0.id == tripId }) {
+                    selectedTripForDetail = trip
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToActiveTrip"))) { _ in
+                if let activeTrip = trips.first(where: { $0.isCurrent }) {
+                    selectedTripForDetail = activeTrip
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToUpcomingTrips"))) { _ in
+                // Scroll to upcoming trips section
+            }
+            .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ShowAddTrip"))) { _ in
+                showingAddTrip = true
+            }
+            .fullScreenCover(item: $selectedTripForDetail) { trip in
+                NavigationStack {
+                    TripDetailView(trip: trip)
+                }
+            }
+            .alert("Limit Reached", isPresented: $showLimitAlert) {
+                Button("Upgrade to Pro") {
+                    showingPaywall = true
+                }
+                Button("Cancel", role: .cancel) { }
+            } message: {
+                if let message = limitAlertMessage {
+                    Text(message)
+                }
+            }
+            .sheet(isPresented: $showingPaywall) {
+                NavigationStack {
+                    PaywallView()
+                }
+            }
         }
     }
 }
@@ -144,7 +210,7 @@ struct SearchBar: View {
         HStack {
             Image(systemName: "magnifyingglass")
                 .foregroundColor(.secondary)
-            TextField("common.search".localized, text: $text)
+            TextField("Search", text: $text)
                 .textFieldStyle(.plain)
             if !text.isEmpty {
                 Button(action: { text = "" }) {
@@ -200,56 +266,11 @@ struct CategoryChip: View {
     }
 }
 
-struct StatisticsCardView: View {
-    let trips: [TripModel]
-    
-    var totalTrips: Int { trips.count }
-    var upcomingCount: Int { trips.filter { $0.isUpcoming }.count }
-    var totalDays: Int { trips.reduce(0) { $0 + $1.duration } }
-    
-    var body: some View {
-        HStack(spacing: 20) {
-            StatItemView(value: "\(totalTrips)", label: "Trips", icon: "airplane")
-            StatItemView(value: "\(upcomingCount)", label: "Upcoming", icon: "calendar")
-            StatItemView(value: "\(totalDays)", label: "Days", icon: "clock")
-        }
-        .padding()
-        .background(
-            LinearGradient(
-                colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        )
-        .cornerRadius(16)
-    }
-}
-
-struct StatItemView: View {
-    let value: String
-    let label: String
-    let icon: String
-    
-    var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(.blue)
-            Text(value)
-                .font(.title2)
-                .fontWeight(.bold)
-            Text(label)
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity)
-    }
-}
-
 struct TripSectionView: View {
     let title: String
     let trips: [TripModel]
     let modelContext: ModelContext
+    @Binding var selectedTripForDetail: TripModel?
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -258,18 +279,35 @@ struct TripSectionView: View {
                 .fontWeight(.semibold)
                 .padding(.horizontal)
             
-            ForEach(trips) { trip in
-                NavigationLink(destination: TripDetailView(trip: trip)) {
-                    TripRowView(trip: trip)
-                        .padding(.horizontal)
-                }
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            ForEach(Array(trips.enumerated()), id: \.element.id) { index, trip in
+                EnhancedTripCardWrapper(
+                    trip: trip,
+                    onCardTap: {
+                        selectedTripForDetail = trip
+                    }
+                )
+                .padding(.horizontal)
+                .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(role: .destructive) {
                         deleteTrip(trip)
+                        HapticManager.shared.error()
                     } label: {
-                        Label("common.delete".localized, systemImage: "trash")
+                        Label("Delete", systemImage: "trash")
                     }
+                    
+                    Button {
+                        duplicateTrip(trip)
+                        HapticManager.shared.success()
+                    } label: {
+                        Label("Duplicate", systemImage: "doc.on.doc")
+                    }
+                    .tint(.blue)
                 }
+                .transition(.asymmetric(
+                    insertion: .move(edge: .trailing).combined(with: .opacity),
+                    removal: .scale.combined(with: .opacity)
+                ))
+                .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(Double(index) * 0.1), value: trips.count)
             }
         }
     }
@@ -282,11 +320,64 @@ struct TripSectionView: View {
             print("Failed to delete trip: \(error)")
         }
     }
+    
+    private func duplicateTrip(_ trip: TripModel) {
+        let duplicatedTrip = TripModel(
+            name: "\(trip.name) (Copy)",
+            startDate: trip.startDate,
+            endDate: trip.endDate,
+            notes: trip.notes,
+            category: trip.category,
+            budget: trip.budget
+        )
+        
+        // Copy destinations
+        if let destinations = trip.destinations, !destinations.isEmpty {
+            duplicatedTrip.destinations = []
+            for (index, destination) in destinations.enumerated() {
+                let newDestination = DestinationModel(
+                    name: destination.name,
+                    address: destination.address,
+                    notes: destination.notes,
+                    order: index
+                )
+                modelContext.insert(newDestination)
+                duplicatedTrip.destinations?.append(newDestination)
+            }
+        }
+        
+        modelContext.insert(duplicatedTrip)
+        
+        do {
+            try modelContext.save()
+        } catch {
+            print("Failed to duplicate trip: \(error)")
+        }
+    }
+}
+
+struct EnhancedTripCardWrapper: View {
+    let trip: TripModel
+    let onCardTap: () -> Void
+    
+    var body: some View {
+        Button(action: onCardTap) {
+            EnhancedTripCard(trip: trip)
+        }
+        .buttonStyle(CardButtonStyle())
+    }
+}
+
+struct CardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .opacity(configuration.isPressed ? 0.95 : 1.0)
+    }
 }
 
 struct TripRowView: View {
     let trip: TripModel
-    @StateObject private var settingsManager = SettingsManager.shared
+    private let settingsManager = SettingsManager.shared
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -325,7 +416,7 @@ struct TripRowView: View {
                             Image(systemName: "dollarsign.circle.fill")
                                 .font(.caption)
                                 .foregroundColor(.green)
-                            Text(settingsManager.formatAmount(budget))
+                            Text(SettingsManager.shared.formatAmount(budget))
                                 .font(.caption)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.green)
@@ -338,7 +429,7 @@ struct TripRowView: View {
                         .font(.title3)
                         .fontWeight(.bold)
                         .foregroundColor(.blue)
-                    Text("trips.days".localized)
+                    Text("days")
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
@@ -381,24 +472,142 @@ struct CategoryBadge: View {
 }
 
 struct EmptyStateView: View {
+    
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "airplane.departure")
                 .font(.system(size: 60))
                 .foregroundColor(.blue.opacity(0.6))
             
-            Text("trips.empty".localized)
+            Text("No Trips Yet")
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("trips.empty.description".localized)
+            Text("Start planning your next adventure!")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
         }
         .padding()
+        .observeLanguage()
     }
 }
+
+// Enhanced Stats Card with multiple metrics
+struct EnhancedStatsCardView: View {
+    let trips: [TripModel]
+    
+    private var totalDays: Int { trips.reduce(0) { $0 + $1.duration } }
+    private var totalTrips: Int { trips.count }
+    private var upcomingCount: Int { trips.filter { $0.isUpcoming }.count }
+    private var currentCount: Int { trips.filter { $0.isCurrent }.count }
+    private var totalDestinations: Int { trips.reduce(0) { $0 + ($1.destinations?.count ?? 0) } }
+    private var totalBudget: Double { trips.compactMap { $0.budget }.reduce(0, +) }
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            // Main stats row
+            HStack(spacing: 16) {
+                StatsCardItem(
+                    icon: "airplane.departure",
+                    value: "\(totalTrips)",
+                    label: "Total Trips",
+                    color: .blue
+                )
+                StatsCardItem(
+                    icon: "clock.fill",
+                    value: "\(totalDays)",
+                    label: "days",
+                    color: .orange
+                )
+                StatsCardItem(
+                    icon: "mappin.circle.fill",
+                    value: "\(totalDestinations)",
+                    label: "Destinations",
+                    color: .green
+                )
+            }
+            
+            // Secondary stats row
+            HStack(spacing: 16) {
+                StatsCardItem(
+                    icon: "calendar.badge.clock",
+                    value: "\(upcomingCount)",
+                    label: "Upcoming",
+                    color: .purple
+                )
+                StatsCardItem(
+                    icon: "airplane.departure",
+                    value: "\(currentCount)",
+                    label: "Current Trips",
+                    color: .blue
+                )
+                if totalBudget > 0 {
+                    StatsCardItem(
+                        icon: "dollarsign.circle.fill",
+                        value: SettingsManager.shared.formatAmount(totalBudget),
+                        label: "Total Budget",
+                        color: .green
+                    )
+                } else {
+                    Spacer()
+                }
+            }
+        }
+        .padding(20)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(.ultraThinMaterial)
+                .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 4)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(
+                            LinearGradient(
+                                colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ),
+                            lineWidth: 1
+                        )
+                )
+        )
+    }
+}
+
+private struct StatsCardItem: View {
+    let icon: String
+    let value: String
+    let label: String
+    let color: Color
+    
+    var body: some View {
+        VStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [color, color.opacity(0.7)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+            Text(value)
+                .font(.title3)
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+            Text(label)
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+
 
 #Preview {
     NavigationStack {
@@ -406,3 +615,4 @@ struct EmptyStateView: View {
             .modelContainer(for: [TripModel.self, DestinationModel.self], inMemory: true)
     }
 }
+

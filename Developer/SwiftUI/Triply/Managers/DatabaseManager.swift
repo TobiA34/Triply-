@@ -30,7 +30,10 @@ class DatabaseManager {
                 PackingItem.self,
                 Expense.self,
                 AppSettings.self,
-                CustomTheme.self
+                CustomTheme.self,
+                TripMemory.self,
+                TripCollaborator.self,
+                TripDocument.self
             ])
             
             // Get database location
@@ -78,7 +81,11 @@ class DatabaseManager {
                     PackingItem.self,
                     Expense.self,
                     AppSettings.self,
-                    CustomTheme.self
+                    CustomTheme.self,
+                    TripMemory.self,
+                    TripCollaborator.self,
+                    TripDocument.self,
+                    DocumentFolder.self
                 ])
                 container = try ModelContainer(for: schema)
                 print("⚠️ Using in-memory database as fallback")

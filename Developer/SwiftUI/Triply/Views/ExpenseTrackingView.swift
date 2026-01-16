@@ -29,6 +29,13 @@ struct ExpenseTrackingView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
+                // AI Expense Insights
+                AIExpenseInsightsCard(trip: trip)
+                    .padding(.top)
+                
+                // Expense Chart
+                ExpenseChartView(trip: trip)
+                
                 // Summary Card
                 VStack(spacing: 16) {
                     HStack {

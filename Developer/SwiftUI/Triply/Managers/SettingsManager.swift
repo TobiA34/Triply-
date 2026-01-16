@@ -21,73 +21,74 @@ class SettingsManager: ObservableObject {
         }
     }
     
-    // CREATE - Create default settings if none exist
+    // CREATE - Create default settings if none exist (async, non-blocking)
     func createDefaultSettings(in context: ModelContext) {
-        // Use singleton ID to fetch or create
-        let singletonID = AppSettings.singletonID
-        let descriptor = FetchDescriptor<AppSettings>(
-            predicate: #Predicate<AppSettings> { settings in
-                settings.id == singletonID
+        // Use Task with low priority to avoid blocking UI
+        Task(priority: .utility) {
+            let singletonID = AppSettings.singletonID
+            let descriptor = FetchDescriptor<AppSettings>(
+                predicate: #Predicate<AppSettings> { settings in
+                    settings.id == singletonID
+                }
+            )
+            
+            do {
+                let existing = try context.fetch(descriptor).first
+                if existing == nil {
+                    let defaultSettings = AppSettings(
+                        id: AppSettings.singletonID,
+                        currencyCode: "USD",
+                        currencySymbol: "$"
+                    )
+                    context.insert(defaultSettings)
+                    try context.save()
+                    print("✅ Created default settings")
+                }
+            } catch {
+                print("❌ Failed to create default settings: \(error)")
             }
-        )
-        
-        do {
-            if try context.fetch(descriptor).first == nil {
-                let defaultSettings = AppSettings(
-                    id: AppSettings.singletonID,
-                    currencyCode: "USD",
-                    currencySymbol: "$"
-                )
-                context.insert(defaultSettings)
-                try context.save()
-                print("✅ Created default settings")
-            } else {
-                print("✅ Settings already exist")
-            }
-        } catch {
-            print("❌ Failed to create default settings: \(error)")
         }
     }
     
-    // READ - Load settings from database
+    // READ - Load settings from database (async, non-blocking)
     func loadSettings(from context: ModelContext) {
-        // Use singleton ID to fetch
-        let singletonID = AppSettings.singletonID
-        let descriptor = FetchDescriptor<AppSettings>(
-            predicate: #Predicate<AppSettings> { settings in
-                settings.id == singletonID
-            }
-        )
-        
-        do {
-            let settings = try context.fetch(descriptor).first
-            if let settings = settings {
-                currentCurrency = Currency.currency(for: settings.currencyCode)
-                // Also save to UserDefaults as backup
-                UserDefaults.standard.set(settings.currencyCode, forKey: "savedCurrencyCode")
-                print("✅ Loaded currency from DB: \(settings.currencyCode)")
-            } else {
-                // No settings found, create default
-                print("⚠️ No settings found, creating default...")
-                createDefaultSettings(in: context)
-                // Reload after creation
-                if let newSettings = try? context.fetch(descriptor).first {
-                    currentCurrency = Currency.currency(for: newSettings.currencyCode)
-                } else {
-                    currentCurrency = Currency.currency(for: "USD")
+        // Use Task to avoid blocking navigation - settings load in background
+        Task(priority: .userInitiated) { [weak self] in
+            // First, try fast UserDefaults fallback (synchronous, instant)
+            if let savedCode = UserDefaults.standard.string(forKey: "savedCurrencyCode") {
+                await MainActor.run {
+                    guard let self = self else { return }
+                    self.currentCurrency = Currency.currency(for: savedCode)
                 }
             }
-        } catch {
-            print("❌ Failed to load settings: \(error)")
-            // Fallback to UserDefaults
-            if let savedCode = UserDefaults.standard.string(forKey: "savedCurrencyCode") {
-                currentCurrency = Currency.currency(for: savedCode)
-                print("✅ Loaded currency from UserDefaults: \(savedCode)")
-            } else {
-                currentCurrency = Currency.currency(for: "USD")
+            
+            // Then load from database (async, non-blocking)
+            let singletonID = AppSettings.singletonID
+            let descriptor = FetchDescriptor<AppSettings>(
+                predicate: #Predicate<AppSettings> { settings in
+                    settings.id == singletonID
+                }
+            )
+            
+            do {
+                let settings = try context.fetch(descriptor).first
+                await MainActor.run {
+                    guard let self = self else { return }
+                    if let settings = settings {
+                        self.currentCurrency = Currency.currency(for: settings.currencyCode)
+                        // Also save to UserDefaults as backup
+                        UserDefaults.standard.set(settings.currencyCode, forKey: "savedCurrencyCode")
+                    } else {
+                        // No settings found, create default (async)
+                        self.createDefaultSettings(in: context)
+                        // Keep current currency (already set from UserDefaults above)
+                    }
+                }
+            } catch {
+                // Error loading from DB - keep UserDefaults value (already set above)
+                print("❌ Failed to load settings: \(error)")
             }
         }
-        objectWillChange.send()
     }
     
     // UPDATE - Update currency in database

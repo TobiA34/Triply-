@@ -59,19 +59,19 @@ struct AnalyticsView: View {
             VStack(spacing: 24) {
                 // Summary Cards
                 HStack(spacing: 16) {
-                    SummaryCard(
+                    AnalyticsSummaryCard(
                         title: "Total Trips",
                         value: "\(trips.count)",
                         icon: "airplane",
                         color: .blue
                     )
-                    SummaryCard(
+                    AnalyticsSummaryCard(
                         title: "Total Budget",
                         value: settingsManager.formatAmount(totalBudget),
                         icon: "dollarsign.circle",
                         color: .green
                     )
-                    SummaryCard(
+                    AnalyticsSummaryCard(
                         title: "Total Spent",
                         value: settingsManager.formatAmount(totalExpenses),
                         icon: "creditcard",
@@ -163,7 +163,7 @@ struct AnalyticsView: View {
     }
 }
 
-struct SummaryCard: View {
+struct AnalyticsSummaryCard: View {
     let title: String
     let value: String
     let icon: String

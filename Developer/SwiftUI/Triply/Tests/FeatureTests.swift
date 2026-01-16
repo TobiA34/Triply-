@@ -42,13 +42,13 @@ struct FeatureTests {
         assert(themeManager.currentTheme == .light, "Theme should be light")
         print("   ✓ Light theme set")
         
-        themeManager.setTheme(.dark)
-        assert(themeManager.currentTheme == .dark, "Theme should be dark")
-        print("   ✓ Dark theme set")
-        
         themeManager.setTheme(.system)
         assert(themeManager.currentTheme == .system, "Theme should be system")
         print("   ✓ System theme set")
+        
+        themeManager.setTheme(.custom)
+        assert(themeManager.currentTheme == .custom, "Theme should be custom")
+        print("   ✓ Custom theme set")
         
         // Test 2: Custom theme creation (Free tier - 1 theme limit)
         print("\n2. Testing Custom Theme Creation (Free Tier)...")
