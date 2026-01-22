@@ -1,0 +1,212 @@
+/* Localizable.strings */
+/* English (Base) */
+
+/* App */
+"app.name" = "Triply";
+"app.version" = "Version 1.0.0";
+"app.description" = "Plan your trips with ease. Organize destinations, create itineraries, and track your budget all in one place.";
+
+/* Common */
+"common.save" = "Save";
+"common.cancel" = "Cancel";
+"common.edit" = "Edit";
+"common.delete" = "Delete";
+"common.search" = "Search";
+"common.filter" = "Filter";
+"common.share" = "Share";
+"common.done" = "Done";
+"common.add" = "Add";
+"common.close" = "Close";
+"common.back" = "Back";
+"common.next" = "Next";
+"common.continue" = "Continue";
+"common.yes" = "Yes";
+"common.no" = "No";
+"common.ok" = "OK";
+"common.loading" = "Loading...";
+"common.error" = "Error";
+"common.success" = "Success";
+
+/* Trips */
+"trips.title" = "My Trips";
+"trips.empty" = "No Trips Yet";
+"trips.empty.description" = "Start planning your next adventure!";
+"trips.new" = "New Trip";
+"trips.edit" = "Edit Trip";
+"trips.delete" = "Delete Trip";
+"trips.details" = "Trip Details";
+"trips.name" = "Trip Name";
+"trips.startDate" = "Start Date";
+"trips.endDate" = "End Date";
+"trips.notes" = "Notes";
+"trips.budget" = "Budget";
+"trips.category" = "Category";
+"trips.duration" = "Duration";
+"trips.days" = "days";
+"trips.day" = "day";
+"trips.current" = "Current Trips";
+"trips.upcoming" = "Upcoming";
+"trips.past" = "Past Trips";
+"trips.optimize" = "Optimize Trip";
+"trips.export" = "Export Trip";
+"trips.reminders" = "Reminders";
+
+/* Categories */
+"category.general" = "General";
+"category.adventure" = "Adventure";
+"category.business" = "Business";
+"category.relaxation" = "Relaxation";
+"category.family" = "Family";
+"category.all" = "All";
+
+/* Destinations */
+"destination.title" = "Destinations";
+"destination.add" = "Add Destination";
+"destination.name" = "Destination Name";
+"destination.address" = "Address";
+"destination.empty" = "No destinations added yet";
+"destination.search" = "Search Destinations";
+
+/* Itinerary */
+"itinerary.title" = "Trip Itinerary";
+"itinerary.addActivity" = "Add Activity";
+"itinerary.day" = "Day";
+"itinerary.start" = "START";
+"itinerary.end" = "END";
+"itinerary.activity.title" = "Activity Title";
+"itinerary.activity.time" = "Time";
+"itinerary.activity.location" = "Location";
+"itinerary.activity.description" = "Description";
+"itinerary.activity.booked" = "Booked";
+"itinerary.activity.bookingReference" = "Booking Reference";
+"itinerary.activity.reminder" = "Set Reminder";
+"itinerary.activity.reminderDate" = "Reminder Date";
+"itinerary.activity.markBooked" = "Mark as Booked";
+"itinerary.activity.markUnbooked" = "Mark Unbooked";
+"itinerary.empty" = "Add first activity";
+"itinerary.daysPlanned" = "days planned";
+
+/* Expenses */
+"expense.title" = "Expenses";
+"expense.add" = "Add Expense";
+"expense.total" = "Total";
+"expense.category" = "Category";
+"expense.amount" = "Amount";
+"expense.date" = "Date";
+"expense.notes" = "Notes";
+"expense.receipt" = "Receipt";
+"expense.scanReceipt" = "Scan Receipt";
+"expense.removeReceipt" = "Remove Receipt";
+"expense.scanning" = "Scanning receipt...";
+"expense.extractedText" = "Extracted Text:";
+"expense.useExtractedAmount" = "Use Extracted Amount:";
+"expense.empty" = "No expenses yet";
+"expense.categories.food" = "Food";
+"expense.categories.transport" = "Transport";
+"expense.categories.accommodation" = "Accommodation";
+"expense.categories.entertainment" = "Entertainment";
+"expense.categories.shopping" = "Shopping";
+"expense.categories.other" = "Other";
+
+/* Packing */
+"packing.title" = "Packing List";
+"packing.add" = "Add Item";
+"packing.suggestions" = "Smart Suggestions";
+"packing.category" = "Category";
+"packing.packed" = "Packed";
+"packing.unpacked" = "Unpacked";
+"packing.empty" = "No items yet";
+"packing.categories.clothing" = "Clothing";
+"packing.categories.electronics" = "Electronics";
+"packing.categories.toiletries" = "Toiletries";
+"packing.categories.documents" = "Documents";
+"packing.categories.health" = "Health";
+"packing.categories.accessories" = "Accessories";
+"packing.categories.footwear" = "Footwear";
+"packing.categories.essentials" = "Essentials";
+"packing.categories.general" = "General";
+
+/* Weather */
+"weather.title" = "Weather Forecast";
+"weather.loading" = "Loading weather...";
+"weather.error" = "Unable to load weather";
+"weather.temperature" = "Temperature";
+"weather.condition" = "Condition";
+"weather.humidity" = "Humidity";
+"weather.wind" = "Wind";
+
+/* Statistics */
+"statistics.title" = "Statistics";
+"statistics.totalTrips" = "Total Trips";
+"statistics.totalExpenses" = "Total Expenses";
+"statistics.averageBudget" = "Average Budget";
+"statistics.mostVisited" = "Most Visited";
+
+/* Analytics */
+"analytics.title" = "Analytics";
+"analytics.spending" = "Spending Trends";
+"analytics.categories" = "By Category";
+
+/* Settings */
+"settings.title" = "Settings";
+"settings.currency" = "Currency";
+"settings.theme" = "Theme";
+"settings.language" = "Language";
+"settings.about" = "About";
+"settings.preferences" = "Preferences";
+"settings.preferences.description" = "Customize your app experience with currency, theme, and language settings.";
+"settings.appTheme" = "App Theme";
+"settings.appLanguage" = "App Language";
+"settings.theme.description" = "Choose between light, dark, or follow system settings.";
+"settings.language.description" = "Select your preferred language. App restart may be required.";
+"settings.preview" = "Preview";
+"settings.currentSelection" = "Current Selection";
+"settings.example" = "Example";
+"settings.appInformation" = "App Information";
+"settings.aboutTriply" = "About Triply";
+
+/* Currency */
+"currency.converter" = "Currency Converter";
+"currency.from" = "From";
+"currency.to" = "To";
+"currency.amount" = "Amount";
+"currency.convert" = "Convert";
+"currency.rate" = "Exchange Rate";
+"currency.lastUpdated" = "Last Updated";
+
+/* Optimizer */
+"optimizer.title" = "Trip Optimizer";
+"optimizer.optimizing" = "Optimizing your trip...";
+"optimizer.route" = "Route Optimization";
+"optimizer.cost" = "Cost Optimization";
+"optimizer.suggestions" = "Suggestions";
+
+/* Export */
+"export.title" = "Export Trip";
+"export.format" = "Format";
+"export.share" = "Share";
+
+/* Reminders */
+"reminders.title" = "Trip Reminders";
+"reminders.add" = "Add Reminder";
+"reminders.empty" = "No reminders set";
+
+/* Empty States */
+"empty.noTrips" = "No Trips Yet";
+"empty.startPlanning" = "Start planning your next adventure!";
+"empty.noDestinations" = "No destinations added yet";
+"empty.noActivities" = "No activities planned";
+"empty.noExpenses" = "No expenses recorded";
+"empty.noItems" = "No items in packing list";
+
+/* Validation */
+"validation.required" = "This field is required";
+"validation.invalidDate" = "Invalid date range";
+"validation.invalidAmount" = "Invalid amount";
+
+/* Errors */
+"error.saveFailed" = "Failed to save";
+"error.loadFailed" = "Failed to load";
+"error.deleteFailed" = "Failed to delete";
+"error.network" = "Network error";
+"error.unknown" = "An unknown error occurred";

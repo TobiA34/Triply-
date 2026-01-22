@@ -1,0 +1,857 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Triply.xcodeproj -scheme Triply -sdk iphonesimulator -derivedDataPath ./DerivedData build CODE_SIGN_IDENTITY= CODE_SIGNING_REQUIRED=NO
+
+Build settings from command line:
+    CODE_SIGN_IDENTITY = 
+    CODE_SIGNING_REQUIRED = NO
+    SDKROOT = iphonesimulator18.5
+
+2025-11-11 14:27:51.474 xcodebuild[73540:34513432] warning:  The file reference for "Extensions" is a member of multiple groups ("Triply" and ""); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2025-11-11 14:27:51.475 xcodebuild[73540:34513432] warning:  The file reference for "Libraries" is a member of multiple groups ("Triply" and ""); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2025-11-11 14:27:51.475 xcodebuild[73540:34513432] warning:  The file reference for "Managers" is a member of multiple groups ("Triply" and ""); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2025-11-11 14:27:51.475 xcodebuild[73540:34513432] warning:  The file reference for "Models" is a member of multiple groups ("Triply" and ""); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2025-11-11 14:27:51.475 xcodebuild[73540:34513432] warning:  The file reference for "Resources" is a member of multiple groups ("Triply" and ""); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2025-11-11 14:27:51.475 xcodebuild[73540:34513432] warning:  The file reference for "Tests" is a member of multiple groups ("Triply" and ""); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+2025-11-11 14:27:51.475 xcodebuild[73540:34513432] warning:  The file reference for "Views" is a member of multiple groups ("Triply" and ""); this indicates a malformed project.  Only the membership in one of the groups will be preserved (but membership in targets will be unaffected).  If you want a reference to the same file in more than one group, please add another reference to the same path.
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, id:dvtdevice-DVTiOSDeviceSimulatorPlaceholder-iphonesimulator:placeholder, name:Any iOS Simulator Device }
+{ platform:iOS Simulator, arch:arm64, id:8EB344BD-AFAF-4F23-9BBB-CE4821C3B1BD, OS:17.0, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:8EB344BD-AFAF-4F23-9BBB-CE4821C3B1BD, OS:17.0, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:1DF065D4-E3EB-4893-8C69-754DD0E2F1DF, OS:17.2, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:1DF065D4-E3EB-4893-8C69-754DD0E2F1DF, OS:17.2, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:AC74BE95-D4ED-4790-AA12-4D47AD50141D, OS:17.5, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:AC74BE95-D4ED-4790-AA12-4D47AD50141D, OS:17.5, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:8B648138-85E4-4B2D-BFA8-4CCC1DEAF550, OS:18.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:8B648138-85E4-4B2D-BFA8-4CCC1DEAF550, OS:18.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:05BA472F-C0DA-4441-A0A1-05BBE40FEDBC, OS:18.3.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:05BA472F-C0DA-4441-A0A1-05BBE40FEDBC, OS:18.3.1, name:iPad (10th generation) }
+{ platform:iOS Simulator, arch:arm64, id:4E28BB14-0CFF-4E08-ACBB-00414B608D27, OS:18.3.1, name:iPad (A16) }
+{ platform:iOS Simulator, arch:x86_64, id:4E28BB14-0CFF-4E08-ACBB-00414B608D27, OS:18.3.1, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:80D7FAA2-BF41-4559-8F96-A41662DB53BD, OS:18.6, name:iPad (A16) }
+{ platform:iOS Simulator, arch:x86_64, id:80D7FAA2-BF41-4559-8F96-A41662DB53BD, OS:18.6, name:iPad (A16) }
+{ platform:iOS Simulator, arch:arm64, id:EA696772-B7A1-42AE-B11B-CF748E9D85F7, OS:17.0, name:iPad Air (5th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:EA696772-B7A1-42AE-B11B-CF748E9D85F7, OS:17.0, name:iPad Air (5th generation) }
+{ platform:iOS Simulator, arch:arm64, id:CEB157F2-691F-4651-8A05-44D86F2DDB11, OS:17.2, name:iPad Air (5th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:CEB157F2-691F-4651-8A05-44D86F2DDB11, OS:17.2, name:iPad Air (5th generation) }
+{ platform:iOS Simulator, arch:arm64, id:B1C1A3B3-7B4F-4C1A-88EF-F4B0CAD33A8E, OS:17.5, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:B1C1A3B3-7B4F-4C1A-88EF-F4B0CAD33A8E, OS:17.5, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:02D440B8-E182-40AF-9E10-7CCB90663DB9, OS:18.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:02D440B8-E182-40AF-9E10-7CCB90663DB9, OS:18.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:BEEE775F-5345-4B4F-8D1C-2FE76ADF2390, OS:18.3.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:BEEE775F-5345-4B4F-8D1C-2FE76ADF2390, OS:18.3.1, name:iPad Air 11-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:3706A39A-D085-4B1B-9239-9A6523FDFBDC, OS:18.3.1, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:3706A39A-D085-4B1B-9239-9A6523FDFBDC, OS:18.3.1, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:2ED98A2F-2507-407D-9279-66CD26D2C1F1, OS:18.6, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:2ED98A2F-2507-407D-9279-66CD26D2C1F1, OS:18.6, name:iPad Air 11-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:63A28EE0-1DD7-4E0F-AB43-15935733A625, OS:17.5, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:63A28EE0-1DD7-4E0F-AB43-15935733A625, OS:17.5, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:854A854B-A736-44A9-AFFB-F7462E358966, OS:18.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:854A854B-A736-44A9-AFFB-F7462E358966, OS:18.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:6DA3BD40-E3B9-49C6-B3CB-C862935D26BA, OS:18.3.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:x86_64, id:6DA3BD40-E3B9-49C6-B3CB-C862935D26BA, OS:18.3.1, name:iPad Air 13-inch (M2) }
+{ platform:iOS Simulator, arch:arm64, id:609E7A21-25AC-4BC6-AD11-7B1832C76704, OS:18.3.1, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:609E7A21-25AC-4BC6-AD11-7B1832C76704, OS:18.3.1, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:EE80F629-32A1-4901-A4DB-A20ACDAED943, OS:18.6, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:x86_64, id:EE80F629-32A1-4901-A4DB-A20ACDAED943, OS:18.6, name:iPad Air 13-inch (M3) }
+{ platform:iOS Simulator, arch:arm64, id:4DBEE7AA-1DFF-4136-BE1E-3C1E1EC6D273, OS:17.0, name:iPad Pro (11-inch) (4th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:4DBEE7AA-1DFF-4136-BE1E-3C1E1EC6D273, OS:17.0, name:iPad Pro (11-inch) (4th generation) }
+{ platform:iOS Simulator, arch:arm64, id:6C14A76E-8D0F-4F5D-8DDF-5A0EDA8F18E8, OS:17.2, name:iPad Pro (11-inch) (4th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:6C14A76E-8D0F-4F5D-8DDF-5A0EDA8F18E8, OS:17.2, name:iPad Pro (11-inch) (4th generation) }
+{ platform:iOS Simulator, arch:arm64, id:00A02686-4217-418C-9891-D96D5CBAE966, OS:17.0, name:iPad Pro (12.9-inch) (6th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:00A02686-4217-418C-9891-D96D5CBAE966, OS:17.0, name:iPad Pro (12.9-inch) (6th generation) }
+{ platform:iOS Simulator, arch:arm64, id:7004FA5E-C9CD-40E9-94EE-9042D5EFA48B, OS:17.2, name:iPad Pro (12.9-inch) (6th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:7004FA5E-C9CD-40E9-94EE-9042D5EFA48B, OS:17.2, name:iPad Pro (12.9-inch) (6th generation) }
+{ platform:iOS Simulator, arch:arm64, id:6C408450-40AF-478C-ACC5-3CB96A91D595, OS:17.5, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:6C408450-40AF-478C-ACC5-3CB96A91D595, OS:17.5, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:6713740F-D704-4B50-B992-B4D6B6A121FD, OS:18.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:6713740F-D704-4B50-B992-B4D6B6A121FD, OS:18.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:CBD350D2-CE77-4C0E-AC34-D3ED38EECDEE, OS:18.3.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:CBD350D2-CE77-4C0E-AC34-D3ED38EECDEE, OS:18.3.1, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:C47FEF6E-98FE-4344-B31F-BD1535BFAA66, OS:18.6, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:C47FEF6E-98FE-4344-B31F-BD1535BFAA66, OS:18.6, name:iPad Pro 11-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:A7080B01-ECB9-4477-89B2-FB5F3941CC1A, OS:17.5, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:A7080B01-ECB9-4477-89B2-FB5F3941CC1A, OS:17.5, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:1B736DCE-4DCF-4120-9332-606CF7DE14A3, OS:18.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:1B736DCE-4DCF-4120-9332-606CF7DE14A3, OS:18.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:A524B956-E3FE-4595-8299-46545A34BA6E, OS:18.3.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:A524B956-E3FE-4595-8299-46545A34BA6E, OS:18.3.1, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:1F40DD4D-9CAA-461D-8704-BB55553EB49A, OS:18.6, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:x86_64, id:1F40DD4D-9CAA-461D-8704-BB55553EB49A, OS:18.6, name:iPad Pro 13-inch (M4) }
+{ platform:iOS Simulator, arch:arm64, id:6F326B24-277A-47B6-9A95-F7EF63A81283, OS:17.0, name:iPad mini (6th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:6F326B24-277A-47B6-9A95-F7EF63A81283, OS:17.0, name:iPad mini (6th generation) }
+{ platform:iOS Simulator, arch:arm64, id:2288B62A-9707-46CA-84E6-3F9CB6B44B3E, OS:17.2, name:iPad mini (6th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:2288B62A-9707-46CA-84E6-3F9CB6B44B3E, OS:17.2, name:iPad mini (6th generation) }
+{ platform:iOS Simulator, arch:arm64, id:C5D11B94-1EB5-4F90-9446-2DB6E689DF08, OS:17.5, name:iPad mini (6th generation) }
+{ platform:iOS Simulator, arch:x86_64, id:C5D11B94-1EB5-4F90-9446-2DB6E689DF08, OS:17.5, name:iPad mini (6th generation) }
+{ platform:iOS Simulator, arch:arm64, id:1B1A4B00-B831-4C9A-B857-C8D138FD520B, OS:18.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:1B1A4B00-B831-4C9A-B857-C8D138FD520B, OS:18.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:F9F5B603-E13A-43D0-AD30-A13B2F72D365, OS:18.3.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:F9F5B603-E13A-43D0-AD30-A13B2F72D365, OS:18.3.1, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:9A191803-BF12-45F5-8D87-F8B8A5A85ECD, OS:18.6, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:x86_64, id:9A191803-BF12-45F5-8D87-F8B8A5A85ECD, OS:18.6, name:iPad mini (A17 Pro) }
+{ platform:iOS Simulator, arch:arm64, id:0D285896-83B1-4821-AA29-DFD2C87E0F7D, OS:17.0, name:iPhone 15 }
+{ platform:iOS Simulator, arch:x86_64, id:0D285896-83B1-4821-AA29-DFD2C87E0F7D, OS:17.0, name:iPhone 15 }
+{ platform:iOS Simulator, arch:arm64, id:ED42C06B-563D-4548-8EDE-FDD609035FD3, OS:17.2, name:iPhone 15 }
+{ platform:iOS Simulator, arch:x86_64, id:ED42C06B-563D-4548-8EDE-FDD609035FD3, OS:17.2, name:iPhone 15 }
+{ platform:iOS Simulator, arch:arm64, id:A66A0C2F-E511-4D91-9EBD-83E62CD1E104, OS:17.5, name:iPhone 15 }
+{ platform:iOS Simulator, arch:x86_64, id:A66A0C2F-E511-4D91-9EBD-83E62CD1E104, OS:17.5, name:iPhone 15 }
+{ platform:iOS Simulator, arch:arm64, id:859B0694-C2B7-4F2D-B036-7FE8CCC28401, OS:17.0, name:iPhone 15 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:859B0694-C2B7-4F2D-B036-7FE8CCC28401, OS:17.0, name:iPhone 15 Plus }
+{ platform:iOS Simulator, arch:arm64, id:1EB15FD7-9D0C-4A57-8C34-3007F2EBA4E5, OS:17.2, name:iPhone 15 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:1EB15FD7-9D0C-4A57-8C34-3007F2EBA4E5, OS:17.2, name:iPhone 15 Plus }
+{ platform:iOS Simulator, arch:arm64, id:E9A3C4C0-F944-4245-95EA-6ECC2F7C4F25, OS:17.5, name:iPhone 15 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:E9A3C4C0-F944-4245-95EA-6ECC2F7C4F25, OS:17.5, name:iPhone 15 Plus }
+{ platform:iOS Simulator, arch:arm64, id:11F27E2E-5199-43B7-9C11-E9159F59B324, OS:17.0, name:iPhone 15 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:11F27E2E-5199-43B7-9C11-E9159F59B324, OS:17.0, name:iPhone 15 Pro }
+{ platform:iOS Simulator, arch:arm64, id:8B558952-F278-472A-B5E1-9E77EC0C39B0, OS:17.2, name:iPhone 15 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:8B558952-F278-472A-B5E1-9E77EC0C39B0, OS:17.2, name:iPhone 15 Pro }
+{ platform:iOS Simulator, arch:arm64, id:7AE4F85B-FAD4-447E-9479-1B9D98AC17AA, OS:17.5, name:iPhone 15 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:7AE4F85B-FAD4-447E-9479-1B9D98AC17AA, OS:17.5, name:iPhone 15 Pro }
+{ platform:iOS Simulator, arch:arm64, id:79E8DF06-3102-4049-B3C8-89EB036FA09B, OS:17.0, name:iPhone 15 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:79E8DF06-3102-4049-B3C8-89EB036FA09B, OS:17.0, name:iPhone 15 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:2D83A962-11ED-44EF-B3E7-2E6CE9C0EB99, OS:17.2, name:iPhone 15 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:2D83A962-11ED-44EF-B3E7-2E6CE9C0EB99, OS:17.2, name:iPhone 15 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:0786D64F-66AC-4891-B512-4047D4330A3C, OS:17.5, name:iPhone 15 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:0786D64F-66AC-4891-B512-4047D4330A3C, OS:17.5, name:iPhone 15 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:227611C5-95A8-4B12-8874-3F8F4EE021A0, OS:18.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:227611C5-95A8-4B12-8874-3F8F4EE021A0, OS:18.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:8941F47F-CE5E-48B3-B575-55246F95A75D, OS:18.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:8941F47F-CE5E-48B3-B575-55246F95A75D, OS:18.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:6BC5A9A7-8558-4FF9-9F3B-A548211DD621, OS:18.3.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:6BC5A9A7-8558-4FF9-9F3B-A548211DD621, OS:18.3.1, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:D7FEB85E-3667-46D7-8626-8FF8C665CB4C, OS:18.6, name:iPhone 16 }
+{ platform:iOS Simulator, arch:x86_64, id:D7FEB85E-3667-46D7-8626-8FF8C665CB4C, OS:18.6, name:iPhone 16 }
+{ platform:iOS Simulator, arch:arm64, id:E5F80054-5BEC-4ECB-BD55-0925F6A715B0, OS:18.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:E5F80054-5BEC-4ECB-BD55-0925F6A715B0, OS:18.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:824EB21D-DC0D-4BC2-A7C0-3FC4DA290A05, OS:18.3.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:824EB21D-DC0D-4BC2-A7C0-3FC4DA290A05, OS:18.3.1, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:2D90B9FF-D06A-449A-970E-4B4611BA9011, OS:18.6, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:x86_64, id:2D90B9FF-D06A-449A-970E-4B4611BA9011, OS:18.6, name:iPhone 16 Plus }
+{ platform:iOS Simulator, arch:arm64, id:239EF509-409A-4569-A593-74FF2001136C, OS:18.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:239EF509-409A-4569-A593-74FF2001136C, OS:18.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:B4BF81A4-0DD3-46C8-A1E3-320BDD4BBBB3, OS:18.3.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:B4BF81A4-0DD3-46C8-A1E3-320BDD4BBBB3, OS:18.3.1, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:46A91C89-5DE8-4D61-A743-D2E435B11829, OS:18.6, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:x86_64, id:46A91C89-5DE8-4D61-A743-D2E435B11829, OS:18.6, name:iPhone 16 Pro }
+{ platform:iOS Simulator, arch:arm64, id:6468A2C3-0ADB-4E21-B1F5-E7839DBCFDB9, OS:18.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:6468A2C3-0ADB-4E21-B1F5-E7839DBCFDB9, OS:18.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:0317A2CD-0137-4611-BB3D-6592F53CDE2F, OS:18.3.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:0317A2CD-0137-4611-BB3D-6592F53CDE2F, OS:18.3.1, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:5EE88F6D-5676-4ECA-82FC-7AFA4518FBB7, OS:18.6, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:x86_64, id:5EE88F6D-5676-4ECA-82FC-7AFA4518FBB7, OS:18.6, name:iPhone 16 Pro Max }
+{ platform:iOS Simulator, arch:arm64, id:D79115C5-1E79-4D13-B3FA-A9E49682B89E, OS:18.3.1, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:D79115C5-1E79-4D13-B3FA-A9E49682B89E, OS:18.3.1, name:iPhone 16e }
+{ platform:iOS Simulator, arch:arm64, id:5AB9BAED-09E1-4152-883E-CDB38E44B7DC, OS:18.6, name:iPhone 16e }
+{ platform:iOS Simulator, arch:x86_64, id:5AB9BAED-09E1-4152-883E-CDB38E44B7DC, OS:18.6, name:iPhone 16e }
+{ platform:iOS Simulator, arch:arm64, id:CC24FEF7-8A88-4175-9DC8-34E3734BF2BE, OS:17.0, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:CC24FEF7-8A88-4175-9DC8-34E3734BF2BE, OS:17.0, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:7B91D78C-0454-40AC-A4BB-C1634F7AF10B, OS:17.2, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:7B91D78C-0454-40AC-A4BB-C1634F7AF10B, OS:17.2, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:2515AB97-9041-436F-B700-BE5E0A84C6E3, OS:17.5, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:2515AB97-9041-436F-B700-BE5E0A84C6E3, OS:17.5, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:DAC227AE-1426-4995-88CF-7E57E9658B3E, OS:18.1, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:DAC227AE-1426-4995-88CF-7E57E9658B3E, OS:18.1, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:arm64, id:D41660AC-221B-4977-973D-E2C1701E2D14, OS:18.3.1, name:iPhone SE (3rd generation) }
+{ platform:iOS Simulator, arch:x86_64, id:D41660AC-221B-4977-973D-E2C1701E2D14, OS:18.3.1, name:iPhone SE (3rd generation) }
+{ platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:00006000-000878610AF9401E, name:My Mac }
+{ platform:iOS, id:dvtdevice-DVTiPhonePlaceholder-iphoneos:placeholder, name:Any iOS Device }
+{ platform:iOS, arch:arm64, id:00008120-000C10D63E0B401E, name:iPhone }
+note: Using codesigning identity override: 
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'Triply' in project 'Triply' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply/Triply.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -o /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache
+
+CpResource /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/build.log /Users/tobiadegoroye/Developer/SwiftUI/Triply/build.log (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks /Users/tobiadegoroye/Developer/SwiftUI/Triply/build.log /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app
+
+SwiftDriver Triply normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Triply -Onone -enforce-exclusivity\=checked @/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply_const_extract_protocols.json -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-generated-files.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-own-target-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-all-target-headers.hmap -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-project-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources-normal/x86_64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/x86_64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply-Swift.h -working-directory /Users/tobiadegoroye/Developer/SwiftUI/Triply -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver Triply normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Triply -Onone -enforce-exclusivity\=checked @/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply_const_extract_protocols.json -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-generated-files.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-own-target-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-all-target-headers.hmap -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-project-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources-normal/arm64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/arm64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply-Swift.h -working-directory /Users/tobiadegoroye/Developer/SwiftUI/Triply -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal x86_64 Compiling\ LanguageAdapter.swift,\ LanguagePickerLibrary.swift,\ LanguageSelectionView.swift,\ LocalizationManager.swift,\ LocalizedString.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/LanguagePicker/LanguageAdapter.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/LanguagePicker/LanguagePickerLibrary.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/LanguageSelectionView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/LocalizationManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Extensions/LocalizedString.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/LanguagePicker/LanguageAdapter.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/LanguagePicker/LanguagePickerLibrary.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/LanguageSelectionView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/LocalizationManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Extensions/LocalizedString.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ AddDestinationView.swift,\ AddTripView.swift,\ AnalyticsView.swift,\ AppSettings.swift,\ ContentView.swift,\ CurrencyAdapter.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddDestinationView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddTripView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AnalyticsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/AppSettings.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ContentView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyAdapter.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddDestinationView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddTripView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AnalyticsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/AppSettings.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ContentView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyAdapter.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ ExpenseTrackingView.swift,\ ExportManager.swift,\ FeatureTests.swift,\ ItineraryItem.swift,\ ItineraryView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseTrackingView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ExportManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Tests/FeatureTests.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/ItineraryItem.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ItineraryView.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseTrackingView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ExportManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Tests/FeatureTests.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/ItineraryItem.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ItineraryView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ Triply (in target 'Triply' from project 'Triply')
+
+EmitSwiftModule normal x86_64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ View+Localization.swift,\ WeatherForecastView.swift,\ WeatherManager.swift,\ verify_features.swift,\ GeneratedAssetSymbols.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Extensions/View+Localization.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/WeatherForecastView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/WeatherManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/verify_features.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Extensions/View+Localization.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/WeatherForecastView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/WeatherManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/verify_features.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/GeneratedAssetSymbols.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ TripModel.swift,\ TripOptimizer.swift,\ TripOptimizerView.swift,\ TripRemindersView.swift,\ TriplyApp.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/TripModel.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/TripOptimizer.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripOptimizerView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripRemindersView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/TriplyApp.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/TripModel.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/TripOptimizer.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripOptimizerView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripRemindersView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/TriplyApp.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ NotificationManager.swift,\ PackingAssistant.swift,\ PackingItem.swift,\ PackingListView.swift,\ ReceiptOCRManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/NotificationManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/PackingAssistant.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/PackingItem.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/PackingListView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ReceiptOCRManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/NotificationManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/PackingAssistant.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/PackingItem.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/PackingListView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ReceiptOCRManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ SettingsManager.swift,\ SettingsView.swift,\ StatisticsView.swift,\ ThemeCreatorView.swift,\ ThemeLibraryView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/SettingsManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/SettingsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/StatisticsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeCreatorView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeLibraryView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/SettingsManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/SettingsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/StatisticsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeCreatorView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeLibraryView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ CurrencyConverter.swift,\ CurrencyConverterView.swift,\ CurrencyPickerLibrary.swift,\ CurrencySelectionView.swift,\ CustomTheme.swift,\ DatabaseManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/CurrencyConverter.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencyConverterView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyPickerLibrary.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencySelectionView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/CustomTheme.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/DatabaseManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/CurrencyConverter.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencyConverterView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyPickerLibrary.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencySelectionView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/CustomTheme.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/DatabaseManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 Compiling\ ThemeManager.swift,\ TripDataManager.swift,\ TripDetailView.swift,\ TripExportView.swift,\ TripListView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ThemeManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/TripDataManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripDetailView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripExportView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripListView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ThemeManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/TripDataManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripDetailView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripExportView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripListView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ Triply (in target 'Triply' from project 'Triply')
+EmitSwiftModule normal arm64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling View+Localization.swift, WeatherForecastView.swift, WeatherManager.swift, verify_features.swift, GeneratedAssetSymbols.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ CustomTheme.swift,\ DatabaseManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/CustomTheme.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/DatabaseManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/CustomTheme.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/DatabaseManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for Triply (in target 'Triply' from project 'Triply')
+
+SwiftDriver\ Compilation\ Requirements Triply normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Triply -Onone -enforce-exclusivity\=checked @/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply_const_extract_protocols.json -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-generated-files.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-own-target-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-all-target-headers.hmap -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-project-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources-normal/x86_64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/x86_64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply-Swift.h -working-directory /Users/tobiadegoroye/Developer/SwiftUI/Triply -experimental-emit-module-separately -disable-cmo
+
+SwiftCompile normal arm64 Compiling\ ThemeCreatorView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeCreatorView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeCreatorView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling LanguageAdapter.swift, LanguagePickerLibrary.swift, LanguageSelectionView.swift, LocalizationManager.swift, LocalizedString.swift (in target 'Triply' from project 'Triply')
+
+Copy /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/x86_64-apple-ios-simulator.swiftmodule /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftmodule (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftmodule /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/x86_64-apple-ios-simulator.swiftmodule
+
+SwiftDriverJobDiscovery normal x86_64 Compiling TripModel.swift, TripOptimizer.swift, TripOptimizerView.swift, TripRemindersView.swift, TriplyApp.swift (in target 'Triply' from project 'Triply')
+
+Copy /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/x86_64-apple-ios-simulator.abi.json /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.abi.json (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.abi.json /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/x86_64-apple-ios-simulator.abi.json
+
+Copy /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftsourceinfo (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftsourceinfo /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ ReceiptOCRManager.swift,\ SettingsManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ReceiptOCRManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/SettingsManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ReceiptOCRManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/SettingsManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 Compiling\ SettingsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/SettingsView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/SettingsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling AddDestinationView.swift, AddTripView.swift, AnalyticsView.swift, AppSettings.swift, ContentView.swift, CurrencyAdapter.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ PackingItem.swift,\ PackingListView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/PackingItem.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/PackingListView.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/PackingItem.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/PackingListView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NotificationManager.swift, PackingAssistant.swift, PackingItem.swift, PackingListView.swift, ReceiptOCRManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ CurrencyPickerLibrary.swift,\ CurrencySelectionView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyPickerLibrary.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencySelectionView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyPickerLibrary.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencySelectionView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling CurrencyConverter.swift, CurrencyConverterView.swift, CurrencyPickerLibrary.swift, CurrencySelectionView.swift, CustomTheme.swift, DatabaseManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ NotificationManager.swift,\ PackingAssistant.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/NotificationManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/PackingAssistant.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/NotificationManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/PackingAssistant.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ThemeCreatorView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ WeatherForecastView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/WeatherForecastView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/WeatherForecastView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling SettingsManager.swift, SettingsView.swift, StatisticsView.swift, ThemeCreatorView.swift, ThemeLibraryView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling CustomTheme.swift, DatabaseManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ TripListView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripListView.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripListView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 Compiling\ TriplyApp.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/TriplyApp.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/TriplyApp.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling ThemeManager.swift, TripDataManager.swift, TripDetailView.swift, TripExportView.swift, TripListView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ ExpenseInsightsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseInsightsView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseInsightsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling SettingsView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ TripRemindersView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripRemindersView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripRemindersView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal x86_64 Compiling ExpenseTrackingView.swift, ExportManager.swift, FeatureTests.swift, ItineraryItem.swift, ItineraryView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ TripDataManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/TripDataManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/TripDataManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ReceiptOCRManager.swift, SettingsManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ ThemeManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ThemeManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ThemeManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for Triply (in target 'Triply' from project 'Triply')
+
+SwiftDriver\ Compilation\ Requirements Triply normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Triply -Onone -enforce-exclusivity\=checked @/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply_const_extract_protocols.json -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-generated-files.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-own-target-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-all-target-headers.hmap -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-project-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources-normal/arm64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/arm64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply-Swift.h -working-directory /Users/tobiadegoroye/Developer/SwiftUI/Triply -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling NotificationManager.swift, PackingAssistant.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ LanguageSelectionView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/LanguageSelectionView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/LanguageSelectionView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+Copy /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/arm64-apple-ios-simulator.swiftmodule /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftmodule (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftmodule /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+SwiftDriverJobDiscovery normal arm64 Compiling TripRemindersView.swift (in target 'Triply' from project 'Triply')
+
+Copy /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/arm64-apple-ios-simulator.abi.json /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.abi.json (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.abi.json /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftsourceinfo (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftsourceinfo /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+SwiftCompile normal arm64 Compiling\ DestinationSearchView.swift,\ EditTripView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/DestinationSearchView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/EditTripView.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/DestinationSearchView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/EditTripView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 Compiling\ ThemeLibraryView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeLibraryView.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ThemeLibraryView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 Compiling\ ExpenseTrackingView.swift,\ ItineraryView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseTrackingView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ItineraryView.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseTrackingView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ItineraryView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling TriplyApp.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TripDataManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ CurrencyConverter.swift,\ CurrencyConverterView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/CurrencyConverter.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencyConverterView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/CurrencyConverter.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/CurrencyConverterView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ThemeManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ AnalyticsView.swift,\ ContentView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AnalyticsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ContentView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AnalyticsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ContentView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ExpenseInsightsView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ LanguagePickerLibrary.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/LanguagePicker/LanguagePickerLibrary.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/LanguagePicker/LanguagePickerLibrary.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling WeatherForecastView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ TripDetailView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripDetailView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripDetailView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling LanguageSelectionView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ AddDestinationView.swift,\ AddTripView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddDestinationView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddTripView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddDestinationView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/AddTripView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling CurrencyPickerLibrary.swift, CurrencySelectionView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ AppSettings.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/AppSettings.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/AppSettings.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling PackingItem.swift, PackingListView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ TripModel.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/TripModel.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/TripModel.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling TripListView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ ExportManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ExportManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/ExportManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppSettings.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ TripOptimizerView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripOptimizerView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripOptimizerView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling DestinationSearchView.swift, EditTripView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ TripExportView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripExportView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/TripExportView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling ThemeLibraryView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ CurrencyAdapter.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyAdapter.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Libraries/CurrencyPicker/CurrencyAdapter.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling CurrencyConverter.swift, CurrencyConverterView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 Compiling\ StatisticsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/StatisticsView.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal arm64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/StatisticsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling LanguagePickerLibrary.swift (in target 'Triply' from project 'Triply')
+
+SwiftCompile normal x86_64 Compiling\ DestinationModel.swift,\ DestinationSearchManager.swift,\ DestinationSearchView.swift,\ EditTripView.swift,\ Expense.swift,\ ExpenseInsightsView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/DestinationModel.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/DestinationSearchManager.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/DestinationSearchView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/EditTripView.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/Expense.swift /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseInsightsView.swift (in target 'Triply' from project 'Triply')
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/DestinationModel.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Managers/DestinationSearchManager.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/DestinationSearchView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/EditTripView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Models/Expense.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftCompile normal x86_64 /Users/tobiadegoroye/Developer/SwiftUI/Triply/Views/ExpenseInsightsView.swift (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+
+SwiftDriverJobDiscovery normal arm64 Compiling AnalyticsView.swift, ContentView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TripModel.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AddDestinationView.swift, AddTripView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling CurrencyAdapter.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TripExportView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ExportManager.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TripDetailView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TripOptimizerView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling StatisticsView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriverJobDiscovery normal arm64 Compiling ExpenseTrackingView.swift, ItineraryView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriver\ Compilation Triply normal arm64 com.apple.xcode.tools.swift.compiler (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Triply -Onone -enforce-exclusivity\=checked @/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target arm64-apple-ios17.0-simulator -g -module-cache-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply_const_extract_protocols.json -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-generated-files.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-own-target-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-all-target-headers.hmap -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-project-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources-normal/arm64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/arm64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply-Swift.h -working-directory /Users/tobiadegoroye/Developer/SwiftUI/Triply -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply.debug.dylib normal arm64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -filelist /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.LinkFileList -install_name @rpath/Triply.debug.dylib -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply.debug.dylib
+
+SwiftDriverJobDiscovery normal x86_64 Compiling DestinationModel.swift, DestinationSearchManager.swift, DestinationSearchView.swift, EditTripView.swift, Expense.swift, ExpenseInsightsView.swift (in target 'Triply' from project 'Triply')
+
+SwiftDriver\ Compilation Triply normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name Triply -Onone -enforce-exclusivity\=checked @/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -target x86_64-apple-ios17.0-simulator -g -module-cache-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Index.noindex/DataStore -swift-version 5 -I /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/SDKStatCaches.noindex/iphonesimulator18.5-22F76-d5fc8ad4295d2ef488fb7d0f804ce0c4.sdkstatcache -output-file-map /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply-OutputFileMap.json -use-frontend-parseable-output -save-temps -no-color-diagnostics -serialize-diagnostics -emit-dependencies -emit-module -emit-module-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftmodule -validate-clang-modules-once -clang-build-session-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/swift-overrides.hmap -emit-const-values -Xfrontend -const-gather-protocols-file -Xfrontend /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply_const_extract_protocols.json -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-generated-files.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-own-target-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-all-target-headers.hmap -Xcc -iquote -Xcc /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-project-headers.hmap -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources-normal/x86_64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources/x86_64 -Xcc -I/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply-Swift.h -working-directory /Users/tobiadegoroye/Developer/SwiftUI/Triply -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply.debug.dylib normal x86_64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -filelist /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.LinkFileList -install_name @rpath/Triply.debug.dylib -Xlinker -rpath -Xlinker @executable_path/Frameworks -dead_strip -Xlinker -object_path_lto -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-ExecutorLinkFileList-normal-arm64.txt (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    construct-stub-executor-link-file-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'Triply' from project 'Triply')
+
+Ld /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply normal arm64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios17.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply.app-Simulated.xcent.der /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply
+
+CreateUniversalBinary /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply.debug.dylib normal arm64\ x86_64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply.debug.dylib /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply.debug.dylib -output /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-ExecutorLinkFileList-normal-x86_64.txt (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    construct-stub-executor-link-file-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-ExecutorLinkFileList-normal-x86_64.txt
+note: Using stub executor library with Swift entry point. (in target 'Triply' from project 'Triply')
+
+Ld /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply normal x86_64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-ios17.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk -O0 -L/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -F/Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-DebugDylibPath-normal-x86_64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-DebugDylibInstallName-normal-x86_64.txt -Xlinker -filelist -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply-ExecutorLinkFileList-normal-x86_64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply.app-Simulated.xcent.der /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply
+
+CreateUniversalBinary /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply normal arm64\ x86_64 (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Binary/Triply /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Binary/Triply -output /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply
+
+CopySwiftLibs /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply.debug.dylib --scan-folder /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Frameworks --scan-folder /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/PlugIns --scan-folder /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/SystemExtensions --scan-folder /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name Triply --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator18.5.sdk --xcode-version 16F6 --platform-family iOS --deployment-target 17.0 --bundle-identifier com.triply.app --output /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app --target-triple arm64-apple-ios17.0-simulator --target-triple x86_64-apple-ios17.0-simulator --binary-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply --dependency-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply_dependency_info.dat --dependency-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply_dependency_info.dat --stringsdata-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.SwiftFileList --source-file-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.SwiftFileList --metadata-file-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply.DependencyMetadataFileList --static-metadata-file-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply.DependencyStaticMetadataFileList --swift-const-vals-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/arm64/Triply.SwiftConstValuesFileList --swift-const-vals-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Objects-normal/x86_64/Triply.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --validate-assistant-intents --no-app-shortcuts-localization
+2025-11-11 14:27:57.595 appintentsmetadataprocessor[73647:34513946] Starting appintentsmetadataprocessor export
+2025-11-11 14:27:57.597 appintentsmetadataprocessor[73647:34513946] warning: Metadata extraction skipped. No AppIntents.framework dependency found.
+
+AppIntentsSSUTraining (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Info.plist --temp-dir-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/ssu --bundle-id com.triply.app --product-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app --extracted-metadata-path /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Metadata.appintents --metadata-file-list /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Intermediates.noindex/Triply.build/Debug-iphonesimulator/Triply.build/Triply.DependencyMetadataFileList --archive-ssu-assets
+2025-11-11 14:27:57.615 appintentsnltrainingprocessor[73648:34513950] Parsing options for appintentsnltrainingprocessor
+2025-11-11 14:27:57.616 appintentsnltrainingprocessor[73648:34513950] No AppShortcuts found - Skipping.
+
+CodeSign /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply.debug.dylib (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/Triply.debug.dylib
+
+CodeSign /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/__preview.dylib (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app/__preview.dylib
+
+CodeSign /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app
+
+RegisterExecutionPolicyException /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-RegisterExecutionPolicyException /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app
+
+Validate /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    builtin-validationUtility /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app -infoplist-subpath Info.plist
+
+Touch /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app (in target 'Triply' from project 'Triply')
+    cd /Users/tobiadegoroye/Developer/SwiftUI/Triply
+    /usr/bin/touch -c /Users/tobiadegoroye/Developer/SwiftUI/Triply/DerivedData/Build/Products/Debug-iphonesimulator/Triply.app
+
+** BUILD SUCCEEDED **
+

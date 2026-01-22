@@ -1,0 +1,39 @@
+Libraries Folder Structure:
+============================
+
+Libraries/
+├── WishKit/                    ← This is where WishKit files are!
+│   ├── Configuration/
+│   │   ├── Config+DoneButton.swift
+│   │   ├── Config+VoteButton.swift
+│   │   ├── Config+SegmentedControl.swift
+│   │   ├── Config+SaveButton.swift
+│   │   ├── Config+AddButton.swift
+│   │   ├── Config+Buttons.swift
+│   │   ├── Config+TabBar.swift
+│   │   └── Configuration.swift
+│   ├── API/
+│   ├── Configuration+Localization.swift
+│   ├── ProjectSettings.swift
+│   ├── Theme.swift
+│   ├── User.swift
+│   └── WishKit.swift          ← Main file
+│
+└── CurrencyPicker/            (other library)
+
+Total WishKit files: 52 Swift files
+
+To add to Xcode:
+1. Right-click "Libraries" folder
+2. "Add Files to 'Triply'..."
+3. Navigate to Libraries/WishKit
+4. Select all files (⌘A)
+5. Add with "Create groups" and "Triply" target checked
+
+
+
+
+
+
+
+
