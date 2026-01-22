@@ -1,0 +1,12 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project Triply.xcodeproj -scheme Triply -destination "platform=iOS Simulator,name=iPhone 15 Pro" build
+
+2025-11-23 21:22:46.484 xcodebuild[78284:41293463] [MT] DVTAssertions: Warning in IDEFrameworks/IDEFoundation/Execution/Schemes/IDEScheme.m:536
+Details:  ignoring attempt to mark as dirty as scheme that has a load error
+Object:   <IDEScheme: 0x118e680c0>
+Method:   -markChangedFromUserAction
+Thread:   <_NSMainThread: 0x141e0f000>{number = 1, name = main}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+2025-11-23 21:22:46.551 xcodebuild[78284:41293463] Writing error result bundle to /var/folders/8r/36smsxr57877kbly22mxdq0c0000gn/T/ResultBundle_2025-23-11_21-22-0046.xcresult
+xcodebuild: error: Scheme Triply is not currently configured for the build action.
+

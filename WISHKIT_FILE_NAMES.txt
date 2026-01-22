@@ -1,0 +1,93 @@
+# Complete List of WishKit Files to Add to Xcode Project
+
+## WishKit Files (52 files)
+
+### API/
+- Api.swift
+- CommentApi.swift
+- RequestCreatable.swift
+- UserApi.swift
+- WishApi.swift
+
+### Configuration/
+- Config+AddButton.swift
+- Config+Buttons.swift
+- Config+DoneButton.swift
+- Config+SaveButton.swift
+- Config+SegmentedControl.swift
+- Config+TabBar.swift
+- Config+VoteButton.swift
+- Configuration.swift
+
+### Extensions/
+- Bundle+AppIcon.swift
+- Bundle+AppName.swift
+- Button+Compat.swift
+- Date+Formatted.swift
+- Enum+Compat.swift
+- List+Compat.swift
+- NSTextView+Background.swift
+- ProgressView+Compat.swift
+- ScrollView+Compat.swift
+- ToolbarCompat.swift
+- UIViewController+Nav.swift
+- View+Shadow.swift
+- WishResponse+Identifiable.swift
+
+### Manager/
+- UUIDManager.swift
+
+### Model/
+- AlertModel.swift
+- CommentModel.swift
+- MockData.swift
+- WishModel.swift
+
+### SwiftUI/
+- AddButton.swift
+- CloseButton.swift
+- CommentFieldView.swift
+- CommentListView.swift
+- CreateWishView.swift
+- DetailWishView.swift
+- SeparatorView.swift
+- SingleCommentView.swift
+- WishView.swift
+- WishlistView.swift
+- WKButton.swift
+
+### SwiftUI/iOS+Catalyst/
+- WishlistView+iOS.swift
+
+### SwiftUI/macOS/
+- WishlistContainer+macOS.swift
+
+### Root Files
+- Configuration+Localization.swift
+- ProjectSettings.swift
+- Theme.swift
+- User.swift
+- WishKit.swift
+- WishState+Description.swift
+
+## WishKitShared Files (12 files)
+
+### Enum/
+- WishState.swift
+
+### Wish/Response/
+- WishResponse.swift
+
+### Wish/Comment/
+- CommentResponse.swift
+
+### Wish/User/
+- UserResponse.swift
+
+## Total: 64 Swift files
+
+## Quick Add Instructions:
+1. In Xcode: Right-click Libraries → "Add Files to 'Itinero'..."
+2. Select Libraries/WishKit and Libraries/WishKitShared folders
+3. Check "Create groups" and "Itinero" target
+4. Click "Add"

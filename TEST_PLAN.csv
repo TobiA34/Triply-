@@ -1,0 +1,278 @@
+Test ID,Feature,Test Case Name,Test Type,Priority,Test Steps,Expected Result,Status,Notes
+TC-001,Trip Management,Create new trip with valid data,UI,P1,"1. Tap + button
+2. Enter trip name
+3. Select start and end dates
+4. Add notes (optional)
+5. Tap Save","Trip is created and appears in trip list",Not Started,
+TC-002,Trip Management,Create trip with invalid dates (end before start),UI,P1,"1. Tap + button
+2. Enter trip name
+3. Select end date before start date
+4. Attempt to save","Validation error shown, trip not created",Not Started,
+TC-003,Trip Management,Edit existing trip details,UI,P1,"1. Open trip from list
+2. Tap Edit button
+3. Modify name, dates, or notes
+4. Save changes","Changes are saved and reflected in trip detail view",Not Started,
+TC-004,Trip Management,Delete trip via swipe gesture,UI,P1,"1. Swipe left on trip in list
+2. Tap Delete button
+3. Confirm deletion","Trip is removed from list",Not Started,
+TC-005,Trip Management,Trip persistence after app restart,Integration,P1,"1. Create a trip
+2. Force close app
+3. Reopen app","Trip data persists and is visible in list",Not Started,
+TC-006,Trip Management,View trip list with multiple trips,UI,P1,"1. Create 3+ trips
+2. View trip list","All trips displayed in chronological order",Not Started,
+TC-007,Trip Management,View trip list with no trips,UI,P1,"1. Delete all trips
+2. View trip list","Empty state message is displayed",Not Started,
+TC-008,Trip Management,Trip duration calculation,Unit,P1,"1. Create trip with start date Jan 1
+2. Set end date Jan 5","Duration calculated as 4 days",Not Started,
+TC-009,Destination Management,Add destination to trip,UI,P1,"1. Open trip detail
+2. Tap Add Destination
+3. Enter destination name and address
+4. Save","Destination appears in trip destinations list",Not Started,
+TC-010,Destination Management,Add destination with notes,UI,P2,"1. Open trip detail
+2. Tap Add Destination
+3. Enter name, address, and notes
+4. Save","Destination saved with all information",Not Started,
+TC-011,Destination Management,Delete destination,UI,P1,"1. Open trip with destinations
+2. Swipe left on destination
+3. Tap Delete","Destination removed from trip",Not Started,
+TC-012,Destination Management,Search destinations by city,UI,P1,"1. Create new trip
+2. Tap Search Destinations
+3. Enter city name
+4. Select from results","Destination added to trip",Not Started,
+TC-013,Destination Management,Search destinations with no results,UI,P1,"1. Create new trip
+2. Tap Search Destinations
+3. Enter invalid/non-existent location
+4. Search","No results message displayed gracefully",Not Started,
+TC-014,Destination Management,Add multiple destinations to trip,UI,P1,"1. Open trip
+2. Add 3+ destinations via search","All destinations appear in trip",Not Started,
+TC-015,Itinerary Management,Add itinerary item with time,UI,P1,"1. Open trip detail
+2. Navigate to Itinerary tab
+3. Tap Add Activity
+4. Enter activity name, date, time, and notes
+5. Save","Activity appears in itinerary list",Not Started,
+TC-016,Itinerary Management,Mark activity as booked,UI,P1,"1. Open itinerary
+2. Tap on activity
+3. Toggle Booked status
+4. Add booking reference","Activity shows booked status with reference",Not Started,
+TC-017,Itinerary Management,Reorder itinerary items,UI,P2,"1. Open itinerary
+2. Drag and drop items to reorder","Items maintain new order",Not Started,
+TC-018,Itinerary Management,Delete itinerary item,UI,P1,"1. Open itinerary
+2. Swipe left on item
+3. Tap Delete","Item removed from itinerary",Not Started,
+TC-019,Itinerary Management,Itinerary sorted by date and time,Unit,P1,"1. Add multiple activities with different times
+2. View itinerary","Activities sorted chronologically",Not Started,
+TC-020,Expense Tracking,Add expense manually,UI,P1,"1. Open trip detail
+2. Navigate to Expenses tab
+3. Tap Add Expense
+4. Enter amount, category, currency, date
+5. Save","Expense appears in expenses list with correct total",Not Started,
+TC-021,Expense Tracking,Add expense via receipt OCR,UI,P2,"1. Open trip detail
+2. Navigate to Expenses tab
+3. Tap Scan Receipt
+4. Take photo of receipt
+5. Review extracted data
+6. Save","Expense created from OCR with correct amount",Not Started,
+TC-022,Expense Tracking,Add expense in different currency,UI,P1,"1. Open trip
+2. Add expense in USD
+3. Add expense in EUR
+4. View totals","Expenses converted to base currency, totals correct",Not Started,
+TC-023,Expense Tracking,Edit expense,UI,P1,"1. Open expenses list
+2. Tap on expense
+3. Modify amount or category
+4. Save","Changes reflected in expense and totals updated",Not Started,
+TC-024,Expense Tracking,Delete expense,UI,P1,"1. Open expenses list
+2. Swipe left on expense
+3. Tap Delete","Expense removed, totals recalculated",Not Started,
+TC-025,Expense Tracking,Expense totals calculation,Unit,P1,"1. Add expenses: $100, $50, $25
+2. View total","Total shows $175",Not Started,
+TC-026,Expense Tracking,Expense category filtering,UI,P2,"1. Add expenses in multiple categories
+2. Filter by category","Only selected category expenses shown",Not Started,
+TC-027,Expense Tracking,Expense insights and charts,UI,P2,"1. Add multiple expenses
+2. Navigate to Expense Insights
+3. View charts","Charts display spending by category and trends",Not Started,
+TC-028,Currency Converter,Convert between currencies,UI,P1,"1. Open Settings
+2. Navigate to Currency Converter
+3. Select source currency
+4. Select target currency
+5. Enter amount
+6. View conversion","Correct conversion rate applied and displayed",Not Started,
+TC-029,Currency Converter,Switch currency pairs,UI,P1,"1. Open currency converter
+2. Convert USD to EUR
+3. Switch to EUR to GBP
+4. Convert","Conversion updates correctly for new pair",Not Started,
+TC-030,Currency Converter,Convert extreme values,Unit,P2,"1. Convert $0.01
+2. Convert $1,000,000","Both values convert correctly with proper formatting",Not Started,
+TC-031,Currency Converter,Convert same currency,Unit,P1,"1. Select USD to USD
+2. Enter amount","Result equals input amount",Not Started,
+TC-032,Currency Converter,Currency formatting by locale,Unit,P1,"1. Set locale to different region
+2. Convert currency","Amount formatted according to locale conventions",Not Started,
+TC-033,Packing List,Add packing item,UI,P1,"1. Open trip detail
+2. Navigate to Packing tab
+3. Tap Add Item
+4. Enter item name
+5. Save","Item appears in packing list",Not Started,
+TC-034,Packing List,Mark item as packed,UI,P1,"1. Open packing list
+2. Tap checkbox on item","Item marked as packed with visual indicator",Not Started,
+TC-035,Packing List,Smart packing suggestions,UI,P2,"1. Open packing list
+2. Tap Smart Suggestions
+3. Review suggested items
+4. Add suggestions","Weather-based suggestions appear and can be added",Not Started,
+TC-036,Packing List,Delete packing item,UI,P1,"1. Open packing list
+2. Swipe left on item
+3. Tap Delete","Item removed from list",Not Started,
+TC-037,Packing List,Bulk pack/unpack items,UI,P2,"1. Open packing list with multiple items
+2. Use bulk action to pack all","All items marked as packed",Not Started,
+TC-038,Packing List,Search/filter packing items,UI,P2,"1. Open packing list with many items
+2. Enter search term","Filtered results displayed",Not Started,
+TC-039,Packing List,Packing suggestions based on trip length,Unit,P2,"1. Create 1-day trip
+2. Create 30-day trip
+3. Get suggestions for each","Suggestions differ based on trip duration",Not Started,
+TC-040,Weather Forecast,View weather for destination,UI,P2,"1. Open trip with destination
+2. Navigate to Weather tab
+3. Select destination","5-day forecast displayed for destination dates",Not Started,
+TC-041,Weather Forecast,Weather loading state,UI,P2,"1. Open weather tab
+2. Observe during API call","Loading indicator shown while fetching",Not Started,
+TC-042,Weather Forecast,Weather error handling,UI,P2,"1. Disable network
+2. Open weather tab
+3. Select destination","Error message displayed gracefully",Not Started,
+TC-043,Weather Forecast,Weather for multiple destinations,UI,P2,"1. Open trip with 2+ destinations
+2. View weather tab
+3. Switch between destinations","Forecast updates for selected destination",Not Started,
+TC-044,Trip Optimizer,Run trip optimization,UI,P2,"1. Open trip with multiple destinations
+2. Tap menu (⋯)
+3. Select Optimize Trip
+4. Review suggestions","Optimization suggestions displayed for route/cost",Not Started,
+TC-045,Trip Optimizer,Optimization with single destination,UI,P2,"1. Open trip with one destination
+2. Run optimizer","Appropriate message or no optimization needed",Not Started,
+TC-046,Analytics,View analytics dashboard,UI,P2,"1. Tap menu (⋯) from main screen
+2. Tap Analytics
+3. View dashboard","Charts and statistics displayed",Not Started,
+TC-047,Analytics,Spending trends chart,UI,P2,"1. Add expenses across multiple months
+2. View analytics
+3. Check trends chart","Chart shows spending trends over time",Not Started,
+TC-048,Analytics,Category breakdown,UI,P2,"1. Add expenses in multiple categories
+2. View analytics
+3. Check category chart","Pie/bar chart shows category distribution",Not Started,
+TC-049,Export,Export trip as PDF,UI,P1,"1. Open trip detail
+2. Tap menu (⋯)
+3. Select Export
+4. Choose PDF format
+5. Share","PDF file generated with trip details",Not Started,
+TC-050,Export,Export trip as CSV,UI,P1,"1. Open trip detail
+2. Tap menu (⋯)
+3. Select Export
+4. Choose CSV format
+5. Share","CSV file generated with trip data",Not Started,
+TC-051,Export,Export with all trip data,Integration,P1,"1. Create trip with destinations, itinerary, expenses, packing
+2. Export trip","All data included in export file",Not Started,
+TC-052,Export,Large trip export performance,Performance,P2,"1. Create trip with 100+ items in each section
+2. Export trip","Export completes within 5 seconds",Not Started,
+TC-053,Settings,Change app language,UI,P1,"1. Open Settings
+2. Navigate to App Language
+3. Select different language
+4. Return to main screen","UI text updates to selected language",Not Started,
+TC-054,Settings,Change app theme,UI,P1,"1. Open Settings
+2. Navigate to App Theme
+3. Select Light/Dark/System
+4. Return to main screen","Theme changes immediately",Not Started,
+TC-055,Settings,Change default currency,UI,P1,"1. Open Settings
+2. Navigate to Select Currency
+3. Choose different currency
+4. View expenses","Default currency updated for new expenses",Not Started,
+TC-056,Settings,Settings persistence,Integration,P1,"1. Change language, theme, currency
+2. Force close app
+3. Reopen app","All settings persist correctly",Not Started,
+TC-057,Settings,Notification permissions toggle,UI,P1,"1. Open Settings
+2. Toggle notification permissions
+3. Test scheduled reminder","Notifications work according to toggle state",Not Started,
+TC-058,Localization,All strings localized,Integration,P1,"1. Switch to each supported language
+2. Navigate through all screens","No missing or untranslated strings",Not Started,
+TC-059,Localization,Text truncation handling,UI,P2,"1. Use language with long strings
+2. View all screens","Text doesn't overflow or clip",Not Started,
+TC-060,Localization,Date and number formatting,Unit,P1,"1. Switch to different locale
+2. View dates and currency amounts","Formats match locale conventions",Not Started,
+TC-061,Accessibility,VoiceOver navigation,Accessibility,P1,"1. Enable VoiceOver
+2. Navigate through main screens
+3. Interact with key features","All interactive elements accessible via VoiceOver",Not Started,
+TC-062,Accessibility,Accessibility labels present,Accessibility,P1,"1. Enable VoiceOver
+2. Navigate app
+3. Check all buttons and controls","All elements have descriptive labels",Not Started,
+TC-063,Accessibility,Dynamic Type support,Accessibility,P1,"1. Set Dynamic Type to Extra Large
+2. Navigate through all screens","Text scales properly, layout doesn't break",Not Started,
+TC-064,Accessibility,Color contrast compliance,Accessibility,P1,"1. Test in Light theme
+2. Test in Dark theme
+3. Check text on backgrounds","Contrast ratios meet WCAG AA standards",Not Started,
+TC-065,Accessibility,Reduce Motion support,Accessibility,P2,"1. Enable Reduce Motion in iOS settings
+2. Navigate app","Animations respect system preference",Not Started,
+TC-066,Performance,Cold launch time,Performance,P1,"1. Force close app
+2. Launch app
+3. Measure time to first screen","Launch completes in < 2.5 seconds",Not Started,
+TC-067,Performance,List scrolling with many items,Performance,P2,"1. Create trip with 1000+ items
+2. Scroll through list","Smooth scrolling maintained (60fps)",Not Started,
+TC-068,Performance,OCR processing time,Performance,P2,"1. Scan receipt
+2. Measure processing time","OCR completes within acceptable threshold",Not Started,
+TC-069,Performance,Memory usage with large datasets,Performance,P2,"1. Create multiple trips with extensive data
+2. Monitor memory usage","Memory usage remains within acceptable limits",Not Started,
+TC-070,Data Persistence,SwiftData model persistence,Integration,P1,"1. Create trip with all data types
+2. Force close app
+3. Reopen app","All data persists correctly",Not Started,
+TC-071,Data Persistence,Concurrent access safety,Integration,P2,"1. Create multiple trips simultaneously
+2. Edit trips concurrently","No data corruption or race conditions",Not Started,
+TC-072,Data Persistence,Data migration,Integration,P2,"1. Update app with schema changes
+2. Launch app with existing data","Data migrates correctly without loss",Not Started,
+TC-073,Error Handling,Network error handling,UI,P2,"1. Disable network
+2. Attempt operations requiring network
+3. Re-enable network","Error messages shown, app recovers gracefully",Not Started,
+TC-074,Error Handling,Invalid input validation,UI,P1,"1. Attempt to create trip with empty name
+2. Attempt invalid date ranges
+3. Attempt negative expense amounts","Validation errors shown, invalid data rejected",Not Started,
+TC-075,Error Handling,Permission denied handling,UI,P2,"1. Deny camera permission
+2. Attempt receipt scan
+3. Deny notification permission
+4. Attempt to set reminder","Appropriate error messages and fallbacks",Not Started,
+TC-076,AI Features,AI chat interaction,UI,P2,"1. Open trip detail
+2. Navigate to AI Assistant
+3. Open Chat tab
+4. Send message
+5. Receive response","AI responds appropriately to queries",Not Started,
+TC-077,AI Features,AI insights generation,UI,P2,"1. Open trip with data
+2. Navigate to AI Insights tab
+3. View generated insights","Relevant insights displayed based on trip data",Not Started,
+TC-078,AI Features,AI trip analysis,UI,P2,"1. Open trip with complete data
+2. Navigate to AI Analysis tab
+3. View analysis","Comprehensive analysis generated and displayed",Not Started,
+TC-079,AI Features,AI smart suggestions,UI,P2,"1. Open trip
+2. Navigate to AI Suggestions tab
+3. Review suggestions","Contextual suggestions provided",Not Started,
+TC-080,Unit Tests,CurrencyConverter conversion logic,Unit,P1,"1. Test with various exchange rates
+2. Test edge cases (zero, negative, large numbers)","All conversions calculate correctly",Not Started,
+TC-081,Unit Tests,TripManager CRUD operations,Unit,P1,"1. Test create, read, update, delete
+2. Test sorting and filtering","All operations work correctly",Not Started,
+TC-082,Unit Tests,TripOptimizer algorithm,Unit,P2,"1. Test with various destination sets
+2. Verify optimization results","Optimization produces valid results",Not Started,
+TC-083,Unit Tests,PackingAssistant suggestions,Unit,P2,"1. Test with different trip parameters
+2. Verify suggestion logic","Suggestions match expected criteria",Not Started,
+TC-084,Unit Tests,ReceiptOCRManager parsing,Unit,P2,"1. Test with sample receipt data
+2. Test error cases","Parsing extracts data correctly",Not Started,
+TC-085,Integration Tests,TripDataManager and DatabaseManager,Integration,P1,"1. Test data flow between managers
+2. Test persistence layer","Data correctly saved and retrieved",Not Started,
+TC-086,Integration Tests,ExportManager file generation,Integration,P1,"1. Test PDF generation
+2. Test CSV generation
+3. Verify file integrity","Files generated correctly with valid content",Not Started,
+TC-087,Integration Tests,NotificationManager scheduling,Integration,P2,"1. Test reminder creation
+2. Test notification delivery","Notifications scheduled and delivered correctly",Not Started,
+TC-088,Regression,Full user journey end-to-end,UI,P1,"1. Create trip
+2. Add destinations
+3. Plan itinerary
+4. Track expenses
+5. Pack items
+6. Export trip","Complete journey works without errors",Not Started,
+TC-089,Regression,App state after background/foreground,Integration,P1,"1. Use app
+2. Background app
+3. Wait 5 minutes
+4. Foreground app","App state preserved, no crashes",Not Started,
+TC-090,Regression,Multiple trips management,UI,P1,"1. Create 5+ trips
+2. Switch between trips
+3. Edit and delete trips","All operations work correctly with multiple trips",Not Started,
+
+
