@@ -39,6 +39,12 @@ struct SettingsView: View {
             contactSection
             proSection
         }
+        // Local keyboard handling so taps on rows stay responsive
+        .keyboardDismissable(
+            onTap: false,
+            onDrag: true,
+            showDoneButton: true
+        )
         .scrollContentBackground(.hidden)
         .background(themeBackgroundColor)
         .navigationTitle("Settings")

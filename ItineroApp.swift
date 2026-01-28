@@ -114,11 +114,6 @@ private struct RootThemeView: View {
             ContentView()
                 .applyAppTheme() // Applies theme colors and styles
                 .refreshOnLanguageChange() // Ensure app-wide language refresh
-                .keyboardDismissable(
-                    onTap: true,
-                    onDrag: true,
-                    showDoneButton: true
-                ) // Global keyboard dismiss + Done button on all screens
         }
         .id(refreshID)
         .onReceive(NotificationCenter.default.publisher(for: .themeChanged)) { _ in
