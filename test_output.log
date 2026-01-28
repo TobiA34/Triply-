@@ -1,0 +1,15 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test -workspace Itinero.xcworkspace -scheme Itinero -destination "platform=iOS Simulator,id=A66A0C2F-E511-4D91-9EBD-83E62CD1E104" "-only-testing:ItineroUITests/TripValidationUITests"
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  wishkit-ios-shared: https://github.com/wishkit/wishkit-ios-shared.git @ 1.5.0
+  wishkit-ios: https://github.com/wishkit/wishkit-ios.git @ 4.7.0
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:iOS Simulator, arch:arm64, id:A66A0C2F-E511-4D91-9EBD-83E62CD1E104, OS:17.5, name:iPhone 15 }
+{ platform:iOS Simulator, arch:x86_64, id:A66A0C2F-E511-4D91-9EBD-83E62CD1E104, OS:17.5, name:iPhone 15 }
+2026-01-25 15:24:40.226 xcodebuild[89396:7793816] Writing error result bundle to /var/folders/8r/36smsxr57877kbly22mxdq0c0000gn/T/ResultBundle_2026-25-01_15-24-0040.xcresult
+xcodebuild: error: Failed to build workspace Itinero with scheme Itinero.: Cannot test target “ItineroUITests” on “iPhone 15”: iPhone 15’s iOS Simulator 17.5 doesn’t match ItineroUITests’s iOS Simulator 26.1 deployment target.

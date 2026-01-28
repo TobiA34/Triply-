@@ -46,21 +46,21 @@ class IAPManager: ObservableObject {
     func loadProducts() async {
         // No-op: in-app purchases disabled
         products = []
-        lastInfoMessage = nil
+                lastInfoMessage = nil
         lastErrorMessage = nil
     }
     
     func purchasePro() async -> Bool {
         // Immediately mark Pro as unlocked
-        setProEntitlement(true)
+                setProEntitlement(true)
         lastInfoMessage = "Pro is unlocked. In-app purchases are disabled in this build."
         lastErrorMessage = nil
-        return true
+                    return true
     }
     
     func restorePurchases() async {
         // No-op: always Pro, nothing to restore
-        setProEntitlement(true)
+                setProEntitlement(true)
         lastInfoMessage = "Restore not needed. Pro is already unlocked."
         lastErrorMessage = nil
     }

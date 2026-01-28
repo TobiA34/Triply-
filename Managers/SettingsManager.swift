@@ -152,5 +152,35 @@ class SettingsManager: ObservableObject {
     func formatAmount(_ amount: Double) -> String {
         return "\(currentCurrency.symbol)\(String(format: "%.2f", amount))"
     }
+
+    /// Returns an SF Symbol name for the current currency.
+    /// Example: USD → `dollarsign.circle` / `dollarsign.circle.fill`,
+    ///          GBP → `sterlingsign.circle`, EUR → `eurosign.circle`, etc.
+    func currencyIconName(filled: Bool = true) -> String {
+        let base: String
+        switch currentCurrency.code.uppercased() {
+        case "USD", "CAD", "AUD", "NZD":
+            base = "dollarsign.circle"
+        case "GBP":
+            base = "sterlingsign.circle"
+        case "EUR":
+            base = "eurosign.circle"
+        case "JPY", "CNY":
+            base = "yensign.circle"
+        case "KRW":
+            base = "wonsign.circle"
+        case "TRY":
+            base = "turkishlirasign.circle"
+        case "RUB":
+            base = "rublesign.circle"
+        case "ILS":
+            base = "shekelsign.circle"
+        case "INR":
+            base = "indianrupeesign.circle"
+        default:
+            base = "dollarsign.circle"
+        }
+        return filled ? "\(base).fill" : base
+    }
 }
 

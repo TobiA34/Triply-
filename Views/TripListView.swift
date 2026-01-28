@@ -420,7 +420,7 @@ struct TripRowView: View {
                     
                     if let budget = trip.budget {
                         HStack {
-                            Image(systemName: "dollarsign.circle.fill")
+                            Image(systemName: SettingsManager.shared.currencyIconName())
                                 .font(.caption)
                                 .foregroundColor(.green)
                             Text(SettingsManager.shared.formatAmount(budget))
@@ -551,7 +551,7 @@ struct EnhancedStatsCardView: View {
                 )
                 if totalBudget > 0 {
                     StatsCardItem(
-                        icon: "dollarsign.circle.fill",
+                        icon: SettingsManager.shared.currencyIconName(),
                         value: SettingsManager.shared.formatAmount(totalBudget),
                         label: "Total Budget",
                         color: .green

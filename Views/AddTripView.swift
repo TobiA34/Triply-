@@ -697,21 +697,26 @@ struct AddTripView: View {
                             RoundedRectangle(cornerRadius: 12)
                                 .fill(Color(.systemGray6))
                         )
+                        .accessibilityIdentifier("Trip Name")
                         .textInputAutocapitalization(.words)
                         .onChange(of: tripName) { oldValue, newValue in
                             if ContentFilter.containsBlockedContent(newValue) {
+                                Task { @MainActor in
                                 tripName = oldValue
                                 // Trigger haptic feedback
                                 let generator = UINotificationFeedbackGenerator()
                                 generator.notificationOccurred(.warning)
+                                }
                             }
                         }
                         .onChange(of: tripName) { _, newValue in
+                            Task { @MainActor in
                             let result = FormValidator.validateTripName(newValue)
                             if result.isValid {
                                 fieldErrors.removeValue(forKey: "tripName")
                             } else {
                                 fieldErrors["tripName"] = result.errorMessage
+                                }
                             }
                         }
                     
@@ -776,13 +781,17 @@ struct AddTripView: View {
                     DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .onChange(of: startDate) { _, _ in
+                            Task { @MainActor in
                             validateDates()
+                            }
                         }
                     
                     DatePicker("End Date", selection: $endDate, in: startDate..., displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .onChange(of: endDate) { _, _ in
+                            Task { @MainActor in
                             validateDates()
+                            }
                         }
                     
                     // Date validation warning
@@ -925,11 +934,13 @@ struct AddTripView: View {
                             .font(.title3)
                             .fontWeight(.semibold)
                             .onChange(of: budget) { _, newValue in
+                                Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
                                 if result.isValid {
                                     fieldErrors.removeValue(forKey: "budget")
                                 } else {
                                     fieldErrors["budget"] = result.errorMessage
+                                    }
                                 }
                             }
                     }
@@ -960,11 +971,13 @@ struct AddTripView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         BudgetRow(icon: "bed.double.fill", label: "Accommodation", amount: $accommodationBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: accommodationBudget) { _, newValue in
+                                Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
                                 if result.isValid {
                                     fieldErrors.removeValue(forKey: "accommodationBudget")
                                 } else {
                                     fieldErrors["accommodationBudget"] = result.errorMessage
+                                    }
                                 }
                             }
                         if let error = fieldErrors["accommodationBudget"] {
@@ -978,11 +991,13 @@ struct AddTripView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         BudgetRow(icon: "fork.knife", label: "Food", amount: $foodBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: foodBudget) { _, newValue in
+                                Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
                                 if result.isValid {
                                     fieldErrors.removeValue(forKey: "foodBudget")
                                 } else {
                                     fieldErrors["foodBudget"] = result.errorMessage
+                                    }
                                 }
                             }
                         if let error = fieldErrors["foodBudget"] {
@@ -996,11 +1011,13 @@ struct AddTripView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         BudgetRow(icon: "figure.walk", label: "Activities", amount: $activitiesBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: activitiesBudget) { _, newValue in
+                                Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
                                 if result.isValid {
                                     fieldErrors.removeValue(forKey: "activitiesBudget")
                                 } else {
                                     fieldErrors["activitiesBudget"] = result.errorMessage
+                                    }
                                 }
                             }
                         if let error = fieldErrors["activitiesBudget"] {
@@ -1014,11 +1031,13 @@ struct AddTripView: View {
                     VStack(alignment: .leading, spacing: 4) {
                         BudgetRow(icon: "airplane", label: "Transportation", amount: $transportationBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: transportationBudget) { _, newValue in
+                                Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
                                 if result.isValid {
                                     fieldErrors.removeValue(forKey: "transportationBudget")
                                 } else {
                                     fieldErrors["transportationBudget"] = result.errorMessage
+                                    }
                                 }
                             }
                         if let error = fieldErrors["transportationBudget"] {
@@ -1067,11 +1086,13 @@ struct AddTripView: View {
                         }
                     }
                     .onChange(of: travelCompanions) { _, newValue in
+                        Task { @MainActor in
                         let result = FormValidator.validateTravelCompanions(newValue)
                         if result.isValid {
                             fieldErrors.removeValue(forKey: "travelCompanions")
                         } else {
                             fieldErrors["travelCompanions"] = result.errorMessage
+                            }
                         }
                     }
                     
@@ -1174,7 +1195,9 @@ struct AddTripView: View {
                         TextField("", text: $newTag)
                             .onChange(of: newTag) { oldValue, newValue in
                                 if ContentFilter.containsBlockedContent(newValue) {
+                                    Task { @MainActor in
                                     newTag = oldValue
+                                    }
                                 }
                             }
                             .textFieldStyle(.plain)
@@ -1265,7 +1288,9 @@ struct AddTripView: View {
                 TextEditor(text: $notes)
                     .onChange(of: notes) { oldValue, newValue in
                         if ContentFilter.containsBlockedContent(newValue) {
+                            Task { @MainActor in
                             notes = oldValue
+                            }
                         }
                     }
                     .foregroundColor(.primary)
@@ -1279,11 +1304,13 @@ struct AddTripView: View {
                             .fill(Color(.systemGray6))
                     )
                     .onChange(of: notes) { _, newValue in
+                        Task { @MainActor in
                         let result = FormValidator.validateTripNotes(newValue)
                         if result.isValid {
                             fieldErrors.removeValue(forKey: "notes")
                         } else {
                             fieldErrors["notes"] = result.errorMessage
+                            }
                         }
                     }
                 

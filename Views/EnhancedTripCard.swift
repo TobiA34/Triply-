@@ -53,6 +53,8 @@ struct EnhancedTripCard: View {
                             .font(.system(size: 22, weight: .bold))
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+                            .accessibilityIdentifier("trip_name")
+                            .accessibilityLabel(trip.name)
                         
                         HStack(spacing: 6) {
                             Image(systemName: "calendar")

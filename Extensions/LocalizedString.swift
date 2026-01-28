@@ -106,28 +106,40 @@ private struct AppThemeWrapper<Content: View>: View {
             .scrollContentBackground(.hidden) // Hide default Form/List backgrounds
             .id(refreshID)
             .onReceive(NotificationCenter.default.publisher(for: .languageChanged)) { _ in
-                // Force refresh when language changes
+                // Force refresh when language changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 refreshID = UUID()
+                }
             }
             .onReceive(NotificationCenter.default.publisher(for: .themeChanged)) { _ in
-                // Force refresh when theme changes
+                // Force refresh when theme changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 refreshID = UUID()
+                }
             }
             .onChange(of: themeManager.currentTheme) { _, _ in
-                // Force refresh when theme changes
+                // Force refresh when theme changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 refreshID = UUID()
+                }
             }
             .onChange(of: themeManager.defaultPalette) { _, _ in
-                // Force refresh when default palette changes
+                // Force refresh when default palette changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 refreshID = UUID()
+                }
             }
             .onChange(of: themeManager.activeCustomThemeID) { _, _ in
-                // Force refresh when custom theme changes
+                // Force refresh when custom theme changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 refreshID = UUID()
+                }
             }
             .onChange(of: localizationManager.currentLanguage) { _, _ in
-                // Force refresh when language changes
+                // Force refresh when language changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 refreshID = UUID()
+                }
             }
     }
 }

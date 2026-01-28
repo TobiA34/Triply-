@@ -126,11 +126,13 @@ class FreePlacesManager: ObservableObject {
         isLoading = true
         defer { isLoading = false }
         
+        let start = Date()
+        
         // Performance optimization:
         // Overpass queries can be slow and return a large payload.
         // For a snappier UX we go straight to Nominatim with a smaller limit
         // and tight bounding box, which is usually fast enough.
-        return await searchWithNominatim(
+        let results = await searchWithNominatim(
             location: location,
             radius: radius,
             category: category,
@@ -138,6 +140,16 @@ class FreePlacesManager: ObservableObject {
             offset: offset,
             limit: limit
         )
+        
+        // Ensure the loading indicator is visible for at least 0.8 seconds
+        let elapsed = Date().timeIntervalSince(start)
+        if elapsed < 0.8 {
+            let remaining = 0.8 - elapsed
+            let nanos = UInt64(remaining * 1_000_000_000)
+            try? await Task.sleep(nanoseconds: nanos)
+        }
+        
+        return results
     }
     
     // MARK: - Overpass API Search (Better for POI searches)
@@ -340,8 +352,11 @@ class FreePlacesManager: ObservableObject {
             
             print("✅ Successfully fetched \(places.count) places from Nominatim")
             if places.isEmpty {
-                print("⚠️ Nominatim returned empty results")
-                errorMessage = "No places found. The area may not have many points of interest in OpenStreetMap."
+                // Treat \"no results\" as a normal (non-error) state.
+                // The caller (e.g. DestinationActivitiesView) will show a friendly
+                // \"No activities found\" message instead of an error banner.
+                print("ℹ️ Nominatim returned empty results for this area")
+                errorMessage = nil
             } else {
                 errorMessage = nil
             }

@@ -68,7 +68,7 @@ struct AnalyticsView: View {
                     AnalyticsSummaryCard(
                         title: "Total Budget",
                         value: settingsManager.formatAmount(totalBudget),
-                        icon: "dollarsign.circle",
+                        icon: settingsManager.currencyIconName(filled: false),
                         color: .green
                     )
                     AnalyticsSummaryCard(

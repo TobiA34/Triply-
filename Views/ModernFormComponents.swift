@@ -53,7 +53,8 @@ struct ModernTextField: View {
                 .keyboardType(keyboardType)
                 .onChange(of: text) { oldValue, newValue in
                     if ContentFilter.containsBlockedContent(newValue) {
-                        // Revert to old value if blocked content detected
+                        // Revert to old value if blocked content detected - defer to avoid publishing during view updates
+                        Task { @MainActor in
                         text = oldValue
                         // Show alert
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -63,6 +64,7 @@ struct ModernTextField: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                                 showContentFilterAlert = false
+                                }
                             }
                         }
                     }
@@ -125,7 +127,8 @@ struct ModernTextEditor: View {
             )
             .onChange(of: text) { oldValue, newValue in
                 if ContentFilter.containsBlockedContent(newValue) {
-                    // Revert to old value if blocked content detected
+                    // Revert to old value if blocked content detected - defer to avoid publishing during view updates
+                    Task { @MainActor in
                     text = oldValue
                     // Show alert
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
@@ -135,6 +138,7 @@ struct ModernTextEditor: View {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                         withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                             showContentFilterAlert = false
+                            }
                         }
                     }
                 }
