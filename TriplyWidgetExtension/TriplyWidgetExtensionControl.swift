@@ -1,19 +1,17 @@
 //
-//  ItineroWidgetExtensionControl.swift
-//  ItineroWidgetExtension
+//  TriplyWidgetExtensionControl.swift
+//  TriplyWidgetExtension
 //
-//  Created by Tobi Adegoroye on 09/12/2025.
+//  Created by Tobi Adegoroye on 28/01/2026.
 //
 
 import AppIntents
 import SwiftUI
 import WidgetKit
 
-@available(iOS 18.0, *)
-struct ItineroWidgetExtensionControl: ControlWidget {
-    static let kind: String = "ItineroWidgetExtensionControl"
+struct TriplyWidgetExtensionControl: ControlWidget {
+    static let kind: String = "com.ntriply.app.TriplyWidgetExtension"
 
-    @available(iOS 18.0, *)
     var body: some ControlWidgetConfiguration {
         AppIntentControlConfiguration(
             kind: Self.kind,
@@ -32,7 +30,7 @@ struct ItineroWidgetExtensionControl: ControlWidget {
     }
 }
 
-extension ItineroWidgetExtensionControl {
+extension TriplyWidgetExtensionControl {
     struct Value {
         var isRunning: Bool
         var name: String
@@ -40,12 +38,12 @@ extension ItineroWidgetExtensionControl {
 
     struct Provider: AppIntentControlValueProvider {
         func previewValue(configuration: TimerConfiguration) -> Value {
-            ItineroWidgetExtensionControl.Value(isRunning: false, name: configuration.timerName)
+            TriplyWidgetExtensionControl.Value(isRunning: false, name: configuration.timerName)
         }
 
         func currentValue(configuration: TimerConfiguration) async throws -> Value {
             let isRunning = true // Check if the timer is running
-            return ItineroWidgetExtensionControl.Value(isRunning: isRunning, name: configuration.timerName)
+            return TriplyWidgetExtensionControl.Value(isRunning: isRunning, name: configuration.timerName)
         }
     }
 }

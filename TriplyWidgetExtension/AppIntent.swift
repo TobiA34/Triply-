@@ -1,8 +1,8 @@
 //
 //  AppIntent.swift
-//  ItineroWidgetExtension
+//  TriplyWidgetExtension
 //
-//  Created by Tobi Adegoroye on 09/12/2025.
+//  Created by Tobi Adegoroye on 28/01/2026.
 //
 
 import WidgetKit

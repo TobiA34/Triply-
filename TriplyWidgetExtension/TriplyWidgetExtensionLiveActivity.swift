@@ -1,15 +1,15 @@
 //
-//  ItineroWidgetExtensionLiveActivity.swift
-//  ItineroWidgetExtension
+//  TriplyWidgetExtensionLiveActivity.swift
+//  TriplyWidgetExtension
 //
-//  Created by Tobi Adegoroye on 09/12/2025.
+//  Created by Tobi Adegoroye on 28/01/2026.
 //
 
 import ActivityKit
 import WidgetKit
 import SwiftUI
 
-struct ItineroWidgetExtensionAttributes: ActivityAttributes {
+struct TriplyWidgetExtensionAttributes: ActivityAttributes {
     public struct ContentState: Codable, Hashable {
         // Dynamic stateful properties about your activity go here!
         var emoji: String
@@ -19,9 +19,9 @@ struct ItineroWidgetExtensionAttributes: ActivityAttributes {
     var name: String
 }
 
-struct ItineroWidgetExtensionLiveActivity: Widget {
+struct TriplyWidgetExtensionLiveActivity: Widget {
     var body: some WidgetConfiguration {
-        ActivityConfiguration(for: ItineroWidgetExtensionAttributes.self) { context in
+        ActivityConfiguration(for: TriplyWidgetExtensionAttributes.self) { context in
             // Lock screen/banner UI goes here
             VStack {
                 Text("Hello \(context.state.emoji)")
@@ -56,25 +56,25 @@ struct ItineroWidgetExtensionLiveActivity: Widget {
     }
 }
 
-extension ItineroWidgetExtensionAttributes {
-    fileprivate static var preview: ItineroWidgetExtensionAttributes {
-        ItineroWidgetExtensionAttributes(name: "World")
+extension TriplyWidgetExtensionAttributes {
+    fileprivate static var preview: TriplyWidgetExtensionAttributes {
+        TriplyWidgetExtensionAttributes(name: "World")
     }
 }
 
-extension ItineroWidgetExtensionAttributes.ContentState {
-    fileprivate static var smiley: ItineroWidgetExtensionAttributes.ContentState {
-        ItineroWidgetExtensionAttributes.ContentState(emoji: "😀")
+extension TriplyWidgetExtensionAttributes.ContentState {
+    fileprivate static var smiley: TriplyWidgetExtensionAttributes.ContentState {
+        TriplyWidgetExtensionAttributes.ContentState(emoji: "😀")
      }
      
-     fileprivate static var starEyes: ItineroWidgetExtensionAttributes.ContentState {
-         ItineroWidgetExtensionAttributes.ContentState(emoji: "🤩")
+     fileprivate static var starEyes: TriplyWidgetExtensionAttributes.ContentState {
+         TriplyWidgetExtensionAttributes.ContentState(emoji: "🤩")
      }
 }
 
-#Preview("Notification", as: .content, using: ItineroWidgetExtensionAttributes.preview) {
-   ItineroWidgetExtensionLiveActivity()
+#Preview("Notification", as: .content, using: TriplyWidgetExtensionAttributes.preview) {
+   TriplyWidgetExtensionLiveActivity()
 } contentStates: {
-    ItineroWidgetExtensionAttributes.ContentState.smiley
-    ItineroWidgetExtensionAttributes.ContentState.starEyes
+    TriplyWidgetExtensionAttributes.ContentState.smiley
+    TriplyWidgetExtensionAttributes.ContentState.starEyes
 }
