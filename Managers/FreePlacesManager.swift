@@ -140,11 +140,12 @@ class FreePlacesManager: ObservableObject {
             offset: offset,
             limit: limit
         )
-        
-        // Ensure the loading indicator is visible for at least 0.8 seconds
+
+        // Ensure the loading indicator is visible long enough to notice,
+        // but don't artificially slow down fast results.
         let elapsed = Date().timeIntervalSince(start)
-        if elapsed < 0.8 {
-            let remaining = 0.8 - elapsed
+        if elapsed < 0.2 {
+            let remaining = 0.2 - elapsed
             let nanos = UInt64(remaining * 1_000_000_000)
             try? await Task.sleep(nanoseconds: nanos)
         }

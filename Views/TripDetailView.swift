@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
+import CoreImage
 
 struct TripDetailView: View {
     @Bindable var trip: TripModel
@@ -795,16 +796,22 @@ private struct FullScreenImageView: View {
     let image: UIImage
     @Environment(\.dismiss) private var dismiss
     
+    @State private var brightness: Double = 0.0
+    @State private var contrast: Double = 1.0
+    @State private var saturation: Double = 1.0
+    @State private var showingFilters = false
+    @State private var scale: CGFloat = 1.0
+    
+    private var filteredImage: UIImage {
+        applyFilters(to: image)
+    }
+    
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
             
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFit()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(Color.black)
-                .ignoresSafeArea()
+            // Zoomable image view
+            ZoomableImageView(image: filteredImage)
             
             VStack {
                 HStack {
@@ -822,10 +829,215 @@ private struct FullScreenImageView: View {
                     .padding(.top, 16)
                     
                     Spacer()
+                    
+                    // Filter toggle button
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            showingFilters.toggle()
+                        }
+                    } label: {
+                        Image(systemName: showingFilters ? "slider.horizontal.3" : "camera.filters")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(Circle())
+                    }
+                    .padding(.trailing, 16)
+                    .padding(.top, 16)
                 }
+                
                 Spacer()
+                
+                // Filter controls panel
+                if showingFilters {
+                    VStack(spacing: 16) {
+                        // Brightness
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "sun.max.fill")
+                                    .foregroundColor(.white)
+                                    .font(.caption)
+                                Text("Brightness")
+                                    .foregroundColor(.white)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Text("\(Int(brightness * 100))%")
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.caption)
+                            }
+                            Slider(value: $brightness, in: -1.0...1.0)
+                                .tint(.white)
+                        }
+                        
+                        // Contrast
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "circle.lefthalf.filled")
+                                    .foregroundColor(.white)
+                                    .font(.caption)
+                                Text("Contrast")
+                                    .foregroundColor(.white)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Text("\(Int(contrast * 100))%")
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.caption)
+                            }
+                            Slider(value: $contrast, in: 0.0...2.0)
+                                .tint(.white)
+                        }
+                        
+                        // Saturation
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "paintpalette.fill")
+                                    .foregroundColor(.white)
+                                    .font(.caption)
+                                Text("Saturation")
+                                    .foregroundColor(.white)
+                                    .font(.caption)
+                                    .fontWeight(.medium)
+                                Spacer()
+                                Text("\(Int(saturation * 100))%")
+                                    .foregroundColor(.white.opacity(0.7))
+                                    .font(.caption)
+                            }
+                            Slider(value: $saturation, in: 0.0...2.0)
+                                .tint(.white)
+                        }
+                        
+                        // Reset button
+                        Button {
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                brightness = 0.0
+                                contrast = 1.0
+                                saturation = 1.0
+                            }
+                        } label: {
+                            HStack {
+                                Image(systemName: "arrow.counterclockwise")
+                                Text("Reset")
+                            }
+                            .foregroundColor(.white)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 8)
+                            .background(Color.white.opacity(0.2))
+                            .cornerRadius(8)
+                        }
+                    }
+                    .padding(20)
+                    .background(Color.black.opacity(0.8))
+                    .cornerRadius(20, corners: [.topLeft, .topRight])
+                    .transition(.move(edge: .bottom))
+                }
             }
         }
+    }
+    
+    private func applyFilters(to image: UIImage) -> UIImage {
+        guard let ciImage = CIImage(image: image) else { return image }
+        
+        let filter = CIFilter(name: "CIColorControls")
+        filter?.setValue(ciImage, forKey: kCIInputImageKey)
+        filter?.setValue(brightness, forKey: kCIInputBrightnessKey)
+        filter?.setValue(contrast, forKey: kCIInputContrastKey)
+        filter?.setValue(saturation, forKey: kCIInputSaturationKey)
+        
+        guard let outputImage = filter?.outputImage,
+              let cgImage = CIContext().createCGImage(outputImage, from: outputImage.extent) else {
+            return image
+        }
+        
+        return UIImage(cgImage: cgImage)
+    }
+}
+
+// MARK: - Zoomable Image View
+private struct ZoomableImageView: UIViewRepresentable {
+    let image: UIImage
+    
+    func makeUIView(context: Context) -> UIScrollView {
+        let scrollView = UIScrollView()
+        scrollView.delegate = context.coordinator
+        scrollView.minimumZoomScale = 1.0
+        scrollView.maximumZoomScale = 5.0
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.backgroundColor = .black
+        
+        let imageView = UIImageView(image: image)
+        imageView.contentMode = .scaleAspectFit
+        imageView.frame = scrollView.bounds
+        imageView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        scrollView.addSubview(imageView)
+        context.coordinator.imageView = imageView
+        
+        return scrollView
+    }
+    
+    func updateUIView(_ scrollView: UIScrollView, context: Context) {
+        if let imageView = context.coordinator.imageView {
+            imageView.image = image
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+    
+    class Coordinator: NSObject, UIScrollViewDelegate {
+        var imageView: UIImageView?
+        
+        func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+            return imageView
+        }
+        
+        func scrollViewDidZoom(_ scrollView: UIScrollView) {
+            // Center the image when zoomed
+            let boundsSize = scrollView.bounds.size
+            var frameToCenter = imageView?.frame ?? .zero
+            
+            if frameToCenter.size.width < boundsSize.width {
+                frameToCenter.origin.x = (boundsSize.width - frameToCenter.size.width) / 2
+            } else {
+                frameToCenter.origin.x = 0
+            }
+            
+            if frameToCenter.size.height < boundsSize.height {
+                frameToCenter.origin.y = (boundsSize.height - frameToCenter.size.height) / 2
+            } else {
+                frameToCenter.origin.y = 0
+            }
+            
+            imageView?.frame = frameToCenter
+        }
+    }
+}
+
+// MARK: - Corner Radius Extension
+private extension View {
+    func cornerRadius(_ radius: CGFloat, corners: UIRectCorner) -> some View {
+        clipShape(RoundedCorner(radius: radius, corners: corners))
+    }
+}
+
+private struct RoundedCorner: Shape {
+    var radius: CGFloat = .infinity
+    var corners: UIRectCorner = .allCorners
+    
+    func path(in rect: CGRect) -> Path {
+        let path = UIBezierPath(
+            roundedRect: rect,
+            byRoundingCorners: corners,
+            cornerRadii: CGSize(width: radius, height: radius)
+        )
+        return Path(path.cgPath)
     }
 }
 
