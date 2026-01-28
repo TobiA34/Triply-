@@ -99,14 +99,18 @@ struct KeyboardDismissModifier: ViewModifier {
     private func base(content: Content) -> some View {
         if onTap && onDrag {
             content
-                .onTapGesture { hideKeyboard() }
+                .simultaneousGesture(
+                    TapGesture().onEnded { hideKeyboard() }
+                )
                 .simultaneousGesture(
                     DragGesture(minimumDistance: 10)
                         .onEnded { _ in hideKeyboard() }
                 )
         } else if onTap {
             content
-                .onTapGesture { hideKeyboard() }
+                .simultaneousGesture(
+                    TapGesture().onEnded { hideKeyboard() }
+                )
         } else if onDrag {
             content
                 .simultaneousGesture(

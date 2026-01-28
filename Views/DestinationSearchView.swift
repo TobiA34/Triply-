@@ -55,20 +55,24 @@ struct DestinationSearchView: View {
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else if searchText.isEmpty {
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text("Popular Destinations")
-                            .font(.headline)
-                            .padding(.horizontal)
-                            .padding(.top)
-                        
-                        ForEach(searchManager.popularDestinations) { destination in
-                            DestinationRowView(
-                                destination: destination,
-                                isSelected: selectedDestinations.contains { $0.id == destination.id }
-                            ) {
-                                toggleDestination(destination)
+                    // Scrollable list of popular destinations when there is no active search
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Popular Destinations")
+                                .font(.headline)
+                                .padding(.horizontal)
+                                .padding(.top)
+                            
+                            ForEach(searchManager.popularDestinations) { destination in
+                                DestinationRowView(
+                                    destination: destination,
+                                    isSelected: selectedDestinations.contains { $0.id == destination.id }
+                                ) {
+                                    toggleDestination(destination)
+                                }
                             }
                         }
+                        .padding(.bottom, 16)
                     }
                 } else {
                     List {
