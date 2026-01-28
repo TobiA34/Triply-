@@ -13,7 +13,7 @@ import SwiftData
 
 struct WidgetDataLoader {
     // App Group identifier - must match the one configured in Xcode
-    private static let appGroupIdentifier = "group.com.nitinero.app"
+    private static let appGroupIdentifier = "group.com.ntriply.app"
     
     // Get database URL - try App Group first, then fallback to Application Support
     private static var databaseURL: URL? {
@@ -159,14 +159,14 @@ struct WidgetDataLoader {
     // Load trips from UserDefaults or file (public method for widgets)
     static func loadTripsFromUserDefaults() -> [[String: Any]] {
         // Try UserDefaults first (App Groups)
-        if let userDefaults = UserDefaults(suiteName: "group.com.nitinero.app"),
+        if let userDefaults = UserDefaults(suiteName: "group.com.ntriply.app"),
            let trips = userDefaults.array(forKey: "widget_trips") as? [[String: Any]],
            !trips.isEmpty {
             return trips
         }
         
         // Try file-based (works even without App Groups if in shared location)
-        let appGroupIdentifier = "group.com.nitinero.app"
+        let appGroupIdentifier = "group.com.ntriply.app"
         var fileURL: URL?
         
         // Try App Group container first

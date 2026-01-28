@@ -14,7 +14,7 @@ import WidgetKit
 class WidgetDataSync: ObservableObject {
     static let shared = WidgetDataSync()
     
-    private let appGroupIdentifier = "group.com.nitinero.app"
+    private let appGroupIdentifier = "group.com.ntriply.app"
     private let userDefaults: UserDefaults?
     private let sharedFileURL: URL?
     
@@ -110,7 +110,7 @@ class WidgetDataSync: ObservableObject {
     /// Load trips from UserDefaults or file (for widgets)
     static func loadTripsFromUserDefaults() -> [[String: Any]] {
         // Try UserDefaults first (App Groups)
-        if let userDefaults = UserDefaults(suiteName: "group.com.nitinero.app"),
+        if let userDefaults = UserDefaults(suiteName: "group.com.ntriply.app"),
            let trips = userDefaults.array(forKey: "widget_trips") as? [[String: Any]],
            !trips.isEmpty {
             print("✅ WidgetDataSync: Loaded \(trips.count) trips from UserDefaults")
@@ -118,7 +118,7 @@ class WidgetDataSync: ObservableObject {
         }
         
         // Try file-based (works even without App Groups if in shared location)
-        let appGroupIdentifier = "group.com.nitinero.app"
+        let appGroupIdentifier = "group.com.ntriply.app"
         var fileURL: URL?
         
         // Try App Group container first
@@ -151,7 +151,7 @@ class WidgetDataSync: ObservableObject {
     /// Load expenses from UserDefaults or file (for widgets)
     static func loadExpensesFromUserDefaults() -> [String: Double] {
         // Try UserDefaults first
-        if let userDefaults = UserDefaults(suiteName: "group.com.nitinero.app"),
+        if let userDefaults = UserDefaults(suiteName: "group.com.ntriply.app"),
            let expenses = userDefaults.array(forKey: "widget_expenses") as? [[String: Any]] {
             var expenseDict: [String: Double] = [:]
             for expense in expenses {
@@ -164,7 +164,7 @@ class WidgetDataSync: ObservableObject {
         }
         
         // Try file-based
-        let appGroupIdentifier = "group.com.nitinero.app"
+        let appGroupIdentifier = "group.com.ntriply.app"
         var fileURL: URL?
         
         if let appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
@@ -198,13 +198,13 @@ class WidgetDataSync: ObservableObject {
     /// Get last sync time
     static func lastSyncTime() -> Date? {
         // Try UserDefaults first
-        if let userDefaults = UserDefaults(suiteName: "group.com.nitinero.app"),
+        if let userDefaults = UserDefaults(suiteName: "group.com.ntriply.app"),
            let timestamp = userDefaults.object(forKey: "widget_last_sync") as? TimeInterval {
             return Date(timeIntervalSince1970: timestamp)
         }
         
         // Try file
-        let appGroupIdentifier = "group.com.nitinero.app"
+        let appGroupIdentifier = "group.com.ntriply.app"
         var fileURL: URL?
         
         if let appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {

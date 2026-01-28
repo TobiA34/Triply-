@@ -80,8 +80,8 @@ struct AppGroupsDiagnosticView: View {
                             Text("3. Go to 'Signing & Capabilities'")
                             Text("4. Click '+ Capability'")
                             Text("5. Add 'App Groups'")
-                            Text("6. Add identifier: group.com.nitinero.app")
-                            Text("7. Repeat for 'ItineroWidgetExtensionExtension' target")
+                            Text("6. Add identifier: group.com.ntriply.app")
+                            Text("7. Repeat for 'TriplyWidgetExtension' target")
                             Text("8. Clean build folder (Shift+⌘+K)")
                             Text("9. Rebuild and reinstall app")
                         }
@@ -97,7 +97,7 @@ struct AppGroupsDiagnosticView: View {
     private func runDiagnostics() {
         diagnosticResults = []
         
-        let appGroupIdentifier = "group.com.nitinero.app"
+        let appGroupIdentifier = "group.com.ntriply.app"
         
         // Check 1: Can access App Group container
         if let appGroupURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {

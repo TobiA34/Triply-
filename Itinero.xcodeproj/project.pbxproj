@@ -168,6 +168,9 @@
 		BD4DE8672F1A8422004CB35D /* package.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE8082F1A8422004CB35D /* package.xcworkspace */; };
 		BD4DE8692F1A8422004CB35D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7FE2F1A8422004CB35D /* LICENSE */; };
 		BD4DE86A2F1A8422004CB35D /* banner-min.png in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7E62F1A8422004CB35D /* banner-min.png */; };
+		BD4DE90D2F2AAAFD004CB35D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD4DE90C2F2AAAFC004CB35D /* WidgetKit.framework */; };
+		BD4DE90F2F2AAAFD004CB35D /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD4DE90E2F2AAAFD004CB35D /* SwiftUI.framework */; };
+		BD4DE9202F2AAAFE004CB35D /* TriplyWidgetExtensionExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = BD4DE90A2F2AAAFC004CB35D /* TriplyWidgetExtensionExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		BDC26AB8B3029ED450E64FD4 /* Models/ItineraryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADB6E0E40391A9320FDB037 /* Models/ItineraryItem.swift */; };
 		BE2939D60CF76ED62CC9724F /* CurrencyPicker/CurrencyAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3B1B582390C867717FB7448 /* CurrencyPicker/CurrencyAdapter.swift */; };
 		BE4B55B4B00543BE91D7E9EF /* Views/NewAddActivitySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5890FBA5706464A95F172AE /* Views/NewAddActivitySheet.swift */; };
@@ -224,7 +227,28 @@
 			remoteGlobalIDString = E1FCF5C5CB845414F990FB5C;
 			remoteInfo = Itinero;
 		};
+		BD4DE91E2F2AAAFE004CB35D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 187EA5C9A61A1372DF47115A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BD4DE9092F2AAAFC004CB35D;
+			remoteInfo = TriplyWidgetExtensionExtension;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		BD4DE9212F2AAAFE004CB35D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				BD4DE9202F2AAAFE004CB35D /* TriplyWidgetExtensionExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0A22333DBCE3EBBE982195CB /* Itinero.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Itinero.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -387,6 +411,10 @@
 		BD4DE81F2F1A8422004CB35D /* WishResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishResponse.swift; sourceTree = "<group>"; };
 		BD4DE8222F1A8422004CB35D /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		BD4DE8712F22D062004CB35D /* ItineroUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ItineroUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD4DE90A2F2AAAFC004CB35D /* TriplyWidgetExtensionExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TriplyWidgetExtensionExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		BD4DE90C2F2AAAFC004CB35D /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		BD4DE90E2F2AAAFD004CB35D /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		BD4DE94D2F2AAD14004CB35D /* Itinero.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Itinero.entitlements; sourceTree = "<group>"; };
 		BDFA5A650E9E110E63744BFF /* Models/AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/AppSettings.swift; sourceTree = "<group>"; };
 		BFA34B149663EA7791B73A44 /* build.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = build.sh; sourceTree = "<group>"; };
 		C2D3E4F5A6B7C8D9E0F1A2B4 /* Managers/SmartTemplateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/SmartTemplateManager.swift; sourceTree = "<group>"; };
@@ -442,8 +470,19 @@
 		P9Q0R1S2T3U4V5W6X7Y8Z9A1 /* Extensions/View+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions/View+Theme.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		BD4DE9242F2AAAFE004CB35D /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = BD4DE9092F2AAAFC004CB35D /* TriplyWidgetExtensionExtension */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		BD4DE8722F22D062004CB35D /* ItineroUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = ItineroUITests; sourceTree = "<group>"; };
+		BD4DE9102F2AAAFD004CB35D /* TriplyWidgetExtension */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (BD4DE9242F2AAAFE004CB35D /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = TriplyWidgetExtension; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -451,6 +490,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD4DE9072F2AAAFC004CB35D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BD4DE90F2F2AAAFD004CB35D /* SwiftUI.framework in Frameworks */,
+				BD4DE90D2F2AAAFD004CB35D /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -582,6 +630,7 @@
 			children = (
 				0A22333DBCE3EBBE982195CB /* Itinero.app */,
 				BD4DE8712F22D062004CB35D /* ItineroUITests.xctest */,
+				BD4DE90A2F2AAAFC004CB35D /* TriplyWidgetExtensionExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -600,6 +649,8 @@
 				194260C2AD961DB9F3A8DB5F,
 				34509DE281FA63EB0E054CAA,
 				BD4DE8722F22D062004CB35D /* ItineroUITests */,
+				BD4DE9102F2AAAFD004CB35D /* TriplyWidgetExtension */,
+				BD4DE90B2F2AAAFC004CB35D /* Frameworks */,
 				4FD49B0E87717D5EFE0868ED /* Products */,
 				BD4DE7BC2F1A61B6004CB35D /* Recovered References */,
 			);
@@ -660,6 +711,7 @@
 		B7F266B8945F21B59D645EC8 /* Itinero */ = {
 			isa = PBXGroup;
 			children = (
+				BD4DE94D2F2AAD14004CB35D /* Itinero.entitlements */,
 				AEFD0ED05AF98F6AE8144009 /* .cursorignore */,
 				FB9835398D1300E37113D57F /* Assets.xcassets */,
 				43B7EE763C2FFB7863276283 /* auto_run_simple.sh */,
@@ -1015,6 +1067,15 @@
 			path = WishKitShared;
 			sourceTree = "<group>";
 		};
+		BD4DE90B2F2AAAFC004CB35D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				BD4DE90C2F2AAAFC004CB35D /* WidgetKit.framework */,
+				BD4DE90E2F2AAAFD004CB35D /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		D015AC5A99638C6F05C23015 /* LanguagePicker */ = {
 			isa = PBXGroup;
 			children = (
@@ -1048,17 +1109,41 @@
 			productReference = BD4DE8712F22D062004CB35D /* ItineroUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		BD4DE9092F2AAAFC004CB35D /* TriplyWidgetExtensionExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BD4DE9252F2AAAFE004CB35D /* Build configuration list for PBXNativeTarget "TriplyWidgetExtensionExtension" */;
+			buildPhases = (
+				BD4DE9062F2AAAFC004CB35D /* Sources */,
+				BD4DE9072F2AAAFC004CB35D /* Frameworks */,
+				BD4DE9082F2AAAFC004CB35D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				BD4DE9102F2AAAFD004CB35D /* TriplyWidgetExtension */,
+			);
+			name = TriplyWidgetExtensionExtension;
+			packageProductDependencies = (
+			);
+			productName = TriplyWidgetExtensionExtension;
+			productReference = BD4DE90A2F2AAAFC004CB35D /* TriplyWidgetExtensionExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		E1FCF5C5CB845414F990FB5C /* Itinero */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2E354DBE4C9E8115234E99D7 /* Build configuration list for PBXNativeTarget "Itinero" */;
 			buildPhases = (
 				B4DE796117718868E46C6183 /* Sources */,
 				404E87F00F5D53CBF0D54A6A /* Resources */,
+				BD4DE9212F2AAAFE004CB35D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				BD4DE86C2F1B9DD6004CB35D /* PBXTargetDependency */,
+				BD4DE91F2F2AAAFE004CB35D /* PBXTargetDependency */,
 			);
 			name = Itinero;
 			packageProductDependencies = (
@@ -1082,6 +1167,9 @@
 						CreatedOnToolsVersion = 26.1.1;
 						TestTargetID = E1FCF5C5CB845414F990FB5C;
 					};
+					BD4DE9092F2AAAFC004CB35D = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
 				};
 			};
 			buildConfigurationList = 7EC3D5D866B409E8223FC3F8 /* Build configuration list for PBXProject "Itinero" */;
@@ -1102,6 +1190,7 @@
 			targets = (
 				E1FCF5C5CB845414F990FB5C /* Itinero */,
 				BD4DE8702F22D062004CB35D /* ItineroUITests */,
+				BD4DE9092F2AAAFC004CB35D /* TriplyWidgetExtensionExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -1136,6 +1225,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		BD4DE86F2F22D062004CB35D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BD4DE9082F2AAAFC004CB35D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1345,6 +1441,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BD4DE9062F2AAAFC004CB35D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1356,6 +1459,11 @@
 			isa = PBXTargetDependency;
 			target = E1FCF5C5CB845414F990FB5C /* Itinero */;
 			targetProxy = BD4DE8752F22D062004CB35D /* PBXContainerItemProxy */;
+		};
+		BD4DE91F2F2AAAFE004CB35D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BD4DE9092F2AAAFC004CB35D /* TriplyWidgetExtensionExtension */;
+			targetProxy = BD4DE91E2F2AAAFE004CB35D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1427,6 +1535,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Itinero.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = S39536K3H7;
@@ -1451,6 +1560,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Itinero.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = S39536K3H7;
@@ -1592,6 +1702,88 @@
 			};
 			name = Release;
 		};
+		BD4DE9222F2AAAFE004CB35D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TriplyWidgetExtension/TriplyWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S39536K3H7;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TriplyWidgetExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TriplyWidgetExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app.TriplyWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		BD4DE9232F2AAAFE004CB35D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = TriplyWidgetExtension/TriplyWidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = S39536K3H7;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = TriplyWidgetExtension/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = TriplyWidgetExtension;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app.TriplyWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1618,6 +1810,15 @@
 			buildConfigurations = (
 				BD4DE8772F22D062004CB35D /* Debug */,
 				BD4DE8782F22D062004CB35D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BD4DE9252F2AAAFE004CB35D /* Build configuration list for PBXNativeTarget "TriplyWidgetExtensionExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BD4DE9222F2AAAFE004CB35D /* Debug */,
+				BD4DE9232F2AAAFE004CB35D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
