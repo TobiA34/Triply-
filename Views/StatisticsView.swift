@@ -80,7 +80,7 @@ struct StatisticsView: View {
                                         .foregroundColor(.green)
                                 }
                                 Spacer()
-                                Image(systemName: "dollarsign.circle.fill")
+                                Image(systemName: settingsManager.currencyIconName())
                                     .font(.system(size: 40))
                                     .foregroundColor(.green.opacity(0.3))
                             }

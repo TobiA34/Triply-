@@ -131,9 +131,10 @@ struct TripMapView: View {
                 let newCoords = (newDestinations ?? []).compactMap { $0.coordinate }.map { "\($0.latitude),\($0.longitude)" }
                 
                 if newCoords != lastDestinationCoords {
-                    lastDestinationCoords = newCoords
-                    refreshID = UUID()
+                    // Defer state updates to avoid publishing during view updates
                     Task { @MainActor in
+                        lastDestinationCoords = newCoords
+                        refreshID = UUID()
                         try? await Task.sleep(nanoseconds: 300_000_000)
                         updateCameraPosition()
                     }

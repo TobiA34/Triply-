@@ -21,6 +21,7 @@ struct TripDetailView: View {
     @State private var showingPaywall = false
     @State private var selectedTab = 0
     @State private var scrollOffset: CGFloat = 0
+    @State private var showingFullScreenImage = false
     @StateObject private var settingsManager = SettingsManager.shared
     @StateObject private var destinationSearchManager = DestinationSearchManager()
     @State private var searchSelectedDestinations: [SearchResult] = []
@@ -40,6 +41,13 @@ struct TripDetailView: View {
                         scrollOffset: $scrollOffset
                     )
                     .frame(height: 250)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        // Only show full-screen if an image is set
+                        if trip.coverImageData != nil {
+                            showingFullScreenImage = true
+                        }
+                    }
                     .overlay(
                         // Edit and Camera buttons - horizontal arrangement
                         HStack {
@@ -229,14 +237,14 @@ struct TripDetailView: View {
                                         }
                                         
                                         VStack(alignment: .leading, spacing: 6) {
-                                            Text(trip.notes)
-                                                .font(.body)
+                                        Text(trip.notes)
+                                            .font(.body)
                                                 .foregroundColor(.primary)
                                                 .multilineTextAlignment(.leading)
                                                 .lineSpacing(4)
                                         }
                                         .padding(16)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
                                         .background(
                                             RoundedRectangle(cornerRadius: 16, style: .continuous)
                                                 .fill(Color(.systemGray6))
@@ -322,6 +330,11 @@ struct TripDetailView: View {
         }
         .sheet(isPresented: $showingSocialImport) {
             SocialMediaImportView(trip: trip)
+        }
+        .fullScreenCover(isPresented: $showingFullScreenImage) {
+            if let data = trip.coverImageData, let image = UIImage(data: data) {
+                FullScreenImageView(image: image)
+            }
         }
         .onAppear {
             // Load settings asynchronously (non-blocking)
@@ -775,6 +788,45 @@ struct ShareSheet: UIViewControllerRepresentable {
     }
     
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - Full Screen Image Viewer
+private struct FullScreenImageView: View {
+    let image: UIImage
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        ZStack {
+            Color.black.ignoresSafeArea()
+            
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFit()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color.black)
+                .ignoresSafeArea()
+            
+            VStack {
+                HStack {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(Circle())
+                    }
+                    .padding(.leading, 16)
+                    .padding(.top, 16)
+                    
+                    Spacer()
+                }
+                Spacer()
+            }
+        }
+    }
 }
 
 // MARK: - Trip Stats Card (Detail Screen)

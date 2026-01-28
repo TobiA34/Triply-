@@ -24,6 +24,8 @@ struct ContentView: View {
                 let hasSeenOnboarding = UserDefaults.standard.bool(forKey: "has_seen_onboarding")
                 let hasRequestedPermissions = UserDefaults.standard.bool(forKey: "hasRequestedPermissions")
                 
+                // Defer state updates to avoid publishing during view updates
+                Task { @MainActor in
                 if !hasSeenOnboarding {
                     // Show onboarding first
                     showOnboarding = true
@@ -31,6 +33,7 @@ struct ContentView: View {
                 } else if !hasRequestedPermissions {
                     // Then show permission request
                     showPermissionRequest = true
+                    }
                 }
                 
                 // Load settings asynchronously (non-blocking)
@@ -40,15 +43,19 @@ struct ContentView: View {
                 }
             }
             .onChange(of: localizationManager.currentLanguage) { oldValue, newValue in
-                // Refresh view when language changes
+                // Refresh view when language changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 withAnimation(.easeInOut(duration: 0.2)) {
                     refreshID = UUID()
+                    }
                 }
             }
             .onReceive(NotificationCenter.default.publisher(for: .languageChanged)) { _ in
-                // Also listen to notification for language changes
+                // Also listen to notification for language changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 withAnimation(.easeInOut(duration: 0.2)) {
                     refreshID = UUID()
+                    }
                 }
             }
             .id(refreshID) // Force view refresh on language change
@@ -56,8 +63,10 @@ struct ContentView: View {
                 OnboardingView(isPresented: $showOnboarding)
                     .onDisappear {
                         // After onboarding, check if we need to request permissions
+                        Task { @MainActor in
                         if !UserDefaults.standard.bool(forKey: "hasRequestedPermissions") {
                             showPermissionRequest = true
+                            }
                         }
                     }
             }
@@ -65,7 +74,9 @@ struct ContentView: View {
                 PermissionRequestView {
                     // Mark permissions as requested and dismiss
                     UserDefaults.standard.set(true, forKey: "hasRequestedPermissions")
+                    Task { @MainActor in
                     showPermissionRequest = false
+                    }
                 }
             }
             .refreshOnLanguageChange() // Ensure language changes propagate

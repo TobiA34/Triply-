@@ -28,7 +28,10 @@ struct InlineContactFormView: View {
                     .autocapitalization(.words)
                     .onChange(of: name) { oldValue, newValue in
                         if ContentFilter.containsBlockedContent(newValue) {
+                            // Defer to avoid publishing during view updates
+                            Task { @MainActor in
                             name = oldValue
+                            }
                         }
                     }
                 TextField("Email", text: $email)
@@ -37,7 +40,10 @@ struct InlineContactFormView: View {
                     .autocapitalization(.none)
                     .onChange(of: email) { oldValue, newValue in
                         if ContentFilter.containsBlockedContent(newValue) {
+                            // Defer to avoid publishing during view updates
+                            Task { @MainActor in
                             email = oldValue
+                            }
                         }
                     }
             }
@@ -46,7 +52,10 @@ struct InlineContactFormView: View {
                     .frame(minHeight: 150)
                     .onChange(of: message) { oldValue, newValue in
                         if ContentFilter.containsBlockedContent(newValue) {
+                            // Defer to avoid publishing during view updates
+                            Task { @MainActor in
                             message = oldValue
+                            }
                         }
                     }
             }

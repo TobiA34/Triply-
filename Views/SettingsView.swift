@@ -56,7 +56,11 @@ struct SettingsView: View {
     
     private var preferencesSection: some View {
         Section {
-            preferenceRow(icon: "dollarsign.circle.fill", color: .green, title: "Currency")
+            preferenceRow(
+                icon: settingsManager.currencyIconName(),
+                color: .green,
+                title: "Currency"
+            )
         } header: {
             Text("Preferences")
         } footer: {
@@ -66,9 +70,14 @@ struct SettingsView: View {
     
     private func preferenceRow(icon: String, color: Color, title: String) -> some View {
         HStack {
-            Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(color)
+            ZStack {
+                Circle()
+                    .fill(color)
+                    .frame(width: 28, height: 28)
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .bold))
+                    .foregroundColor(.white)
+            }
             Text(title)
                 .font(.headline)
                 .foregroundColor(.primary)
@@ -223,7 +232,7 @@ struct SettingsView: View {
     
     private var proSection: some View {
         // In-app purchases removed: no dedicated Pro section in Settings
-        EmptyView()
+                EmptyView()
     }
     
     private func resetSelections() {

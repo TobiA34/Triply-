@@ -42,16 +42,22 @@ struct ThemeModifier: ViewModifier {
             .scrollContentBackground(.hidden)
             .background(currentPalette.background)
             .onReceive(NotificationCenter.default.publisher(for: .themeChanged)) { _ in
-                // Force update when theme changes
+                // Force update when theme changes - defer to avoid publishing during view updates
+                Task { @MainActor in
                 currentPalette = themeManager.currentPalette
+                }
             }
             .onChange(of: themeManager.currentPalette) { oldValue, newValue in
-                // Direct observation - update state immediately
+                // Direct observation - update state with defer to avoid publishing during view updates
+                Task { @MainActor in
                 currentPalette = newValue
+                }
             }
             .onAppear {
-                // Initialize on appear
+                // Initialize on appear - defer to avoid publishing during view updates
+                Task { @MainActor in
                 currentPalette = themeManager.currentPalette
+                }
             }
     }
 }
