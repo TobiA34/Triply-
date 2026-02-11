@@ -158,15 +158,15 @@ struct CalendarUnauthorizedView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            Image(systemName: "calendar.badge.exclamationmark")
+            Image(systemName: "calendar.badge.plus")
                 .font(.system(size: 60))
                 .foregroundColor(.orange)
             
-            Text("Calendar Access Required")
+            Text("Add to Calendar")
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text("Allow access to your calendar to add trips and get reminders.")
+            Text("To add this trip and get reminders, your device will ask for calendar access.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -175,8 +175,8 @@ struct CalendarUnauthorizedView: View {
                 onRequestAccess()
             } label: {
                 HStack {
-                    Image(systemName: "lock.open")
-                    Text("Grant Access")
+                    Image(systemName: "calendar.badge.plus")
+                    Text("Add to Calendar")
                 }
                 .foregroundColor(.white)
                 .padding()
