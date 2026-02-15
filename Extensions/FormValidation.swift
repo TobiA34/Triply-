@@ -37,41 +37,38 @@ struct FormValidator {
     static func validateTripName(_ name: String) -> ValidationResult {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         if trimmed.isEmpty {
-            return .invalid("Trip name is required")
+            return .invalid("validation.tripNameRequired".localized)
         }
         if trimmed.count < 3 {
-            return .invalid("Trip name must be at least 3 characters")
+            return .invalid("validation.tripNameMinLength".localized)
         }
         if trimmed.count > 100 {
-            return .invalid("Trip name must be less than 100 characters")
+            return .invalid("validation.tripNameMaxLength".localized)
         }
         return .valid
     }
     
     static func validateTripDates(startDate: Date, endDate: Date) -> ValidationResult {
         if endDate < startDate {
-            return .invalid("End date must be after start date")
+            return .invalid("validation.endDateAfterStart".localized)
         }
         
         let calendar = Calendar.current
         let now = Date()
         
-        // Start date shouldn't be more than 2 years in the past
         if let twoYearsAgo = calendar.date(byAdding: .year, value: -2, to: now),
            startDate < twoYearsAgo {
-            return .invalid("Start date cannot be more than 2 years in the past")
+            return .invalid("validation.startDateTooPast".localized)
         }
         
-        // End date shouldn't be more than 10 years in the future
         if let tenYearsFromNow = calendar.date(byAdding: .year, value: 10, to: now),
            endDate > tenYearsFromNow {
-            return .invalid("End date cannot be more than 10 years in the future")
+            return .invalid("validation.endDateTooFuture".localized)
         }
         
-        // Trip duration shouldn't be more than 2 years
         if let duration = calendar.dateComponents([.day], from: startDate, to: endDate).day,
            duration > 730 {
-            return .invalid("Trip duration cannot exceed 2 years")
+            return .invalid("validation.durationMax".localized)
         }
         
         return .valid
@@ -81,18 +78,18 @@ struct FormValidator {
         let trimmed = budget.trimmingCharacters(in: .whitespaces)
         
         if isRequired && trimmed.isEmpty {
-            return .invalid("Budget is required")
+            return .invalid("validation.budgetRequired".localized)
         }
         
         if !trimmed.isEmpty {
             guard let value = Double(trimmed) else {
-                return .invalid("Budget must be a valid number")
+                return .invalid("validation.budgetInvalidNumber".localized)
             }
             if value < 0 {
-                return .invalid("Budget cannot be negative")
+                return .invalid("validation.budgetNegative".localized)
             }
             if value > 10_000_000 {
-                return .invalid("Budget amount is too large (max 10,000,000)")
+                return .invalid("validation.budgetTooLarge".localized)
             }
         }
         
@@ -101,10 +98,10 @@ struct FormValidator {
     
     static func validateTravelCompanions(_ count: Int) -> ValidationResult {
         if count < 1 {
-            return .invalid("Must have at least 1 travel companion")
+            return .invalid("validation.travelCompanionsMin".localized)
         }
         if count > 50 {
-            return .invalid("Maximum 50 travel companions allowed")
+            return .invalid("validation.travelCompanionsMax".localized)
         }
         return .valid
     }
@@ -112,20 +109,20 @@ struct FormValidator {
     static func validateTag(_ tag: String) -> ValidationResult {
         let trimmed = tag.trimmingCharacters(in: .whitespaces)
         if trimmed.isEmpty {
-            return .invalid("Tag cannot be empty")
+            return .invalid("validation.tagEmpty".localized)
         }
         if trimmed.count < 2 {
-            return .invalid("Tag must be at least 2 characters")
+            return .invalid("validation.tagMinLength".localized)
         }
         if trimmed.count > 30 {
-            return .invalid("Tag must be less than 30 characters")
+            return .invalid("validation.tagMaxLength".localized)
         }
         return .valid
     }
     
     static func validateTags(_ tags: [String]) -> ValidationResult {
         if tags.count > 10 {
-            return .invalid("Maximum 10 tags allowed")
+            return .invalid("validation.tagsMaxCount".localized)
         }
         for tag in tags {
             let result = validateTag(tag)
@@ -138,7 +135,7 @@ struct FormValidator {
     
     static func validateTripNotes(_ notes: String) -> ValidationResult {
         if notes.count > 2000 {
-            return .invalid("Notes must be less than 2000 characters")
+            return .invalid("validation.notesMaxLength".localized)
         }
         return .valid
     }

@@ -175,7 +175,7 @@ struct TripHeroImageView: View {
                             Image(systemName: "clock.fill")
                                 .font(.caption)
                                 .foregroundColor(.white.opacity(0.9))
-                            Text("\(duration) days")
+                            Text("tripHeroImageView.durationDaysFormat".localized(duration))
                                 .font(.subheadline.weight(.semibold))
                                 .foregroundColor(.white)
                             let badge = durationDescription(for: duration)
@@ -282,15 +282,15 @@ struct TripHeroImageView: View {
     
     private func durationDescription(for days: Int) -> String {
         switch days {
-        case 1: return "One day"
-        case 2...3: return "Short getaway"
-        case 4...6: return "Nearly a week"
-        case 7: return "One week"
-        case 8...10: return "Week and a bit"
-        case 11...14: return "Two weeks"
-        case 15...21: return "About three weeks"
+        case 1: return "trips.durationOneDay".localized
+        case 2...3: return "trips.durationShortGetaway".localized
+        case 4...6: return "trips.durationNearlyWeek".localized
+        case 7: return "trips.durationOneWeek".localized
+        case 8...10: return "trips.durationWeekAndBit".localized
+        case 11...14: return "trips.durationTwoWeeks".localized
+        case 15...21: return "trips.durationAboutThreeWeeks".localized
         default:
-            return days % 7 == 0 ? "\(days / 7) weeks" : "\(days) days total"
+            return days % 7 == 0 ? "trips.weeks".localized(days / 7) : "trips.daysTotal".localized(days)
         }
     }
 }
@@ -299,8 +299,22 @@ struct TripHeroImageView: View {
 private struct HeroCategoryBadge: View {
     let category: String
     
+    private var localizedCategory: String {
+        switch category.lowercased() {
+        case "general": return "category.general".localized
+        case "adventure": return "category.adventure".localized
+        case "business": return "category.business".localized
+        case "relaxation": return "category.relaxation".localized
+        case "family": return "category.family".localized
+        case "romantic": return "category.romantic".localized
+        case "solo": return "category.solo".localized
+        case "group": return "category.group".localized
+        default: return category
+        }
+    }
+    
     var body: some View {
-        Text(category)
+        Text(localizedCategory)
             .font(.caption)
             .fontWeight(.semibold)
             .foregroundColor(.white)

@@ -20,6 +20,15 @@ struct TripDetailView: View {
     @State private var showingImagePicker = false
     @State private var showingSocialImport = false
     @State private var showingPaywall = false
+    @State private var proFeatureTeaser: ProFeatureTeaserItem?
+    // Pro / AI feature entry points
+    @State private var showingPlanGenerator = false
+    @State private var showingTripOptimizer = false
+    @State private var showingBudgetInsights = false
+    @State private var showingCollaborativeTrip = false
+    @State private var showingSmartPacking = false
+    @State private var showingExport = false
+    @State private var showingAddToCalendar = false
     @State private var selectedTab = 0
     @State private var scrollOffset: CGFloat = 0
     @State private var showingFullScreenImage = false
@@ -33,7 +42,7 @@ struct TripDetailView: View {
                 VStack(spacing: 0) {
                     // Hero Image with Parallax
                     TripHeroImageView(
-                        image: trip.coverImageData != nil ? UIImage(data: trip.coverImageData!) : nil,
+                        image: trip.coverImageData.flatMap { UIImage(data: $0) },
                         tripName: trip.name,
                         category: trip.category,
                         dateRange: trip.formattedDateRange,
@@ -96,16 +105,16 @@ struct TripDetailView: View {
                     // Tab Selector - 4 core tabs
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            TabButton(title: "Overview", icon: "list.bullet", isSelected: selectedTab == 0) {
+                            TabButton(title: "tripDetail.overview".localized, icon: "list.bullet", isSelected: selectedTab == 0) {
                                 selectedTab = 0
                             }
-                            TabButton(title: "Itinerary", icon: "calendar", isSelected: selectedTab == 1) {
+                            TabButton(title: "tripDetail.itineraryTab".localized, icon: "calendar", isSelected: selectedTab == 1) {
                                 selectedTab = 1
                             }
-                            TabButton(title: "Expenses", icon: "creditcard", isSelected: selectedTab == 2) {
+                            TabButton(title: "tripDetail.expensesTab".localized, icon: "creditcard", isSelected: selectedTab == 2) {
                                 selectedTab = 2
                             }
-                            TabButton(title: "Packing", icon: "suitcase", isSelected: selectedTab == 3) {
+                            TabButton(title: "tripDetail.packingTab".localized, icon: "suitcase", isSelected: selectedTab == 3) {
                                 selectedTab = 3
                             }
                         }
@@ -165,7 +174,52 @@ struct TripDetailView: View {
                                 TripPrimaryActionsRow(
                                     onShare: { showingShareSheet = true },
                                     onEdit: { showingEditTrip = true },
-                                    onAddDestination: { showingAddDestination = true }
+                                    onAddDestination: {
+                                        let count = trip.destinations?.count ?? 0
+                                        let check = ProLimiter.shared.canAddDestination(currentDestinationCount: count, tripName: trip.name)
+                                        if check.allowed { showingAddDestination = true } else { proFeatureTeaser = .moreDestinations() }
+                                    }
+                                )
+                                .padding(.horizontal, 16)
+                                
+                                // Pro & AI Tools
+                                ProToolsRow(
+                                    onPlanGenerator: {
+                                        if IAPManager.shared.isPro {
+                                            showingPlanGenerator = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onOptimizer: {
+                                        if IAPManager.shared.isPro {
+                                            showingTripOptimizer = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onBudgetInsights: {
+                                        if IAPManager.shared.isPro {
+                                            showingBudgetInsights = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onCollaborate: {
+                                        if IAPManager.shared.isPro {
+                                            showingCollaborativeTrip = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onSmartPacking: {
+                                        if IAPManager.shared.isPro {
+                                            showingSmartPacking = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onExport: { showingExport = true }
                                 )
                                 .padding(.horizontal, 16)
                                 
@@ -175,12 +229,12 @@ struct TripDetailView: View {
                                     if check.allowed {
                                         showingSocialImport = true
                                     } else {
-                                        showingPaywall = true
+                                        proFeatureTeaser = .socialImport()
                                     }
                                 } label: {
                                     HStack {
                                         Image(systemName: "camera.fill")
-                                        Text("Import from Instagram/TikTok")
+                                        Text("tripDetail.importSocial".localized)
                                         if !ProLimiter.shared.isPro {
                                             Image(systemName: "crown.fill")
                                                 .font(.caption)
@@ -204,10 +258,14 @@ struct TripDetailView: View {
                                 // Destinations Section
                                 VStack(alignment: .leading, spacing: 12) {
                                     HStack(spacing: 8) {
-                                        Text("Destinations")
+                                        Text("destination.title".localized)
                                             .font(.title3.weight(.semibold))
                                         Spacer(minLength: 8)
-                                        Button(action: { showingAddDestination = true }) {
+                                        Button(action: {
+                                            let count = trip.destinations?.count ?? 0
+                                            let check = ProLimiter.shared.canAddDestination(currentDestinationCount: count, tripName: trip.name)
+                                            if check.allowed { showingAddDestination = true } else { proFeatureTeaser = .moreDestinations() }
+                                        }) {
                                             Image(systemName: "plus.circle.fill")
                                                 .font(.title3)
                                                 .foregroundColor(.blue)
@@ -232,7 +290,7 @@ struct TripDetailView: View {
                                         HStack(spacing: 8) {
                                             Image(systemName: "note.text")
                                                 .foregroundColor(.accentColor)
-                                            Text("Notes")
+                                            Text("trips.notes".localized)
                                                 .font(.title3.weight(.semibold))
                                             Spacer()
                                         }
@@ -299,8 +357,25 @@ struct TripDetailView: View {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Back")
+                        Text("common.back".localized)
                     }
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: { showingShareSheet = true }) {
+                        Label("tripDetail.share".localized, systemImage: "square.and.arrow.up")
+                    }
+                    if IAPManager.shared.isPro {
+                        Button(action: { showingExport = true }) {
+                            Label("tripDetail.exportOptions".localized, systemImage: "doc.text")
+                        }
+                        Button(action: { showingAddToCalendar = true }) {
+                            Label("tripDetail.addToCalendar".localized, systemImage: "calendar.badge.plus")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
@@ -329,8 +404,46 @@ struct TripDetailView: View {
                 PaywallView()
             }
         }
+        .sheet(item: $proFeatureTeaser) { feature in
+            ProFeatureTeaserSheet(
+                feature: feature,
+                onDismiss: { proFeatureTeaser = nil },
+                onGoToPro: {}
+            )
+        }
         .sheet(isPresented: $showingSocialImport) {
             SocialMediaImportView(trip: trip)
+        }
+        .sheet(isPresented: $showingPlanGenerator) {
+            NavigationStack {
+                PlanGeneratorView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingTripOptimizer) {
+            NavigationStack {
+                InlineTripOptimizerView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingBudgetInsights) {
+            NavigationStack {
+                BudgetInsightsView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingCollaborativeTrip) {
+            NavigationStack {
+                InlineCollaborativeTripView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingSmartPacking) {
+            NavigationStack {
+                SmartPackingGeneratorView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingExport) {
+            TripExportView(trip: trip)
+        }
+        .sheet(isPresented: $showingAddToCalendar) {
+            TripCalendarView(trip: trip)
         }
         .fullScreenCover(isPresented: $showingFullScreenImage) {
             if let data = trip.coverImageData, let image = UIImage(data: data) {
@@ -407,6 +520,146 @@ struct TripDetailView: View {
     }
 }
 
+// MARK: - Pro / AI tools row
+
+private struct ProToolsRow: View {
+    let onPlanGenerator: () -> Void
+    let onOptimizer: () -> Void
+    let onBudgetInsights: () -> Void
+    let onCollaborate: () -> Void
+    let onSmartPacking: () -> Void
+    let onExport: () -> Void
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ProToolCard(
+                    title: "tripDetail.aiPlan".localized,
+                    subtitle: "tripDetail.aiPlanSubtitle".localized,
+                    icon: "sparkles",
+                    color: .purple,
+                    action: onPlanGenerator
+                )
+                ProToolCard(
+                    title: "tripDetail.optimize".localized,
+                    subtitle: "tripDetail.optimizeSubtitle".localized,
+                    icon: "wand.and.stars",
+                    color: .blue,
+                    action: onOptimizer
+                )
+                ProToolCard(
+                    title: "tripDetail.budgetAI".localized,
+                    subtitle: "tripDetail.budgetAISubtitle".localized,
+                    icon: "chart.pie.fill",
+                    color: .teal,
+                    action: onBudgetInsights
+                )
+                ProToolCard(
+                    title: "tripDetail.collaborateShort".localized,
+                    subtitle: "tripDetail.collaborateSubtitle".localized,
+                    icon: "person.2.fill",
+                    color: .indigo,
+                    action: onCollaborate
+                )
+                ProToolCard(
+                    title: "tripDetail.smartPacking".localized,
+                    subtitle: "tripDetail.smartPackingSubtitle".localized,
+                    icon: "suitcase.fill",
+                    color: .orange,
+                    action: onSmartPacking
+                )
+                ProToolCard(
+                    title: "tripDetail.exportShort".localized,
+                    subtitle: "tripDetail.exportSubtitle".localized,
+                    icon: "square.and.arrow.up",
+                    color: .green,
+                    action: onExport
+                )
+            }
+            .padding(.vertical, 4)
+        }
+    }
+}
+
+private struct ProToolCard: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: icon)
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(color.opacity(0.9))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+                
+                Spacer(minLength: 0)
+            }
+            .padding(10)
+            .background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(Color(.systemGray6))
+            )
+        }
+    }
+}
+
+// MARK: - Inline fallback Pro views
+
+private struct InlineTripOptimizerView: View {
+    @Bindable var trip: TripModel
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("optimizer.title".localized)
+                .font(.title)
+                .fontWeight(.bold)
+            Text("tripDetail.optimizerHint".localized(trip.name))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct InlineCollaborativeTripView: View {
+    @Bindable var trip: TripModel
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("tripDetail.collaborativePlanning".localized)
+                .font(.title)
+                .fontWeight(.bold)
+            Text("tripDetail.collabHint".localized(trip.name))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
 // MARK: - Scroll Offset Preference Key
 struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
@@ -433,7 +686,7 @@ struct EmptyDestinationsView: View {
             Image(systemName: "mappin.slash")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary.opacity(0.5))
-            Text("No destinations added yet")
+            Text("destination.empty".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -596,7 +849,7 @@ struct DestinationCardView: View {
                         Image(systemName: "heart.fill")
                             .foregroundColor(.pink)
                             .font(.caption)
-                        Text("Why I saved this")
+                        Text("tripDetail.whyISaved".localized)
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
@@ -618,7 +871,7 @@ struct DestinationCardView: View {
                         Image(systemName: "lightbulb.fill")
                             .foregroundColor(.yellow)
                             .font(.caption)
-                        Text("Tips & Prep Notes")
+                        Text("tripDetail.tipsPrep".localized)
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
@@ -636,12 +889,12 @@ struct DestinationCardView: View {
                     .padding(.vertical, 8)
                 
                 HStack(spacing: 12) {
-                    if let sourceURL = destination.sourceURL, !sourceURL.isEmpty {
-                        Link(destination: URL(string: sourceURL)!) {
+                    if let sourceURL = destination.sourceURL, !sourceURL.isEmpty, let url = URL(string: sourceURL) {
+                        Link(destination: url) {
                             HStack(spacing: 6) {
                                 Image(systemName: destination.sourceURL?.contains("instagram") == true ? "camera.fill" : "music.note")
                                     .font(.caption)
-                                Text("View Original Post")
+                                Text("tripDetail.viewOriginalPost".localized)
                                     .font(.caption)
                             }
                             .foregroundColor(.blue)
@@ -652,12 +905,12 @@ struct DestinationCardView: View {
                         }
                     }
                     
-                    if let reviewURL = destination.reviewURL, !reviewURL.isEmpty {
-                        Link(destination: URL(string: reviewURL)!) {
+                    if let reviewURL = destination.reviewURL, !reviewURL.isEmpty, let url = URL(string: reviewURL) {
+                        Link(destination: url) {
                             HStack(spacing: 6) {
                                 Image(systemName: "star.fill")
                                     .font(.caption)
-                                Text("Reviews")
+                                Text("tripDetail.reviews".localized)
                                     .font(.caption)
                             }
                             .foregroundColor(.orange)
@@ -698,7 +951,7 @@ struct DestinationCardView: View {
                 
                 HStack(spacing: 12) {
                     if destination.savedFromSocial {
-                        Label("Saved from Social", systemImage: "heart.fill")
+                        Label("tripDetail.savedFromSocial".localized, systemImage: "heart.fill")
                             .font(.caption2)
                             .foregroundColor(.pink)
                             .padding(.horizontal, 8)
@@ -714,7 +967,7 @@ struct DestinationCardView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "link")
                                     .font(.caption2)
-                                Text("Original Post")
+                                Text("tripDetail.originalPost".localized)
                                     .font(.caption2)
                             }
                             .foregroundColor(.blue)
@@ -732,7 +985,7 @@ struct DestinationCardView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "star.fill")
                                     .font(.caption2)
-                                Text("Reviews")
+                                Text("tripDetail.reviews".localized)
                                     .font(.caption2)
                             }
                             .foregroundColor(.orange)
@@ -858,12 +1111,12 @@ private struct FullScreenImageView: View {
                                 Image(systemName: "sun.max.fill")
                                     .foregroundColor(.white)
                                     .font(.caption)
-                                Text("Brightness")
+                                Text("tripDetail.brightness".localized)
                                     .foregroundColor(.white)
                                     .font(.caption)
                                     .fontWeight(.medium)
                                 Spacer()
-                                Text("\(Int(brightness * 100))%")
+                                Text("tripDetailView.intbrightness.100".localized)
                                     .foregroundColor(.white.opacity(0.7))
                                     .font(.caption)
                             }
@@ -877,12 +1130,12 @@ private struct FullScreenImageView: View {
                                 Image(systemName: "circle.lefthalf.filled")
                                     .foregroundColor(.white)
                                     .font(.caption)
-                                Text("Contrast")
+                                Text("tripDetail.contrast".localized)
                                     .foregroundColor(.white)
                                     .font(.caption)
                                     .fontWeight(.medium)
                                 Spacer()
-                                Text("\(Int(contrast * 100))%")
+                                Text("tripDetailView.intcontrast.100".localized)
                                     .foregroundColor(.white.opacity(0.7))
                                     .font(.caption)
                             }
@@ -896,12 +1149,12 @@ private struct FullScreenImageView: View {
                                 Image(systemName: "paintpalette.fill")
                                     .foregroundColor(.white)
                                     .font(.caption)
-                                Text("Saturation")
+                                Text("tripDetail.saturation".localized)
                                     .foregroundColor(.white)
                                     .font(.caption)
                                     .fontWeight(.medium)
                                 Spacer()
-                                Text("\(Int(saturation * 100))%")
+                                Text("tripDetailView.intsaturation.100".localized)
                                     .foregroundColor(.white.opacity(0.7))
                                     .font(.caption)
                             }
@@ -919,7 +1172,7 @@ private struct FullScreenImageView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "arrow.counterclockwise")
-                                Text("Reset")
+                                Text("tripDetail.reset".localized)
                             }
                             .foregroundColor(.white)
                             .font(.caption)
@@ -1047,13 +1300,13 @@ private struct TripStatsCard: View {
     
     private func durationBadge(_ days: Int) -> String? {
         switch days {
-        case 1: return "One day"
-        case 2...3: return "Short"
-        case 4...6: return "Nearly a week"
-        case 7: return "One week"
+        case 1: return "trips.durationOneDay".localized
+        case 2...3: return "trips.durationShort".localized
+        case 4...6: return "trips.durationNearlyWeek".localized
+        case 7: return "trips.durationOneWeek".localized
         default:
-            if days % 7 == 0 { return "\(days / 7) weeks" }
-            if days > 14 { return "Long trip" }
+            if days % 7 == 0 { return "trips.weeks".localized(days / 7) }
+            if days > 14 { return "trips.durationLong".localized }
             return nil
         }
     }
@@ -1066,13 +1319,13 @@ private struct TripStatsCard: View {
     }
     private var statusValue: String {
         if trip.isUpcoming { return "\(max(0, daysUntil))" }
-        if trip.isCurrent { return "Day \(min(trip.duration, currentDay))" }
-        return "Done"
+        if trip.isCurrent { return "itinerary.dayN".localized(min(trip.duration, currentDay)) }
+        return "trips.statusDone".localized
     }
     private var statusLabel: String {
-        if trip.isUpcoming { return "days until" }
-        if trip.isCurrent { return "in progress" }
-        return "completed"
+        if trip.isUpcoming { return "trips.statusDaysUntil".localized }
+        if trip.isCurrent { return "trips.statusInProgress".localized }
+        return "trips.statusCompleted".localized
     }
     private var daysUntil: Int {
         Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0
@@ -1085,8 +1338,8 @@ private struct TripStatsCard: View {
     var body: some View {
         VStack(spacing: 16) {
             HStack(spacing: 8) {
-                TripStatItem(icon: "clock", value: "\(trip.duration)", label: "days", badge: durationBadge(trip.duration))
-                TripStatItem(icon: "mappin.circle", value: "\(destinationCount)", label: "Destinations")
+                TripStatItem(icon: "clock", value: "\(trip.duration)", label: "trips.days".localized, badge: durationBadge(trip.duration))
+                TripStatItem(icon: "mappin.circle", value: "\(destinationCount)", label: "destination.title".localized)
                 TripStatItem(icon: statusIcon, value: statusValue, label: statusLabel)
             }
             .frame(maxWidth: .infinity)
@@ -1096,7 +1349,7 @@ private struct TripStatsCard: View {
                 let totalExpenses = trip.expenses?.reduce(0) { $0 + $1.amount } ?? 0
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Budget")
+                        Text("trips.budget".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
@@ -1265,15 +1518,15 @@ private struct TripQuickLinksGrid: View {
     
     private var links: [(icon: String, title: String, index: Int)] {
         [
-            ("calendar", "Itinerary", 1),
-            ("creditcard", "Expenses", 2),
-            ("suitcase", "Packing", 3)
+            ("calendar", "tripDetail.itineraryTab".localized, 1),
+            ("creditcard", "tripDetail.expensesTab".localized, 2),
+            ("suitcase", "tripDetail.packingTab".localized, 3)
         ]
     }
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(links, id: \.title) { item in
+            ForEach(links, id: \.index) { item in
                 Button {
                     selectedTab = item.index
                 } label: {
@@ -1327,11 +1580,11 @@ private struct TripProgressCard: View {
             if isCurrent {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Trip Progress")
+                        Text("tripDetail.tripProgress".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("\(Int((Double(currentDay) / Double(max(1, trip.duration))) * 100))%")
+                        Text("tripDetail.dayLabel".localized(currentDay))
                             .font(.caption)
                             .fontWeight(.semibold)
                     }
@@ -1359,7 +1612,7 @@ private struct TripProgressCard: View {
                 HStack(spacing: 8) {
                     Image(systemName: "calendar.badge.clock")
                         .foregroundColor(.orange)
-                    Text("Starts in \(Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0) days")
+                    Text("trips.startsInDays".localized(Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0))
                         .font(.subheadline)
                         .foregroundColor(.primary)
                         .lineLimit(1)
@@ -1395,9 +1648,9 @@ private struct TripPrimaryActionsRow: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            ActionItem(icon: "square.and.arrow.up", title: "Share", action: onShare)
-            ActionItem(icon: "pencil", title: "Edit Trip", action: onEdit)
-            ActionItem(icon: "plus", title: "Add Destination", action: onAddDestination)
+            ActionItem(icon: "square.and.arrow.up", title: "tripDetail.shareAction".localized, action: onShare)
+            ActionItem(icon: "pencil", title: "tripDetail.editTripAction".localized, action: onEdit)
+            ActionItem(icon: "plus", title: "tripDetail.addDestinationAction".localized, action: onAddDestination)
         }
     }
 }
@@ -1447,13 +1700,13 @@ private struct TripOverviewCard: View {
     
     private func durationBadge(_ days: Int) -> String? {
         switch days {
-        case 1: return "One day"
-        case 2...3: return "Short"
-        case 4...6: return "Nearly a week"
-        case 7: return "One week"
+        case 1: return "trips.durationOneDay".localized
+        case 2...3: return "trips.durationShort".localized
+        case 4...6: return "trips.durationNearlyWeek".localized
+        case 7: return "trips.durationOneWeek".localized
         default:
-            if days % 7 == 0 { return "\(days / 7) weeks" }
-            if days > 14 { return "Long trip" }
+            if days % 7 == 0 { return "trips.weeks".localized(days / 7) }
+            if days > 14 { return "trips.durationLong".localized }
             return nil
         }
     }
@@ -1461,12 +1714,12 @@ private struct TripOverviewCard: View {
     private var statusText: String {
         if trip.isUpcoming {
             let days = Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0
-            return days <= 0 ? "Starts today" : "Starts in \(days) days"
+            return days <= 0 ? "trips.startsToday".localized : "trips.startsInDays".localized(days)
         } else if trip.isCurrent {
             let day = (Calendar.current.dateComponents([.day], from: trip.startDate, to: Date()).day ?? 0) + 1
-            return "Day \(max(1, min(day, trip.duration))) of \(trip.duration)"
+            return "trips.dayOfTotal".localized(max(1, min(day, trip.duration)), trip.duration)
         } else {
-            return "Completed"
+            return "trips.completed".localized
         }
     }
     
@@ -1491,7 +1744,7 @@ private struct TripOverviewCard: View {
                     .font(.caption)
                     .frame(width: 16)
                 HStack(spacing: 6) {
-                    Text("\(trip.duration) days")
+                    Text("\(trip.duration) \("trips.days".localized)")
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(1)
                     if let badge = durationBadge(trip.duration) {
@@ -1578,6 +1831,14 @@ private struct SnapshotTilesGrid: View {
         }
         return "—"
     }
+    private var itineraryItemsCountText: String {
+        let count = trip.itinerary?.count ?? 0
+        return count == 1 ? "tripDetail.itemSingular".localized : "tripDetail.itemsCount".localized(count)
+    }
+    private var packingItemsCountText: String {
+        let count = trip.packingList?.count ?? 0
+        return count == 1 ? "tripDetail.itemSingular".localized : "tripDetail.itemsCount".localized(count)
+    }
     
     var body: some View {
         LazyVGrid(columns: [
@@ -1586,15 +1847,15 @@ private struct SnapshotTilesGrid: View {
         ], spacing: 12) {
             SnapshotTile(
                 icon: "creditcard",
-                title: "Expenses",
+                title: "tripDetail.expensesSection".localized,
                 value: SettingsManager.shared.formatAmount(totalExpenses)
             ) {
                 selectedTab = 2
             }
             
             SnapshotTile(
-                icon: "dollarsign.circle",
-                title: "Remaining",
+                icon: SettingsManager.shared.currencyIconName(filled: false),
+                title: "tripDetail.remainingSection".localized,
                 value: remainingBudgetText
             ) {
                 selectedTab = 2
@@ -1602,16 +1863,16 @@ private struct SnapshotTilesGrid: View {
             
             SnapshotTile(
                 icon: "list.bullet",
-                title: "Itinerary",
-                value: "\(trip.itinerary?.count ?? 0) items"
+                title: "tripDetail.itinerarySection".localized,
+                value: itineraryItemsCountText
             ) {
                 selectedTab = 1
             }
             
             SnapshotTile(
                 icon: "suitcase",
-                title: "Packing",
-                value: "\(trip.packingList?.count ?? 0) items"
+                title: "tripDetail.packingSection".localized,
+                value: packingItemsCountText
             ) {
                 selectedTab = 3
             }

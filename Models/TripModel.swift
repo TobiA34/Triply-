@@ -60,6 +60,7 @@ final class TripModel {
     var formattedDateRange: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
+        formatter.locale = Locale.current
         return "\(formatter.string(from: startDate)) - \(formatter.string(from: endDate))"
     }
     
