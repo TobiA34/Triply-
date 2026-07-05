@@ -34,17 +34,7 @@ struct BudgetInsightsView: View {
     }
     
     var body: some View {
-        if !iapManager.isPro {
-            PaywallGateView(
-                featureName: "Budget Insights",
-                featureDescription: "Get AI-powered budget analysis, spending predictions, and cost-saving suggestions for your trip.",
-                icon: "chart.pie.fill",
-                iconColor: .teal
-            )
-            .navigationTitle("Budget Insights")
-        } else {
-            budgetInsightsContent
-        }
+        budgetInsightsContent
     }
     
     private var budgetInsightsContent: some View {
@@ -52,14 +42,14 @@ struct BudgetInsightsView: View {
             VStack(spacing: 24) {
                 // Budget Overview
                 VStack(spacing: 16) {
-                    Text("Budget Overview")
+                    Text("budget.overview".localized)
                         .font(.title2)
                         .fontWeight(.bold)
                     
                     // Budget Card
                     VStack(spacing: 12) {
                         HStack {
-                            Text("Total Budget")
+                            Text("budget.totalBudget".localized)
                                 .font(.headline)
                             Spacer()
                             Text(settingsManager.formatAmount(trip.budget ?? 0))
@@ -69,7 +59,7 @@ struct BudgetInsightsView: View {
                         }
                         
                         HStack {
-                            Text("Spent")
+                            Text("budget.spent".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             Spacer()
@@ -79,7 +69,7 @@ struct BudgetInsightsView: View {
                         }
                         
                         HStack {
-                            Text("Remaining")
+                            Text("budget.remaining".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             Spacer()
@@ -120,7 +110,7 @@ struct BudgetInsightsView: View {
                         HStack {
                             Image(systemName: "sparkles")
                                 .foregroundColor(.purple)
-                            Text("AI Budget Insights")
+                            Text("budget.aiInsights".localized)
                                 .font(.headline)
                         }
                         
@@ -142,7 +132,7 @@ struct BudgetInsightsView: View {
                         HStack {
                             Image(systemName: "sparkles")
                                 .foregroundColor(.purple)
-                            Text("AI Budget Insights")
+                            Text("budget.aiInsights".localized)
                                 .font(.headline)
                         }
                         
@@ -159,7 +149,7 @@ struct BudgetInsightsView: View {
                 // Expense Breakdown
                 if let expenses = trip.expenses, !expenses.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Expense Breakdown")
+                        Text("expense.breakdown".localized)
                             .font(.headline)
                             .padding(.horizontal)
                         
@@ -181,11 +171,11 @@ struct BudgetInsightsView: View {
                 }
             }
         }
-        .navigationTitle("Budget Insights")
+        .navigationTitle("budget.insightsTitle".localized)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Done") {
+                Button("common.done".localized) {
                     dismiss()
                 }
             }

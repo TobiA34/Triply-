@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 @MainActor
 class ExportManager: ObservableObject {
@@ -14,6 +15,7 @@ class ExportManager: ObservableObject {
     
     private init() {}
     
+    /// Plain-text version of the trip (for preview and "Export as Text").
     func exportTripToPDF(trip: TripModel) -> String {
         var content = """
         TRIP DETAILS
@@ -114,6 +116,40 @@ class ExportManager: ObservableObject {
     func shareTrip(trip: TripModel) -> [Any] {
         let text = exportTripToPDF(trip: trip)
         return [text]
+    }
+    
+    /// Generates a real PDF file (Data) for the trip. Returns nil if PDF creation fails.
+    func exportTripToPDFData(trip: TripModel) -> Data? {
+        let text = exportTripToPDF(trip: trip)
+        let pageRect = CGRect(x: 0, y: 0, width: 612, height: 792)
+        let margin: CGFloat = 50
+        let lineHeight: CGFloat = 14
+        let bodyFont = UIFont.systemFont(ofSize: 10)
+        let titleFont = UIFont.boldSystemFont(ofSize: 12)
+        
+        let renderer = UIGraphicsPDFRenderer(bounds: pageRect)
+        let data = renderer.pdfData { ctx in
+            let lines = text.components(separatedBy: .newlines)
+            var y = margin
+            var startedFirstPage = false
+            
+            for line in lines {
+                if !startedFirstPage {
+                    ctx.beginPage()
+                    startedFirstPage = true
+                } else if y > pageRect.maxY - margin - lineHeight {
+                    ctx.beginPage()
+                    y = margin
+                }
+                let isSectionHeader = line.hasPrefix("===") || line.hasPrefix("---") || (line.count > 0 && line.allSatisfy { $0 == "=" || $0 == "-" })
+                let font = isSectionHeader || (line.isEmpty == false && line == line.uppercased() && line.count < 50) ? titleFont : bodyFont
+                let attributes: [NSAttributedString.Key: Any] = [.font: font]
+                let ns = line as NSString
+                ns.draw(at: CGPoint(x: margin, y: y), withAttributes: attributes)
+                y += lineHeight
+            }
+        }
+        return data
     }
     
     func exportTestPlan() -> URL? {

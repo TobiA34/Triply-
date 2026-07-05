@@ -14,12 +14,22 @@ struct TripDetailView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var themeManager: ThemeManager
     @State private var showingEditTrip = false
     @State private var showingAddDestination = false
     @State private var showingShareSheet = false
     @State private var showingImagePicker = false
     @State private var showingSocialImport = false
     @State private var showingPaywall = false
+    @State private var proFeatureTeaser: ProFeatureTeaserItem?
+    // Pro / AI feature entry points
+    @State private var showingPlanGenerator = false
+    @State private var showingTripOptimizer = false
+    @State private var showingBudgetInsights = false
+    @State private var showingCollaborativeTrip = false
+    @State private var showingSmartPacking = false
+    @State private var showingExport = false
+    @State private var showingAddToCalendar = false
     @State private var selectedTab = 0
     @State private var scrollOffset: CGFloat = 0
     @State private var showingFullScreenImage = false
@@ -27,13 +37,10 @@ struct TripDetailView: View {
     @StateObject private var destinationSearchManager = DestinationSearchManager()
     @State private var searchSelectedDestinations: [SearchResult] = []
     
-    var body: some View {
-        GeometryReader { geometry in
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    // Hero Image with Parallax
-                    TripHeroImageView(
-                        image: trip.coverImageData != nil ? UIImage(data: trip.coverImageData!) : nil,
+    private var tripDetailScrollBody: some View {
+        VStack(spacing: 0) {
+            TripHeroImageView(
+                        image: trip.coverImageData.flatMap { UIImage(data: $0) },
                         tripName: trip.name,
                         category: trip.category,
                         dateRange: trip.formattedDateRange,
@@ -93,20 +100,17 @@ struct TripDetailView: View {
                         }
                     )
                     
-                    // Tab Selector - 4 core tabs
+                    // Tab Selector - 3 core tabs (Overview / Itinerary / Packing)
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 10) {
-                            TabButton(title: "Overview", icon: "list.bullet", isSelected: selectedTab == 0) {
+                            TabButton(title: "tripDetail.overview".localized, icon: "list.bullet", isSelected: selectedTab == 0) {
                                 selectedTab = 0
                             }
-                            TabButton(title: "Itinerary", icon: "calendar", isSelected: selectedTab == 1) {
+                            TabButton(title: "tripDetail.itineraryTab".localized, icon: "calendar", isSelected: selectedTab == 1) {
                                 selectedTab = 1
                             }
-                            TabButton(title: "Expenses", icon: "creditcard", isSelected: selectedTab == 2) {
+                            TabButton(title: "tripDetail.packingTab".localized, icon: "suitcase", isSelected: selectedTab == 2) {
                                 selectedTab = 2
-                            }
-                            TabButton(title: "Packing", icon: "suitcase", isSelected: selectedTab == 3) {
-                                selectedTab = 3
                             }
                         }
                         .padding(.leading, 16)
@@ -127,14 +131,17 @@ struct TripDetailView: View {
                                     .blur(radius: 20)
                             } else {
                                 LinearGradient(
-                                    colors: [Color.blue, Color.purple],
+                                    colors: [
+                                        Color(red: 0.95, green: 0.5, blue: 0.35),
+                                        Color(red: 1.0, green: 0.65, blue: 0.45)
+                                    ],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
                             }
                         }
                         .opacity(0.1)
-                        .background(Color(.systemBackground))
+                        .background(themeManager.currentPalette.background)
                     )
                     
                     // Content based on tab
@@ -165,7 +172,58 @@ struct TripDetailView: View {
                                 TripPrimaryActionsRow(
                                     onShare: { showingShareSheet = true },
                                     onEdit: { showingEditTrip = true },
-                                    onAddDestination: { showingAddDestination = true }
+                                    onAddDestination: {
+                                        let count = trip.destinations?.count ?? 0
+                                        let check = ProLimiter.shared.canAddDestination(currentDestinationCount: count, tripName: trip.name)
+                                        if check.allowed { showingAddDestination = true } else { proFeatureTeaser = .moreDestinations() }
+                                    }
+                                )
+                                .padding(.horizontal, 16)
+                                
+                                // Pro & AI Tools (all gated; non‑Pro taps show paywall)
+                                ProToolsRow(
+                                    onPlanGenerator: {
+                                        if ProLimiter.shared.isPro {
+                                            showingPlanGenerator = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onOptimizer: {
+                                        if ProLimiter.shared.isPro {
+                                            showingTripOptimizer = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onBudgetInsights: {
+                                        if ProLimiter.shared.isPro {
+                                            showingBudgetInsights = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onCollaborate: {
+                                        if ProLimiter.shared.isPro {
+                                            showingCollaborativeTrip = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onSmartPacking: {
+                                        if ProLimiter.shared.isPro {
+                                            showingSmartPacking = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    },
+                                    onExport: {
+                                        if ProLimiter.shared.isPro {
+                                            showingExport = true
+                                        } else {
+                                            showingPaywall = true
+                                        }
+                                    }
                                 )
                                 .padding(.horizontal, 16)
                                 
@@ -175,12 +233,12 @@ struct TripDetailView: View {
                                     if check.allowed {
                                         showingSocialImport = true
                                     } else {
-                                        showingPaywall = true
+                                        proFeatureTeaser = .socialImport()
                                     }
                                 } label: {
                                     HStack {
                                         Image(systemName: "camera.fill")
-                                        Text("Import from Instagram/TikTok")
+                                        Text("tripDetail.importSocial".localized)
                                         if !ProLimiter.shared.isPro {
                                             Image(systemName: "crown.fill")
                                                 .font(.caption)
@@ -204,10 +262,14 @@ struct TripDetailView: View {
                                 // Destinations Section
                                 VStack(alignment: .leading, spacing: 12) {
                                     HStack(spacing: 8) {
-                                        Text("Destinations")
+                                        Text("destination.title".localized)
                                             .font(.title3.weight(.semibold))
                                         Spacer(minLength: 8)
-                                        Button(action: { showingAddDestination = true }) {
+                                        Button(action: {
+                                            let count = trip.destinations?.count ?? 0
+                                            let check = ProLimiter.shared.canAddDestination(currentDestinationCount: count, tripName: trip.name)
+                                            if check.allowed { showingAddDestination = true } else { proFeatureTeaser = .moreDestinations() }
+                                        }) {
                                             Image(systemName: "plus.circle.fill")
                                                 .font(.title3)
                                                 .foregroundColor(.blue)
@@ -231,8 +293,8 @@ struct TripDetailView: View {
                                     VStack(alignment: .leading, spacing: 10) {
                                         HStack(spacing: 8) {
                                             Image(systemName: "note.text")
-                                                .foregroundColor(.accentColor)
-                                            Text("Notes")
+                                                .foregroundColor(themeManager.currentPalette.accent)
+                                            Text("trips.notes".localized)
                                                 .font(.title3.weight(.semibold))
                                             Spacer()
                                         }
@@ -240,7 +302,7 @@ struct TripDetailView: View {
                                         VStack(alignment: .leading, spacing: 6) {
                                         Text(trip.notes)
                                             .font(.body)
-                                                .foregroundColor(.primary)
+                                                .foregroundColor(themeManager.currentPalette.text)
                                                 .multilineTextAlignment(.leading)
                                                 .lineSpacing(4)
                                         }
@@ -248,8 +310,12 @@ struct TripDetailView: View {
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                         .background(
                                             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                                .fill(Color(.systemGray6))
-                                                .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 4)
+                                                .fill(themeManager.currentPalette.background)
+                                                .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 8, x: 0, y: 4)
+                                                .overlay(
+                                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                                        .stroke(themeManager.currentPalette.accent.opacity(0.12), lineWidth: 1)
+                                                )
                                         )
                                     }
                                     .padding(.horizontal, 16)
@@ -265,19 +331,19 @@ struct TripDetailView: View {
                                 .padding(.bottom, 100)
                         }
                         
-                        // Expenses Tab
-                        if selectedTab == 2 {
-                            ExpenseTrackingView(trip: trip)
-                                .padding(.bottom, 100)
-                        }
-                        
                         // Packing List Tab
-                        if selectedTab == 3 {
+                        if selectedTab == 2 {
                             PackingListView(trip: trip)
                                 .padding(.bottom, 100)
                         }
                     }
                 }
+    }
+
+    var body: some View {
+        GeometryReader { _ in
+            ScrollView(showsIndicators: false) {
+                tripDetailScrollBody
             }
             .background(
                 GeometryReader { scrollGeometry in
@@ -299,8 +365,25 @@ struct TripDetailView: View {
                 Button(action: { dismiss() }) {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
-                        Text("Back")
+                        Text("common.back".localized)
                     }
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: { showingShareSheet = true }) {
+                        Label("tripDetail.share".localized, systemImage: "square.and.arrow.up")
+                    }
+                    if ProLimiter.shared.isPro {
+                        Button(action: { showingExport = true }) {
+                            Label("tripDetail.exportOptions".localized, systemImage: "doc.text")
+                        }
+                        Button(action: { showingAddToCalendar = true }) {
+                            Label("tripDetail.addToCalendar".localized, systemImage: "calendar.badge.plus")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
                 }
             }
         }
@@ -329,12 +412,56 @@ struct TripDetailView: View {
                 PaywallView()
             }
         }
+        .sheet(item: $proFeatureTeaser) { feature in
+            ProFeatureTeaserSheet(
+                feature: feature,
+                onDismiss: { proFeatureTeaser = nil },
+                onGoToPro: {}
+            )
+        }
         .sheet(isPresented: $showingSocialImport) {
             SocialMediaImportView(trip: trip)
         }
+        .sheet(isPresented: $showingPlanGenerator) {
+            NavigationStack {
+                PlanGeneratorView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingTripOptimizer) {
+            NavigationStack {
+                InlineTripOptimizerView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingBudgetInsights) {
+            NavigationStack {
+                BudgetInsightsView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingCollaborativeTrip) {
+            NavigationStack {
+                InlineCollaborativeTripView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingSmartPacking) {
+            NavigationStack {
+                SmartPackingGeneratorView(trip: trip)
+            }
+        }
+        .sheet(isPresented: $showingExport) {
+            TripExportView(trip: trip)
+        }
+        .sheet(isPresented: $showingAddToCalendar) {
+            TripCalendarView(trip: trip)
+        }
         .fullScreenCover(isPresented: $showingFullScreenImage) {
             if let data = trip.coverImageData, let image = UIImage(data: data) {
-                FullScreenImageView(image: image)
+                FullScreenImageView(image: image) { updatedImage in
+                    // Persist edited cover image back to the trip
+                    if let jpegData = updatedImage.jpegData(compressionQuality: 0.9) {
+                        trip.coverImageData = jpegData
+                        try? modelContext.save()
+                    }
+                }
             }
         }
         .onAppear {
@@ -407,6 +534,154 @@ struct TripDetailView: View {
     }
 }
 
+// MARK: - Pro / AI tools row
+
+private struct ProToolsRow: View {
+    let onPlanGenerator: () -> Void
+    let onOptimizer: () -> Void
+    let onBudgetInsights: () -> Void
+    let onCollaborate: () -> Void
+    let onSmartPacking: () -> Void
+    let onExport: () -> Void
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 12) {
+                ProToolCard(
+                    title: "tripDetail.aiPlan".localized,
+                    subtitle: "tripDetail.aiPlanSubtitle".localized,
+                    icon: "sparkles",
+                    color: .purple,
+                    action: onPlanGenerator
+                )
+                ProToolCard(
+                    title: "tripDetail.optimize".localized,
+                    subtitle: "tripDetail.optimizeSubtitle".localized,
+                    icon: "wand.and.stars",
+                    color: .blue,
+                    action: onOptimizer
+                )
+                ProToolCard(
+                    title: "tripDetail.budgetAI".localized,
+                    subtitle: "tripDetail.budgetAISubtitle".localized,
+                    icon: "chart.pie.fill",
+                    color: .teal,
+                    action: onBudgetInsights
+                )
+                ProToolCard(
+                    title: "tripDetail.collaborateShort".localized,
+                    subtitle: "tripDetail.collaborateSubtitle".localized,
+                    icon: "person.2.fill",
+                    color: .indigo,
+                    action: onCollaborate
+                )
+                ProToolCard(
+                    title: "tripDetail.smartPacking".localized,
+                    subtitle: "tripDetail.smartPackingSubtitle".localized,
+                    icon: "suitcase.fill",
+                    color: .orange,
+                    action: onSmartPacking
+                )
+                ProToolCard(
+                    title: "tripDetail.exportShort".localized,
+                    subtitle: "tripDetail.exportSubtitle".localized,
+                    icon: "square.and.arrow.up",
+                    color: .green,
+                    action: onExport
+                )
+            }
+            .padding(.vertical, 4)
+        }
+    }
+}
+
+private struct ProToolCard: View {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let color: Color
+    let action: () -> Void
+    @EnvironmentObject var themeManager: ThemeManager
+
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: icon)
+                    .font(.headline)
+                    .foregroundColor(color)
+                    .frame(width: 32, height: 32)
+                    .background(color.opacity(0.15))
+                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundColor(themeManager.currentPalette.text)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.leading)
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(12)
+            .frame(width: 200, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(themeManager.currentPalette.background)
+                    .shadow(color: color.opacity(0.08), radius: 8, x: 0, y: 4)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(color.opacity(0.15), lineWidth: 1)
+                    )
+            )
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Inline fallback Pro views
+
+private struct InlineTripOptimizerView: View {
+    @Bindable var trip: TripModel
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("optimizer.title".localized)
+                .font(.title)
+                .fontWeight(.bold)
+            Text("tripDetail.optimizerHint".localized(trip.name))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
+private struct InlineCollaborativeTripView: View {
+    @Bindable var trip: TripModel
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("tripDetail.collaborativePlanning".localized)
+                .font(.title)
+                .fontWeight(.bold)
+            Text("tripDetail.collabHint".localized(trip.name))
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(.systemGroupedBackground))
+    }
+}
+
 // MARK: - Scroll Offset Preference Key
 struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
@@ -428,17 +703,33 @@ struct ShareButton: View {
 }
 
 struct EmptyDestinationsView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "mappin.slash")
-                .font(.system(size: 40))
-                .foregroundColor(.secondary.opacity(0.5))
-            Text("No destinations added yet")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+        VStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(themeManager.currentPalette.accent.opacity(0.1))
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: "map.fill")
+                    .font(.system(size: 36))
+                    .foregroundColor(themeManager.currentPalette.accent)
+            }
+            
+            VStack(spacing: 6) {
+                Text("Your canvas awaits")
+                    .font(.headline)
+                    .foregroundColor(themeManager.currentPalette.text)
+                
+                Text("Tap the plus button to add places you'd love to visit.")
+                    .font(.subheadline)
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+            }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
+        .padding(.vertical, 32)
     }
 }
 
@@ -447,6 +738,7 @@ struct DestinationCardView: View {
     @Bindable var destination: DestinationModel
     let trip: TripModel
     let modelContext: ModelContext
+    @EnvironmentObject var themeManager: ThemeManager
     
     // Check if text is placeholder/garbage text
     private func isPlaceholderText(_ text: String) -> Bool {
@@ -544,12 +836,12 @@ struct DestinationCardView: View {
             // Header with name and delete button
             HStack(alignment: .center, spacing: 12) {
                 Image(systemName: "mappin.circle.fill")
-                    .foregroundColor(.red)
+                    .foregroundColor(themeManager.currentPalette.accent)
                     .font(.title3)
                 
                 Text(destination.name)
                     .font(.headline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                 
                 Spacer()
                 
@@ -574,13 +866,13 @@ struct DestinationCardView: View {
                 
                 HStack(alignment: .top, spacing: 8) {
                     Image(systemName: "location.fill")
-                        .foregroundColor(.blue)
+                        .foregroundColor(themeManager.currentPalette.accent)
                         .font(.caption)
                         .padding(.top, 2)
                     
                     Text(destination.address)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
                 }
@@ -596,7 +888,7 @@ struct DestinationCardView: View {
                         Image(systemName: "heart.fill")
                             .foregroundColor(.pink)
                             .font(.caption)
-                        Text("Why I saved this")
+                        Text("tripDetail.whyISaved".localized)
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
@@ -618,7 +910,7 @@ struct DestinationCardView: View {
                         Image(systemName: "lightbulb.fill")
                             .foregroundColor(.yellow)
                             .font(.caption)
-                        Text("Tips & Prep Notes")
+                        Text("tripDetail.tipsPrep".localized)
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.secondary)
@@ -636,12 +928,12 @@ struct DestinationCardView: View {
                     .padding(.vertical, 8)
                 
                 HStack(spacing: 12) {
-                    if let sourceURL = destination.sourceURL, !sourceURL.isEmpty {
-                        Link(destination: URL(string: sourceURL)!) {
+                    if let sourceURL = destination.sourceURL, !sourceURL.isEmpty, let url = URL(string: sourceURL) {
+                        Link(destination: url) {
                             HStack(spacing: 6) {
                                 Image(systemName: destination.sourceURL?.contains("instagram") == true ? "camera.fill" : "music.note")
                                     .font(.caption)
-                                Text("View Original Post")
+                                Text("tripDetail.viewOriginalPost".localized)
                                     .font(.caption)
                             }
                             .foregroundColor(.blue)
@@ -652,12 +944,12 @@ struct DestinationCardView: View {
                         }
                     }
                     
-                    if let reviewURL = destination.reviewURL, !reviewURL.isEmpty {
-                        Link(destination: URL(string: reviewURL)!) {
+                    if let reviewURL = destination.reviewURL, !reviewURL.isEmpty, let url = URL(string: reviewURL) {
+                        Link(destination: url) {
                             HStack(spacing: 6) {
                                 Image(systemName: "star.fill")
                                     .font(.caption)
-                                Text("Reviews")
+                                Text("tripDetail.reviews".localized)
                                     .font(.caption)
                             }
                             .foregroundColor(.orange)
@@ -698,7 +990,7 @@ struct DestinationCardView: View {
                 
                 HStack(spacing: 12) {
                     if destination.savedFromSocial {
-                        Label("Saved from Social", systemImage: "heart.fill")
+                        Label("tripDetail.savedFromSocial".localized, systemImage: "heart.fill")
                             .font(.caption2)
                             .foregroundColor(.pink)
                             .padding(.horizontal, 8)
@@ -714,7 +1006,7 @@ struct DestinationCardView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "link")
                                     .font(.caption2)
-                                Text("Original Post")
+                                Text("tripDetail.originalPost".localized)
                                     .font(.caption2)
                             }
                             .foregroundColor(.blue)
@@ -732,7 +1024,7 @@ struct DestinationCardView: View {
                             HStack(spacing: 4) {
                                 Image(systemName: "star.fill")
                                     .font(.caption2)
-                                Text("Reviews")
+                                Text("tripDetail.reviews".localized)
                                     .font(.caption2)
                             }
                             .foregroundColor(.orange)
@@ -747,14 +1039,15 @@ struct DestinationCardView: View {
         }
         .padding(16)
         .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 2)
+            RoundedRectangle(cornerRadius: 16)
+                .fill(themeManager.currentPalette.background)
+                .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 20, x: 0, y: 8)
         )
     }
 }
 
 struct TabButton: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let title: String
     let icon: String
     let isSelected: Bool
@@ -774,7 +1067,7 @@ struct TabButton: View {
             .foregroundColor(isSelected ? .white : .primary)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
-            .background(isSelected ? Color.blue : Color(.systemGray5))
+            .background(isSelected ? themeManager.currentPalette.accent : Color(.systemGray5))
             .cornerRadius(18)
         }
     }
@@ -794,6 +1087,7 @@ struct ShareSheet: UIViewControllerRepresentable {
 // MARK: - Full Screen Image Viewer
 private struct FullScreenImageView: View {
     let image: UIImage
+    let onSave: (UIImage) -> Void
     @Environment(\.dismiss) private var dismiss
     
     @State private var brightness: Double = 0.0
@@ -801,6 +1095,8 @@ private struct FullScreenImageView: View {
     @State private var saturation: Double = 1.0
     @State private var showingFilters = false
     @State private var scale: CGFloat = 1.0
+    @State private var rotationDegrees: Double = 0
+    @State private var isFlippedHorizontally: Bool = false
     
     private var filteredImage: UIImage {
         applyFilters(to: image)
@@ -811,7 +1107,11 @@ private struct FullScreenImageView: View {
             Color.black.ignoresSafeArea()
             
             // Zoomable image view
-            ZoomableImageView(image: filteredImage)
+            ZoomableImageView(
+                image: filteredImage,
+                rotationDegrees: rotationDegrees,
+                isFlippedHorizontally: isFlippedHorizontally
+            )
             
             VStack {
                 HStack {
@@ -829,6 +1129,34 @@ private struct FullScreenImageView: View {
                     .padding(.top, 16)
                     
                     Spacer()
+                    
+                    // Rotate button
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            rotationDegrees = (rotationDegrees + 90).truncatingRemainder(dividingBy: 360)
+                        }
+                    } label: {
+                        Image(systemName: "rotate.right")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(Circle())
+                    }
+                    
+                    // Flip button
+                    Button {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                            isFlippedHorizontally.toggle()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.left.and.right.righttriangle.left.righttriangle.right")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundColor(.white)
+                            .padding(10)
+                            .background(Color.black.opacity(0.6))
+                            .clipShape(Circle())
+                    }
                     
                     // Filter toggle button
                     Button {
@@ -849,91 +1177,116 @@ private struct FullScreenImageView: View {
                 
                 Spacer()
                 
-                // Filter controls panel
-                if showingFilters {
-                    VStack(spacing: 16) {
-                        // Brightness
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Image(systemName: "sun.max.fill")
-                                    .foregroundColor(.white)
-                                    .font(.caption)
-                                Text("Brightness")
-                                    .foregroundColor(.white)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                Spacer()
-                                Text("\(Int(brightness * 100))%")
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .font(.caption)
+                VStack(spacing: 12) {
+                    // Filter controls panel
+                    if showingFilters {
+                        VStack(spacing: 16) {
+                            // Brightness
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "sun.max.fill")
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                    Text("tripDetail.brightness".localized)
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Text("tripDetailView.intbrightness.100".localized)
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.caption)
+                                }
+                                Slider(value: $brightness, in: -1.0...1.0)
+                                    .tint(.white)
                             }
-                            Slider(value: $brightness, in: -1.0...1.0)
-                                .tint(.white)
-                        }
-                        
-                        // Contrast
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Image(systemName: "circle.lefthalf.filled")
-                                    .foregroundColor(.white)
-                                    .font(.caption)
-                                Text("Contrast")
-                                    .foregroundColor(.white)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                Spacer()
-                                Text("\(Int(contrast * 100))%")
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .font(.caption)
+                            
+                            // Contrast
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "circle.lefthalf.filled")
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                    Text("tripDetail.contrast".localized)
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Text("tripDetailView.intcontrast.100".localized)
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.caption)
+                                }
+                                Slider(value: $contrast, in: 0.0...2.0)
+                                    .tint(.white)
                             }
-                            Slider(value: $contrast, in: 0.0...2.0)
-                                .tint(.white)
-                        }
-                        
-                        // Saturation
-                        VStack(alignment: .leading, spacing: 8) {
-                            HStack {
-                                Image(systemName: "paintpalette.fill")
-                                    .foregroundColor(.white)
-                                    .font(.caption)
-                                Text("Saturation")
-                                    .foregroundColor(.white)
-                                    .font(.caption)
-                                    .fontWeight(.medium)
-                                Spacer()
-                                Text("\(Int(saturation * 100))%")
-                                    .foregroundColor(.white.opacity(0.7))
-                                    .font(.caption)
+                            
+                            // Saturation
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Image(systemName: "paintpalette.fill")
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                    Text("tripDetail.saturation".localized)
+                                        .foregroundColor(.white)
+                                        .font(.caption)
+                                        .fontWeight(.medium)
+                                    Spacer()
+                                    Text("tripDetailView.intsaturation.100".localized)
+                                        .foregroundColor(.white.opacity(0.7))
+                                        .font(.caption)
+                                }
+                                Slider(value: $saturation, in: 0.0...2.0)
+                                    .tint(.white)
                             }
-                            Slider(value: $saturation, in: 0.0...2.0)
-                                .tint(.white)
+                            
+                            // Reset button
+                            Button {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                                    brightness = 0.0
+                                    contrast = 1.0
+                                    saturation = 1.0
+                                }
+                            } label: {
+                                HStack {
+                                    Image(systemName: "arrow.counterclockwise")
+                                    Text("tripDetail.reset".localized)
+                                }
+                                .foregroundColor(.white)
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 8)
+                                .background(Color.white.opacity(0.2))
+                                .cornerRadius(8)
+                            }
                         }
-                        
-                        // Reset button
+                        .padding(20)
+                        .background(Color.black.opacity(0.8))
+                        .cornerRadius(20, corners: [.topLeft, .topRight])
+                        .transition(.move(edge: .bottom))
+                    }
+                    
+                    // Save changes button
+                    HStack {
+                        Spacer()
                         Button {
-                            withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
-                                brightness = 0.0
-                                contrast = 1.0
-                                saturation = 1.0
-                            }
+                            let finalImage = makeFinalImageForSaving()
+                            onSave(finalImage)
+                            dismiss()
                         } label: {
-                            HStack {
-                                Image(systemName: "arrow.counterclockwise")
-                                Text("Reset")
+                            HStack(spacing: 8) {
+                                Image(systemName: "square.and.arrow.down")
+                                Text("Save Changes")
+                                    .fontWeight(.semibold)
                             }
                             .foregroundColor(.white)
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 8)
-                            .background(Color.white.opacity(0.2))
-                            .cornerRadius(8)
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 10)
+                            .background(Color.white.opacity(0.25))
+                            .cornerRadius(20)
                         }
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 24)
                     }
-                    .padding(20)
-                    .background(Color.black.opacity(0.8))
-                    .cornerRadius(20, corners: [.topLeft, .topRight])
-                    .transition(.move(edge: .bottom))
                 }
             }
         }
@@ -955,11 +1308,40 @@ private struct FullScreenImageView: View {
         
         return UIImage(cgImage: cgImage)
     }
+    
+    private func makeFinalImageForSaving() -> UIImage {
+        // Start from filtered image
+        let base = filteredImage
+        let size = base.size
+        
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { context in
+            let cg = context.cgContext
+            
+            // Move origin to center for rotation/flip
+            cg.translateBy(x: size.width / 2, y: size.height / 2)
+            
+            // Apply flip first (horizontal)
+            if isFlippedHorizontally {
+                cg.scaleBy(x: -1, y: 1)
+            }
+            
+            // Apply rotation
+            let radians = CGFloat(rotationDegrees * .pi / 180)
+            cg.rotate(by: radians)
+            
+            // Draw image centered
+            cg.translateBy(x: -size.width / 2, y: -size.height / 2)
+            base.draw(in: CGRect(origin: .zero, size: size))
+        }
+    }
 }
 
 // MARK: - Zoomable Image View
 private struct ZoomableImageView: UIViewRepresentable {
     let image: UIImage
+    let rotationDegrees: Double
+    let isFlippedHorizontally: Bool
     
     func makeUIView(context: Context) -> UIScrollView {
         let scrollView = UIScrollView()
@@ -984,6 +1366,14 @@ private struct ZoomableImageView: UIViewRepresentable {
     func updateUIView(_ scrollView: UIScrollView, context: Context) {
         if let imageView = context.coordinator.imageView {
             imageView.image = image
+            
+            // Apply rotation and flip via transform to avoid reallocating images.
+            let radians = CGFloat(rotationDegrees * .pi / 180)
+            var transform = CGAffineTransform.identity.rotated(by: radians)
+            if isFlippedHorizontally {
+                transform = transform.scaledBy(x: -1, y: 1)
+            }
+            imageView.transform = transform
         }
     }
     
@@ -1044,16 +1434,17 @@ private struct RoundedCorner: Shape {
 // MARK: - Trip Stats Card (Detail Screen)
 private struct TripStatsCard: View {
     let trip: TripModel
+    @EnvironmentObject var themeManager: ThemeManager
     
     private func durationBadge(_ days: Int) -> String? {
         switch days {
-        case 1: return "One day"
-        case 2...3: return "Short"
-        case 4...6: return "Nearly a week"
-        case 7: return "One week"
+        case 1: return "trips.durationOneDay".localized
+        case 2...3: return "trips.durationShort".localized
+        case 4...6: return "trips.durationNearlyWeek".localized
+        case 7: return "trips.durationOneWeek".localized
         default:
-            if days % 7 == 0 { return "\(days / 7) weeks" }
-            if days > 14 { return "Long trip" }
+            if days % 7 == 0 { return "trips.weeks".localized(days / 7) }
+            if days > 14 { return "trips.durationLong".localized }
             return nil
         }
     }
@@ -1066,13 +1457,13 @@ private struct TripStatsCard: View {
     }
     private var statusValue: String {
         if trip.isUpcoming { return "\(max(0, daysUntil))" }
-        if trip.isCurrent { return "Day \(min(trip.duration, currentDay))" }
-        return "Done"
+        if trip.isCurrent { return "itinerary.dayN".localized(min(trip.duration, currentDay)) }
+        return "trips.statusDone".localized
     }
     private var statusLabel: String {
-        if trip.isUpcoming { return "days until" }
-        if trip.isCurrent { return "in progress" }
-        return "completed"
+        if trip.isUpcoming { return "trips.statusDaysUntil".localized }
+        if trip.isCurrent { return "trips.statusInProgress".localized }
+        return "trips.statusCompleted".localized
     }
     private var daysUntil: Int {
         Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0
@@ -1085,8 +1476,8 @@ private struct TripStatsCard: View {
     var body: some View {
         VStack(spacing: 16) {
             HStack(spacing: 8) {
-                TripStatItem(icon: "clock", value: "\(trip.duration)", label: "days", badge: durationBadge(trip.duration))
-                TripStatItem(icon: "mappin.circle", value: "\(destinationCount)", label: "Destinations")
+                TripStatItem(icon: "clock", value: "\(trip.duration)", label: "trips.days".localized, badge: durationBadge(trip.duration))
+                TripStatItem(icon: "mappin.circle", value: "\(destinationCount)", label: "destination.title".localized)
                 TripStatItem(icon: statusIcon, value: statusValue, label: statusLabel)
             }
             .frame(maxWidth: .infinity)
@@ -1096,7 +1487,7 @@ private struct TripStatsCard: View {
                 let totalExpenses = trip.expenses?.reduce(0) { $0 + $1.amount } ?? 0
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Budget")
+                        Text("trips.budget".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
@@ -1116,24 +1507,14 @@ private struct TripStatsCard: View {
         .padding(18)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
+                .fill(themeManager.currentPalette.background)
+                .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 24, x: 0, y: 8)
         )
     }
 }
 
 private struct TripStatItem: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let icon: String
     let value: String
     let label: String
@@ -1152,7 +1533,7 @@ private struct TripStatItem: View {
                 .font(.title3)
                 .foregroundStyle(
                     LinearGradient(
-                        colors: [.blue, .blue.opacity(0.7)],
+                        colors: [themeManager.currentPalette.accent, themeManager.currentPalette.accent.opacity(0.7)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
@@ -1163,7 +1544,7 @@ private struct TripStatItem: View {
                 HStack(spacing: 4) {
                     Text(value)
                         .font(.system(size: 28, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                        .foregroundColor(themeManager.currentPalette.text)
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                     
@@ -1179,7 +1560,7 @@ private struct TripStatItem: View {
                                 Capsule()
                                     .fill(
                                         LinearGradient(
-                                            colors: [Color.blue.opacity(0.7), Color.blue.opacity(0.5)],
+                                            colors: [themeManager.currentPalette.accent.opacity(0.8), themeManager.currentPalette.accent.opacity(0.5)],
                                             startPoint: .topLeading,
                                             endPoint: .bottomTrailing
                                         )
@@ -1194,8 +1575,8 @@ private struct TripStatItem: View {
                 .frame(maxWidth: .infinity)
                 
                 Text(label)
-                    .font(.system(size: 12, weight: .medium, design: .default))
-                    .foregroundColor(.primary)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
@@ -1223,6 +1604,7 @@ private struct TripInfoChips: View {
 }
 
 private struct InfoChip: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let icon: String
     let text: String
     
@@ -1230,30 +1612,22 @@ private struct InfoChip: View {
         HStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.caption2)
-                .foregroundColor(.primary)
+                .foregroundColor(themeManager.currentPalette.accent)
                 .frame(width: 14)
             Text(text)
-                .font(.caption)
-                .foregroundColor(.primary)
+                .font(.caption.weight(.medium))
+                .foregroundColor(themeManager.currentPalette.text)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 14)
         .padding(.vertical, 8)
         .background(
             Capsule()
-                .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.05), radius: 4, x: 0, y: 2)
+                .fill(themeManager.currentPalette.accent.opacity(0.08))
                 .overlay(
                     Capsule()
-                        .stroke(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.4), Color.white.opacity(0.2)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
+                        .stroke(themeManager.currentPalette.accent.opacity(0.2), lineWidth: 1)
                 )
         )
     }
@@ -1261,30 +1635,31 @@ private struct InfoChip: View {
 
 private struct TripQuickLinksGrid: View {
     @Binding var selectedTab: Int
+    @EnvironmentObject var themeManager: ThemeManager
     private let columns: [GridItem] = Array(repeating: GridItem(.flexible(), spacing: 10), count: 3)
     
     private var links: [(icon: String, title: String, index: Int)] {
         [
-            ("calendar", "Itinerary", 1),
-            ("creditcard", "Expenses", 2),
-            ("suitcase", "Packing", 3)
+            ("calendar", "tripDetail.itineraryTab".localized, 1),
+            ("creditcard", "tripDetail.expensesTab".localized, 2),
+            ("suitcase", "tripDetail.packingTab".localized, 3)
         ]
     }
     
     var body: some View {
         LazyVGrid(columns: columns, spacing: 10) {
-            ForEach(links, id: \.title) { item in
+            ForEach(links, id: \.index) { item in
                 Button {
                     selectedTab = item.index
                 } label: {
                     VStack(spacing: 8) {
                         Image(systemName: item.icon)
                             .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(.blue)
+                            .foregroundColor(themeManager.currentPalette.accent)
                             .frame(height: 20)
                         Text(item.title)
-                            .font(.caption)
-                            .foregroundColor(.primary)
+                            .font(.caption.weight(.medium))
+                            .foregroundColor(themeManager.currentPalette.text)
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     }
@@ -1293,18 +1668,10 @@ private struct TripQuickLinksGrid: View {
                     .frame(minHeight: 70)
                     .background(
                         RoundedRectangle(cornerRadius: 14)
-                            .fill(.ultraThinMaterial)
-                            .shadow(color: .black.opacity(0.06), radius: 4, x: 0, y: 2)
+                            .fill(themeManager.currentPalette.accent.opacity(0.04))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 14)
-                                    .stroke(
-                                        LinearGradient(
-                                            colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ),
-                                        lineWidth: 1
-                                    )
+                                    .stroke(themeManager.currentPalette.accent.opacity(0.15), lineWidth: 1)
                             )
                     )
                 }
@@ -1314,6 +1681,7 @@ private struct TripQuickLinksGrid: View {
 }
 
 private struct TripProgressCard: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let trip: TripModel
     
     private var isCurrent: Bool { trip.isCurrent }
@@ -1327,41 +1695,34 @@ private struct TripProgressCard: View {
             if isCurrent {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Trip Progress")
+                        Text("tripDetail.tripProgress".localized)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(themeManager.currentPalette.secondaryText)
                         Spacer()
-                        Text("\(Int((Double(currentDay) / Double(max(1, trip.duration))) * 100))%")
-                            .font(.caption)
-                            .fontWeight(.semibold)
+                        Text("tripDetail.dayLabel".localized(currentDay))
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(themeManager.currentPalette.text)
                     }
                     ProgressView(value: Double(currentDay), total: Double(max(1, trip.duration)))
-                        .tint(.blue)
+                        .tint(themeManager.currentPalette.accent)
                 }
                 .padding(14)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                        .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
+                        .fill(themeManager.currentPalette.background)
+                        .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 6, x: 0, y: 2)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1
-                                )
+                                .stroke(themeManager.currentPalette.accent.opacity(0.15), lineWidth: 1)
                         )
                 )
             } else if trip.isUpcoming {
                 HStack(spacing: 8) {
                     Image(systemName: "calendar.badge.clock")
-                        .foregroundColor(.orange)
-                    Text("Starts in \(Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0) days")
+                        .foregroundColor(themeManager.currentPalette.accent)
+                    Text("trips.startsInDays".localized(Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0))
                         .font(.subheadline)
-                        .foregroundColor(.primary)
+                        .foregroundColor(themeManager.currentPalette.text)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                     Spacer()
@@ -1369,18 +1730,11 @@ private struct TripProgressCard: View {
                 .padding(14)
                 .background(
                     RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
-                        .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 2)
+                        .fill(themeManager.currentPalette.background)
+                        .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 6, x: 0, y: 2)
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(
-                                    LinearGradient(
-                                        colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    ),
-                                    lineWidth: 1
-                                )
+                                .stroke(themeManager.currentPalette.accent.opacity(0.15), lineWidth: 1)
                         )
                 )
             }
@@ -1395,14 +1749,15 @@ private struct TripPrimaryActionsRow: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            ActionItem(icon: "square.and.arrow.up", title: "Share", action: onShare)
-            ActionItem(icon: "pencil", title: "Edit Trip", action: onEdit)
-            ActionItem(icon: "plus", title: "Add Destination", action: onAddDestination)
+            ActionItem(icon: "square.and.arrow.up", title: "tripDetail.shareAction".localized, action: onShare)
+            ActionItem(icon: "pencil", title: "tripDetail.editTripAction".localized, action: onEdit)
+            ActionItem(icon: "plus", title: "tripDetail.addDestinationAction".localized, action: onAddDestination)
         }
     }
 }
 
 private struct ActionItem: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let icon: String
     let title: String
     let action: () -> Void
@@ -1412,28 +1767,24 @@ private struct ActionItem: View {
             Button(action: action) {
                 Image(systemName: icon)
                     .font(.system(size: 16, weight: .semibold))
-                    .foregroundColor(.blue)
-                    .frame(width: 36, height: 36)
+                    .foregroundColor(themeManager.currentPalette.accent)
+                    .frame(width: 40, height: 40)
                     .background(
                         Circle()
-                            .fill(.ultraThinMaterial)
-                            .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
+                            .fill(themeManager.currentPalette.accent.opacity(0.08))
+                            .shadow(color: themeManager.currentPalette.accent.opacity(0.1), radius: 4, x: 0, y: 2)
                             .overlay(
                                 Circle()
-                                    .stroke(
-                                        LinearGradient(
-                                            colors: [Color.white.opacity(0.4), Color.white.opacity(0.2)],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        ),
-                                        lineWidth: 1
-                                    )
+                                    .stroke(themeManager.currentPalette.accent.opacity(0.2), lineWidth: 1)
                             )
                     )
             }
+            .buttonStyle(.plain)
+            
             Text(title)
-                .font(.caption2)
-                .foregroundColor(.secondary)
+                .font(.caption2.weight(.medium))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
+                .multilineTextAlignment(.center)
                 .lineLimit(1)
                 .minimumScaleFactor(0.8)
         }
@@ -1443,17 +1794,18 @@ private struct ActionItem: View {
 
 // MARK: - Overview Enhancements
 private struct TripOverviewCard: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let trip: TripModel
     
     private func durationBadge(_ days: Int) -> String? {
         switch days {
-        case 1: return "One day"
-        case 2...3: return "Short"
-        case 4...6: return "Nearly a week"
-        case 7: return "One week"
+        case 1: return "trips.durationOneDay".localized
+        case 2...3: return "trips.durationShort".localized
+        case 4...6: return "trips.durationNearlyWeek".localized
+        case 7: return "trips.durationOneWeek".localized
         default:
-            if days % 7 == 0 { return "\(days / 7) weeks" }
-            if days > 14 { return "Long trip" }
+            if days % 7 == 0 { return "trips.weeks".localized(days / 7) }
+            if days > 14 { return "trips.durationLong".localized }
             return nil
         }
     }
@@ -1461,12 +1813,12 @@ private struct TripOverviewCard: View {
     private var statusText: String {
         if trip.isUpcoming {
             let days = Calendar.current.dateComponents([.day], from: Date(), to: trip.startDate).day ?? 0
-            return days <= 0 ? "Starts today" : "Starts in \(days) days"
+            return days <= 0 ? "trips.startsToday".localized : "trips.startsInDays".localized(days)
         } else if trip.isCurrent {
             let day = (Calendar.current.dateComponents([.day], from: trip.startDate, to: Date()).day ?? 0) + 1
-            return "Day \(max(1, min(day, trip.duration))) of \(trip.duration)"
+            return "trips.dayOfTotal".localized(max(1, min(day, trip.duration)), trip.duration)
         } else {
-            return "Completed"
+            return "trips.completed".localized
         }
     }
     
@@ -1474,12 +1826,12 @@ private struct TripOverviewCard: View {
         VStack(spacing: 12) {
             HStack(spacing: 10) {
                 Image(systemName: "calendar")
-                    .foregroundColor(.blue)
+                    .foregroundColor(themeManager.currentPalette.accent)
                     .font(.caption)
                     .frame(width: 16)
                 Text(trip.formattedDateRange)
                     .font(.subheadline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                 Spacer()
@@ -1487,12 +1839,13 @@ private struct TripOverviewCard: View {
             
             HStack(spacing: 10) {
                 Image(systemName: "clock")
-                    .foregroundColor(.blue)
+                    .foregroundColor(themeManager.currentPalette.accent)
                     .font(.caption)
                     .frame(width: 16)
                 HStack(spacing: 6) {
-                    Text("\(trip.duration) days")
+                    Text("\(trip.duration) \("trips.days".localized)")
                         .font(.subheadline.weight(.semibold))
+                        .foregroundColor(themeManager.currentPalette.text)
                         .lineLimit(1)
                     if let badge = durationBadge(trip.duration) {
                         Text(badge)
@@ -1504,13 +1857,7 @@ private struct TripOverviewCard: View {
                             .padding(.vertical, 4)
                             .background(
                                 Capsule()
-                                    .fill(
-                                        LinearGradient(
-                                            colors: [Color.blue.opacity(0.7), Color.blue.opacity(0.5)],
-                                            startPoint: .topLeading,
-                                            endPoint: .bottomTrailing
-                                        )
-                                    )
+                                    .fill(themeManager.currentPalette.accent)
                                     .overlay(
                                         Capsule().stroke(Color.white.opacity(0.25), lineWidth: 1)
                                     )
@@ -1522,12 +1869,12 @@ private struct TripOverviewCard: View {
             
             HStack(spacing: 10) {
                 Image(systemName: "tag")
-                    .foregroundColor(.blue)
+                    .foregroundColor(themeManager.currentPalette.accent)
                     .font(.caption)
                     .frame(width: 16)
                 Text(trip.category)
                     .font(.subheadline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                 Spacer()
@@ -1535,12 +1882,12 @@ private struct TripOverviewCard: View {
             
             HStack(spacing: 10) {
                 Image(systemName: trip.isUpcoming ? "calendar.badge.clock" : trip.isCurrent ? "airplane.departure" : "checkmark.circle")
-                    .foregroundColor(.blue)
+                    .foregroundColor(themeManager.currentPalette.accent)
                     .font(.caption)
                     .frame(width: 16)
                 Text(statusText)
                     .font(.subheadline)
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                     .lineLimit(1)
                     .minimumScaleFactor(0.8)
                 Spacer()
@@ -1549,19 +1896,8 @@ private struct TripOverviewCard: View {
         .padding(16)
         .background(
             RoundedRectangle(cornerRadius: 18)
-                .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18)
-                        .stroke(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
+                .fill(themeManager.currentPalette.background)
+                .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 24, x: 0, y: 8)
         )
     }
 }
@@ -1578,6 +1914,14 @@ private struct SnapshotTilesGrid: View {
         }
         return "—"
     }
+    private var itineraryItemsCountText: String {
+        let count = trip.itinerary?.count ?? 0
+        return count == 1 ? "tripDetail.itemSingular".localized : "tripDetail.itemsCount".localized(count)
+    }
+    private var packingItemsCountText: String {
+        let count = trip.packingList?.count ?? 0
+        return count == 1 ? "tripDetail.itemSingular".localized : "tripDetail.itemsCount".localized(count)
+    }
     
     var body: some View {
         LazyVGrid(columns: [
@@ -1586,15 +1930,15 @@ private struct SnapshotTilesGrid: View {
         ], spacing: 12) {
             SnapshotTile(
                 icon: "creditcard",
-                title: "Expenses",
+                title: "tripDetail.expensesSection".localized,
                 value: SettingsManager.shared.formatAmount(totalExpenses)
             ) {
                 selectedTab = 2
             }
             
             SnapshotTile(
-                icon: "dollarsign.circle",
-                title: "Remaining",
+                icon: SettingsManager.shared.currencyIconName(filled: false),
+                title: "tripDetail.remainingSection".localized,
                 value: remainingBudgetText
             ) {
                 selectedTab = 2
@@ -1602,16 +1946,16 @@ private struct SnapshotTilesGrid: View {
             
             SnapshotTile(
                 icon: "list.bullet",
-                title: "Itinerary",
-                value: "\(trip.itinerary?.count ?? 0) items"
+                title: "tripDetail.itinerarySection".localized,
+                value: itineraryItemsCountText
             ) {
                 selectedTab = 1
             }
             
             SnapshotTile(
                 icon: "suitcase",
-                title: "Packing",
-                value: "\(trip.packingList?.count ?? 0) items"
+                title: "tripDetail.packingSection".localized,
+                value: packingItemsCountText
             ) {
                 selectedTab = 3
             }
@@ -1620,6 +1964,7 @@ private struct SnapshotTilesGrid: View {
 }
 
 private struct SnapshotTile: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let icon: String
     let title: String
     let value: String
@@ -1631,24 +1976,18 @@ private struct SnapshotTile: View {
                 HStack(spacing: 6) {
                     Image(systemName: icon)
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.blue, .blue.opacity(0.7)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                        .foregroundStyle(themeManager.currentPalette.accent)
                         .frame(width: 16)
                     Text(title)
                         .font(.caption)
                         .fontWeight(.medium)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
                         .lineLimit(1)
                     Spacer()
                 }
                 Text(value)
                     .font(.title3.weight(.bold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
             }
@@ -1657,18 +1996,11 @@ private struct SnapshotTile: View {
             .frame(minHeight: 80)
             .background(
                 RoundedRectangle(cornerRadius: 18)
-                    .fill(.ultraThinMaterial)
-                    .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                    .fill(themeManager.currentPalette.background)
+                    .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 8, x: 0, y: 4)
                     .overlay(
                         RoundedRectangle(cornerRadius: 18)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1
-                            )
+                            .stroke(themeManager.currentPalette.accent.opacity(0.15), lineWidth: 1)
                     )
             )
         }
@@ -1685,6 +2017,7 @@ private struct SnapshotTile: View {
             endDate: Calendar.current.date(byAdding: .day, value: 15, to: Date()) ?? Date(),
             notes: "First time in Europe!"
         ))
+        .environmentObject(ThemeManager.shared)
         .modelContainer(for: [TripModel.self, DestinationModel.self], inMemory: true)
     }
 }

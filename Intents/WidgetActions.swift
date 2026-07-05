@@ -15,7 +15,7 @@ struct OpenTripAction: AppIntent {
     static var description = IntentDescription("Open this trip in Triply")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip ID")
+    @Parameter(title: "widgetActions.trip.id")
     var tripId: String
     
     func perform() async throws -> some IntentResult {
@@ -36,10 +36,10 @@ struct QuickAddExpenseAction: AppIntent {
     static var description = IntentDescription("Quickly add an expense to this trip")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip ID")
+    @Parameter(title: "widgetActions.trip.id")
     var tripId: String
     
-    @Parameter(title: "Amount")
+    @Parameter(title: "expense.amount")
     var amount: Double
     
     func perform() async throws -> some IntentResult {
@@ -60,7 +60,7 @@ struct ViewItineraryAction: AppIntent {
     static var description = IntentDescription("View the itinerary for this trip")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip ID")
+    @Parameter(title: "widgetActions.trip.id")
     var tripId: String
     
     func perform() async throws -> some IntentResult {

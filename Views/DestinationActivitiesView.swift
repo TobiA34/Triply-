@@ -28,7 +28,7 @@ struct DestinationActivitiesView: View {
     @State private var mapViewMode: ViewMode = .list  // Default to list since main view already has map
     @State private var currentOffset = 0
     @State private var hasMoreResults = true
-    @State private var pageSize = 10  // Results per page for \"Load More\"
+    @State private var pageSize = 25  // Results per page
     @State private var selectedCategoryFilter: String = "All"
     
     enum ViewMode {
@@ -117,6 +117,7 @@ struct DestinationActivitiesView: View {
                         }
                         Text(destination.name)
                             .font(.caption.bold())
+                            .foregroundColor(.black)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
                             .background(Color.white)
@@ -150,6 +151,7 @@ struct DestinationActivitiesView: View {
                             }
                             Text(place.name)
                                 .font(.caption2)
+                                .foregroundColor(.black)
                                 .lineLimit(1)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 3)
@@ -283,7 +285,7 @@ struct DestinationActivitiesView: View {
                             .font(.headline)
                             .foregroundColor(.secondary)
                         
-                        Text("Try adjusting the map or searching a nearby area to discover more places.")
+                        Text("Using free OpenStreetMap API - no API key needed!")
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -423,138 +425,6 @@ struct DestinationActivitiesView: View {
         cameraPosition = .region(MKCoordinateRegion(center: center, span: span))
     }
     
-    /// Fallback search using Apple Maps (MKLocalSearch) when OpenStreetMap returns no results.
-    /// This runs entirely on-device and does not require an API key.
-    private func loadApplePlaces(for coordinate: CLLocationCoordinate2D) async -> [FreePlace] {
-        let request = MKLocalSearch.Request()
-        // Broad query so Apple Maps can decide relevant POIs
-        request.naturalLanguageQuery = "restaurants, attractions, museums, parks"
-        
-        // Reasonable region around the destination
-        let region = MKCoordinateRegion(
-            center: coordinate,
-            span: MKCoordinateSpan(latitudeDelta: 0.2, longitudeDelta: 0.2)
-        )
-        request.region = region
-        
-        // Prefer common point-of-interest categories
-        request.pointOfInterestFilter = MKPointOfInterestFilter(including: [
-            .restaurant,
-            .cafe,
-            .museum,
-            .park,
-            .store,
-            .theater,
-            .amusementPark,
-            .stadium
-        ])
-        
-        let search = MKLocalSearch(request: request)
-        do {
-            let response = try await search.start()
-            let items = response.mapItems
-            print("📍 Apple Maps found \(items.count) map items")
-            
-            let places: [FreePlace] = items.map { item in
-                let name = item.name ?? "Unknown Place"
-                
-                // Simple address formatting
-                let placemark = item.placemark
-                var addressParts: [String] = []
-                if let street = placemark.thoroughfare {
-                    addressParts.append(street)
-                }
-                if let city = placemark.locality {
-                    addressParts.append(city)
-                }
-                if let country = placemark.country {
-                    addressParts.append(country)
-                }
-                let address = addressParts.isEmpty ? "Address not available" : addressParts.joined(separator: ", ")
-                
-                // Rough category based on Apple POI category
-                let category: String
-                if let poi = item.pointOfInterestCategory {
-                    switch poi {
-                    case .restaurant, .cafe, .foodMarket, .bakery, .brewery, .winery:
-                        category = "Restaurant"
-                    case .museum, .library:
-                        category = "Museum"
-                    case .park, .beach, .nationalPark:
-                        category = "Park"
-                    case .store:
-                        category = "Shopping"
-                    case .nightlife:
-                        category = "Nightlife"
-                    case .hotel:
-                        category = "Hotel"
-                    case .theater, .movieTheater, .stadium, .amusementPark:
-                        category = "Attraction"
-                    default:
-                        category = "Activity"
-                    }
-                } else {
-                    category = "Activity"
-                }
-                
-                return FreePlace(
-                    id: UUID().uuidString,
-                    name: name,
-                    address: address,
-                    location: placemark.coordinate,
-                    category: category,
-                    type: "apple_maps"
-                )
-            }
-            
-            return places
-        } catch {
-            print("⚠️ Apple Maps search failed: \(error.localizedDescription)")
-            return []
-        }
-    }
-    
-    /// Generate a small set of synthetic sample activities around the destination
-    /// so the UI can still showcase the feature when live APIs return nothing.
-    private func generateSampleActivities(
-        for city: String,
-        coordinate: CLLocationCoordinate2D
-    ) -> [FreePlace] {
-        // Slight offsets so markers don't stack exactly on top of each other
-        let deltas: [(lat: Double, lon: Double)] = [
-            (0.01, 0.0),
-            (-0.008, 0.006),
-            (0.006, -0.008),
-            (0.012, 0.012),
-            (-0.01, -0.01)
-        ]
-        
-        let baseName = city.isEmpty ? "Local" : city
-        let templates: [(String, String)] = [
-            ("\(baseName) City Walking Tour", "Attraction"),
-            ("Popular Cafés & Coffee Spots", "Restaurant"),
-            ("Museums & Culture Highlights", "Museum"),
-            ("Parks & Scenic Viewpoints", "Park"),
-            ("Shopping & Local Markets", "Shopping")
-        ]
-        
-        return zip(deltas, templates).map { delta, info in
-            let (title, category) = info
-            let newCoord = CLLocationCoordinate2D(
-                latitude: coordinate.latitude + delta.lat,
-                longitude: coordinate.longitude + delta.lon
-            )
-            return FreePlace(
-                id: UUID().uuidString,
-                name: title,
-                address: baseName,
-                location: newCoord,
-                category: category,
-                type: "sample"
-            )
-        }
-    }
-    
     private func iconForCategory(_ category: String) -> String {
         switch category.lowercased() {
         case "restaurant", "food", "cafe": return "fork.knife"
@@ -664,30 +534,10 @@ struct DestinationActivitiesView: View {
                 allResults.append(contentsOf: nominatimResults)
             }
             
-            // If free OpenStreetMap sources returned nothing, fall back to Apple Maps (device-only API)
-            if reset && allResults.isEmpty {
-                print("🔍 No OSM results, trying Apple Maps (MKLocalSearch)...")
-                let appleResults = await loadApplePlaces(for: coordinate)
-                print("✅ Apple Maps returned \(appleResults.count) places")
-                allResults.append(contentsOf: appleResults)
-            }
-            
-            // Final fallback: if both APIs return nothing, generate a few
-            // synthetic sample activities near the destination so the list
-            // never feels completely empty in common cities.
-            if reset && allResults.isEmpty {
-                print("ℹ️ No live results from APIs, generating sample activities...")
-                let samples = generateSampleActivities(
-                    for: destination.name,
-                    coordinate: coordinate
-                )
-                allResults.append(contentsOf: samples)
-            }
-            
-            // Update pagination state (OSM-based only; Apple/search is single-page)
+            // Update pagination state
             hasMoreResults = comprehensiveResults.count >= pageSize
             
-            // Check for errors from OSM API
+            // Check for errors
             if let apiError = placesManager.errorMessage {
                 print("❌ Free Places API Error: \(apiError)")
                 await MainActor.run {
@@ -748,11 +598,11 @@ struct DestinationActivitiesView: View {
                     currentOffset += newResults.count
                 }
                 
-                // Show error banner only for real API errors.
-                // An empty result is treated as a normal \"no activities\" state,
-                // which is handled by the activities.isEmpty branch in the list view.
+                // Show error message if we have one, or if no results (only on first load)
                 if let apiError = placesManager.errorMessage {
                     errorMessage = apiError
+                } else if reset && activities.isEmpty {
+                    errorMessage = "No places found near this location. The search may have timed out or the area may not have many points of interest. Try again or search a different area."
                 } else {
                     errorMessage = nil
                     // Update map camera to show all places

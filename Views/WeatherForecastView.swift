@@ -56,7 +56,7 @@ struct WeatherForecastView: View {
                         Image(systemName: "exclamationmark.triangle")
                             .font(.system(size: 40))
                             .foregroundColor(.orange)
-                        Text("Weather unavailable")
+                        Text("weatherForecastView.weather.unavailable".localized)
                             .font(.headline)
                         Text(error)
                             .font(.subheadline)
@@ -68,9 +68,9 @@ struct WeatherForecastView: View {
                         Image(systemName: "cloud.sun")
                             .font(.system(size: 40))
                             .foregroundColor(.secondary.opacity(0.5))
-                        Text("Select a destination to see weather")
+                        Text("weatherForecastView.select.a.destination.to.see".localized)
                             .font(.headline)
-                        Text("Weather forecast will show 5-day predictions")
+                        Text("weatherForecastView.weather.forecast.will.show.5day".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -85,7 +85,7 @@ struct WeatherForecastView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Weather Forecast")
+        .navigationTitle("weather.title".localized)
         .onAppear {
             // Auto-load weather for first destination
             if selectedDestination == nil,
@@ -130,9 +130,9 @@ struct WeatherCardView: View {
                     .font(.subheadline)
                     .fontWeight(.medium)
                 HStack {
-                    Label("\(Int(forecast.precipitation))mm", systemImage: "drop.fill")
+                    Label("weatherForecastView.intforecastprecipitationmm".localized, systemImage: "drop.fill")
                         .font(.caption)
-                    Label("\(forecast.humidity)%", systemImage: "humidity")
+                    Label("weatherForecastView.forecasthumidity".localized, systemImage: "humidity")
                         .font(.caption)
                 }
                 .foregroundColor(.secondary)
@@ -141,10 +141,10 @@ struct WeatherCardView: View {
             
             // Temperature
             VStack(alignment: .trailing, spacing: 4) {
-                Text("\(Int(forecast.highTemp))°")
+                Text("weatherForecastView.intforecasthightemp".localized)
                     .font(.title2)
                     .fontWeight(.bold)
-                Text("\(Int(forecast.lowTemp))°")
+                Text("weatherForecastView.intforecastlowtemp".localized)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
             }

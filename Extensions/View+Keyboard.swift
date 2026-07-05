@@ -41,7 +41,7 @@ extension View {
             self.toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
-                    Button("Done") {
+                    Button("common.done".localized) {
                         hideKeyboard()
                     }
                 }
@@ -134,7 +134,7 @@ private struct KeyboardDoneToolbarModifier: ViewModifier {
                 content.toolbar {
                     ToolbarItemGroup(placement: .keyboard) {
                         Spacer()
-                        Button("Done") { hideKeyboard() }
+                        Button("common.done".localized) { hideKeyboard() }
                     }
                 }
             } else {

@@ -9,6 +9,9 @@ import SwiftUI
 import SwiftData
 import MessageUI
 import UIKit
+#if canImport(RevenueCat)
+import RevenueCat
+#endif
 
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
@@ -20,6 +23,7 @@ struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @State private var selectedCurrency: Currency = Currency.currency(for: "USD")
+    @State private var showingPaywall: Bool = false
     
     // Use an explicit init so the sheet doesn't trigger extra loads on appear.
     // Values are pulled from the shared managers that are already initialized
@@ -39,16 +43,17 @@ struct SettingsView: View {
             contactSection
             proSection
         }
-        // Local keyboard handling so taps on rows stay responsive
-        .keyboardDismissable(
-            onTap: false,
-            onDrag: true,
-            showDoneButton: true
-        )
         .scrollContentBackground(.hidden)
         .background(themeBackgroundColor)
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showingPaywall) {
+            NavigationStack {
+                PaywallView()
+            }
+            .presentationDetents([.medium, .large])
+            .presentationCornerRadius(24)
+        }
         .onDisappear {
             // Auto-save when leaving settings (when in tab bar)
             saveSettings()
@@ -62,11 +67,7 @@ struct SettingsView: View {
     
     private var preferencesSection: some View {
         Section {
-            preferenceRow(
-                icon: settingsManager.currencyIconName(),
-                color: .green,
-                title: "Currency"
-            )
+            preferenceRow(icon: "dollarsign.circle.fill", color: .green, title: "Currency")
         } header: {
             Text("Preferences")
         } footer: {
@@ -76,14 +77,9 @@ struct SettingsView: View {
     
     private func preferenceRow(icon: String, color: Color, title: String) -> some View {
         HStack {
-            ZStack {
-                Circle()
-                    .fill(color)
-                    .frame(width: 28, height: 28)
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
-            }
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(color)
             Text(title)
                 .font(.headline)
                 .foregroundColor(.primary)
@@ -178,6 +174,19 @@ struct SettingsView: View {
     
     private var aboutSection: some View {
         Section {
+            NavigationLink {
+                WhatsNewView()
+            } label: {
+                HStack {
+                    Image(systemName: "sparkles")
+                        .foregroundStyle(
+                            LinearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                    Text("settings.whatsNew".localized)
+                        .foregroundColor(.primary)
+                }
+            }
+
             VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Image(systemName: "info.circle.fill")
@@ -186,12 +195,13 @@ struct SettingsView: View {
                         .font(.headline)
                         .foregroundColor(.primary)
                 }
-                
-                Text("Version 1.0.0")
+
+                Text(Bundle.main.appVersionDisplay)
                     .font(.subheadline)
                     .foregroundColor(Color(white: 0.4))
-                
-                Text("Plan your trips with ease. Organize destinations, create itineraries, and track your budget all in one place.")
+                    .textSelection(.enabled)
+
+                Text("app.description".localized)
                     .font(.caption)
                     .foregroundColor(Color(white: 0.4))
                     .padding(.top, 4)
@@ -237,8 +247,103 @@ struct SettingsView: View {
     }
     
     private var proSection: some View {
-        // In-app purchases removed: no dedicated Pro section in Settings
+        Section {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 10) {
+                    ZStack {
+                        Circle()
+                            .fill(LinearGradient(
+                                colors: [Color.yellow.opacity(0.9), Color.orange.opacity(0.8)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            ))
+                            .frame(width: 32, height: 32)
+                        Image(systemName: "crown.fill")
+                            .foregroundColor(.white)
+                            .font(.system(size: 16, weight: .bold))
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(RevenueCatManager.shared.isPro ? "Triply Pro is Active" : "Unlock Triply Pro")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        Text(RevenueCatManager.shared.isPro ? "Thank you for supporting development." : "AI planning, smart templates, exports and more.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                }
+                
+                if !RevenueCatManager.shared.isPro {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "sparkles")
+                            Text("AI trip planning & expense insights")
+                        }
+                        HStack(spacing: 8) {
+                            Image(systemName: "square.stack.3d.up.fill")
+                            Text("Smart templates, exports & widgets")
+                        }
+                        HStack(spacing: 8) {
+                            Image(systemName: "lock.open.display")
+                            Text("Unlock all upcoming Pro features")
+                        }
+                    }
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    
+                    Button {
+                        showingPaywall = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "crown.fill")
+                            Text("View Pro Plans")
+                                .fontWeight(.semibold)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 10)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.yellow, Color.orange],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                        .foregroundColor(.black)
+                        .cornerRadius(14)
+                    }
+                    .buttonStyle(.plain)
+                    
+                    Button {
+                        Task {
+                            await RevenueCatManager.shared.restorePurchases()
+                        }
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.clockwise.circle")
+                            Text("Restore Purchases")
+                        }
+                        .font(.caption)
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundColor(.secondary)
+                } else {
+                    Text("You already have access to all current Pro features.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding(.vertical, 4)
+        } header: {
+            Text("Pro")
+        } footer: {
+            if let msg = RevenueCatManager.shared.lastInfoMessage {
+                Text(msg)
+                    .font(.footnote)
+            } else {
                 EmptyView()
+            }
+        }
     }
     
     private func resetSelections() {
@@ -258,6 +363,52 @@ struct SettingsView: View {
         }
     }
 }
+
+// MARK: - RevenueCat Manager (local to Settings)
+
+// Real implementation when RevenueCat is available.
+#if canImport(RevenueCat)
+@MainActor
+final class RevenueCatManager: ObservableObject {
+    static let shared = RevenueCatManager()
+    private let iap = IAPManager.shared
+    var isPro: Bool { iap.isPro }
+    var lastInfoMessage: String? { iap.lastInfoMessage }
+    var lastErrorMessage: String? { iap.lastErrorMessage }
+
+    private init() {}
+
+    func refreshEntitlements() async {
+        await iap.refreshEntitlements()
+    }
+
+    func restorePurchases() async {
+        await iap.restorePurchases()
+    }
+}
+
+#else
+
+// Fallback stub when RevenueCat SDK isn't linked; avoids scary error text.
+@MainActor
+final class RevenueCatManager: ObservableObject {
+    static let shared = RevenueCatManager()
+
+    @Published private(set) var isPro: Bool = false
+    @Published private(set) var lastInfoMessage: String? = nil
+    @Published private(set) var lastErrorMessage: String? = nil
+
+    private init() {}
+
+    func refreshEntitlements() async {
+        // No-op; use local StoreKit paywall instead.
+    }
+
+    func restorePurchases() async {
+        // No-op for stub.
+    }
+}
+#endif
 
 
 // Inline Contact Form - No dependencies, always works
@@ -639,6 +790,50 @@ private struct WishKitNotAvailableView: View {
         }
         .padding()
         .navigationTitle("Feature Requests")
+    }
+}
+
+// MARK: - What's New (v2 highlights)
+
+/// In-app changelog for major releases; copy lives in Localizable.strings (`v2.*`).
+struct WhatsNewView: View {
+    private let bulletKeys = [
+        "v2.item1",
+        "v2.item2",
+        "v2.item3",
+        "v2.item4",
+    ]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("v2.title".localized)
+                    .font(.title.bold())
+
+                Text("v2.lead".localized)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                VStack(alignment: .leading, spacing: 14) {
+                    ForEach(Array(bulletKeys.enumerated()), id: \.offset) { _, key in
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                                .font(.body)
+                            Text(key.localized)
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+                .padding(.top, 8)
+            }
+            .padding()
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("settings.whatsNew".localized)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

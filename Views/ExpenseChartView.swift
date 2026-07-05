@@ -15,7 +15,7 @@ struct ExpenseChartView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("Expense Breakdown")
+            Text("expense.breakdown".localized)
                 .font(.title2)
                 .fontWeight(.bold)
                 .padding(.horizontal)
@@ -129,10 +129,7 @@ struct CategoryRow: View {
     }
     
     private func formatCurrency(_ amount: Double) -> String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "USD"
-        return formatter.string(from: NSNumber(value: amount)) ?? "$\(Int(amount))"
+        SettingsManager.shared.formatAmount(amount)
     }
 }
 
@@ -142,9 +139,9 @@ struct EmptyExpenseView: View {
             Image(systemName: "chart.pie")
                 .font(.system(size: 50))
                 .foregroundColor(.secondary)
-            Text("No Expenses Yet")
+            Text("expense.noExpensesYet".localized)
                 .font(.headline)
-            Text("Add expenses to see visual breakdown")
+            Text("expense.addToSeeBreakdown".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -156,7 +153,9 @@ struct EmptyExpenseView: View {
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: TripModel.self, configurations: config)
+    guard let container = try? ModelContainer(for: TripModel.self, configurations: config) else {
+        return AnyView(Text("Preview unavailable"))
+    }
     let sampleTrip = TripModel(
         name: "Test Trip",
         startDate: Date(),
@@ -164,9 +163,7 @@ struct EmptyExpenseView: View {
         notes: "",
         category: "General"
     )
-    
-    return ExpenseChartView(trip: sampleTrip)
-        .modelContainer(container)
+    return AnyView(ExpenseChartView(trip: sampleTrip).modelContainer(container))
 }
 
 

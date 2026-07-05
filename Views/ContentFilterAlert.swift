@@ -53,13 +53,13 @@ struct ContentFilterAlert: ViewModifier {
                                 .padding(.bottom, 20)
                                 
                                 // Title
-                                Text("Inappropriate Content")
+                                Text("content.inappropriate".localized)
                                     .font(.system(size: 22, weight: .bold))
                                     .foregroundColor(.primary)
                                     .padding(.bottom, 8)
                                 
                                 // Message
-                                Text("Your message contains language that doesn't align with our community guidelines. Please revise your text.")
+                                Text("content.inappropriateMessage".localized)
                                     .font(.system(size: 15))
                                     .foregroundColor(.secondary)
                                     .multilineTextAlignment(.center)
@@ -73,7 +73,7 @@ struct ContentFilterAlert: ViewModifier {
                                         isPresented = false
                                     }
                                 }) {
-                                    Text("Got it")
+                                    Text("content.gotIt".localized)
                                         .font(.system(size: 17, weight: .semibold))
                                         .foregroundColor(.white)
                                         .frame(maxWidth: .infinity)

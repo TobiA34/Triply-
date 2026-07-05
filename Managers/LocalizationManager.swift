@@ -56,54 +56,70 @@ class LocalizationManager: ObservableObject {
     
     @Published var currentLanguage: SupportedLanguage = .english
     
-    private let languageKey = "app_language"
-    
     // Bundle for current language - thread-safe
     var bundle: Bundle {
-        // Always use main bundle for now since we don't have separate language bundles
-        // The localized extension handles language switching via UserDefaults
         return Bundle.main
     }
     
     private init() {
-        // Initialize safely
-        currentLanguage = .english // Default first
+        currentLanguage = .english
         loadLanguage()
     }
     
-    func loadLanguage() {
-        // Safely load language from UserDefaults
-        if let savedLanguage = UserDefaults.standard.string(forKey: languageKey),
-           let language = SupportedLanguage(rawValue: savedLanguage) {
-            currentLanguage = language
-        } else {
-            // Detect system language safely
-            if let systemLanguageCode = Locale.current.language.languageCode?.identifier,
-               let systemLanguage = SupportedLanguage(rawValue: systemLanguageCode) {
-                currentLanguage = systemLanguage
-            } else {
-                currentLanguage = .english
-            }
+    /// Resolves device locale (language + region) to SupportedLanguage. Matches LocalizedString.deviceLanguageCode logic.
+    private static func deviceLanguage() -> SupportedLanguage {
+        let code = Self.resolveDeviceLanguageCode()
+        return SupportedLanguage(rawValue: code) ?? .english
+    }
+    
+    /// Returns the same language code used by LocalizedString (preferred language, then region fallback).
+    static func resolveDeviceLanguageCode() -> String {
+        if let preferred = Locale.preferredLanguages.first, !preferred.isEmpty {
+            let code = languageCode(from: preferred)
+            if SupportedLanguage(rawValue: code) != nil { return code }
+        }
+        if let current = Locale.current.language.languageCode?.identifier {
+            let code = languageCode(from: current)
+            if SupportedLanguage(rawValue: code) != nil { return code }
+        }
+        if let region = Locale.current.region?.identifier {
+            let code = languageCodeFromRegion(region)
+            if SupportedLanguage(rawValue: code) != nil { return code }
+        }
+        return "en"
+    }
+    
+    private static func languageCode(from localeIdentifier: String) -> String {
+        let parts = localeIdentifier.split(separator: "-").map(String.init)
+        let lang = parts.first ?? "en"
+        if lang == "zh" { return "zh-Hans" }
+        return lang
+    }
+    
+    private static func languageCodeFromRegion(_ region: String) -> String {
+        let r = region.uppercased()
+        switch r {
+        case "ES", "MX", "AR", "CO", "CL", "PE", "VE", "EC", "GT", "CU", "BO", "DO", "HN", "PY", "SV", "UY", "CR", "PA", "NI": return "es"
+        case "FR", "BE", "CA", "CH", "LU", "MC", "SN", "CI": return "fr"
+        case "DE", "AT", "CH", "LI", "LU": return "de"
+        case "IT", "CH", "SM", "VA": return "it"
+        case "PT", "BR", "AO", "MZ": return "pt"
+        case "JP": return "ja"
+        case "KR": return "ko"
+        case "CN", "SG", "TW": return "zh-Hans"
+        case "GB", "US", "AU", "CA", "IE", "NZ", "ZA", "IN": return "en"
+        default: return "en"
         }
     }
     
+    /// Syncs currentLanguage from device (language follows device, no manual override).
+    func loadLanguage() {
+        currentLanguage = Self.deviceLanguage()
+    }
+    
+    /// No-op: app language follows device only. Kept for API compatibility (e.g. LanguageSelectionView).
     func setLanguage(_ language: SupportedLanguage) {
-        guard currentLanguage != language else { return }
-        
-        // Update UserDefaults first (thread-safe)
-        UserDefaults.standard.set(language.rawValue, forKey: languageKey)
-        UserDefaults.standard.synchronize()
-        
-        // Update current language immediately on main thread
-        currentLanguage = language
-        
-        // Force UI update by sending notification
-        NotificationCenter.default.post(name: .languageChanged, object: nil)
-        
-        // Also trigger objectWillChange to ensure all observers update
-        objectWillChange.send()
-        
-        print("🌐 Language changed to: \(language.rawValue)")
+        loadLanguage()
     }
     
     func localizedString(_ key: String) -> String {

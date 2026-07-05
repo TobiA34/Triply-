@@ -12,24 +12,22 @@ import SwiftData
 class ProLimiter: ObservableObject {
     static let shared = ProLimiter()
     
-    // Use StoreKit-based IAPManager for Pro entitlement instead of RevenueCat
+    // Pro entitlement: prefer RevenueCat (paywall), fall back to IAPManager (StoreKit sync).
+    // Both are updated from RevenueCat when configured; unifying here ensures limits and UI stay in sync.
     private let iapManager = IAPManager.shared
     
-    // Free tier limits (carefully tuned to encourage upgrading while keeping the app useful)
-    //
-    // - Enough to fully plan a single real trip
-    // - But you quickly feel the benefit of Pro once you start planning more
-    private let maxTripsFree = 2                 // Plan up to 2 trips for free
-    private let maxDestinationsPerTripFree = 4   // Great for a weekend or simple multi‑stop trip
-    private let maxExpensesPerTripFree = 10      // Basic budgeting, detailed tracking is Pro
-    private let maxActivitiesPerDayFree = 6      // Simple daily plan; full schedules are Pro
-    private let maxPackingItemsFree = 25         // Core packing list; Pro for long/complex trips
-    private let maxDocumentsPerTripFree = 5      // Key documents only
-    private let maxFoldersFree = 2               // A couple of collections; power users go Pro
-    // Theme system removed - no longer needed
+    // Free tier limits: defined in TierPlan.TierLimits (single source of truth for tier plan)
+    private var maxTripsFree: Int { TierLimits.freeTrips }
+    private var maxDestinationsPerTripFree: Int { TierLimits.freeDestinationsPerTrip }
+    private var maxExpensesPerTripFree: Int { TierLimits.freeExpensesPerTrip }
+    private var maxActivitiesPerDayFree: Int { TierLimits.freeActivitiesPerDay }
+    private var maxPackingItemsFree: Int { TierLimits.freePackingItems }
+    private var maxDocumentsPerTripFree: Int { TierLimits.freeDocumentsPerTrip }
+    private var maxFoldersFree: Int { TierLimits.freeFolders }
     
+    /// True if the user has Pro (RevenueCat entitlement or IAPManager sync). Use this for all feature gating.
     var isPro: Bool {
-        iapManager.isPro
+        iapManager.isPro || RevenueCatManager.shared.isPro
     }
     
     private init() { }

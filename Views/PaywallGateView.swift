@@ -12,8 +12,7 @@ struct PaywallGateView: View {
     let featureDescription: String
     let icon: String
     let iconColor: Color
-    @State private var showPaywall = false
-    @State private var showFeatures = false
+    @State private var showProFeatures = false
     
     var body: some View {
         VStack(spacing: 20) {
@@ -37,13 +36,20 @@ struct PaywallGateView: View {
                 .padding(.horizontal, 24)
                 .frame(maxWidth: .infinity)
             
+            Text("pro.powerStatement".localized)
+                .font(.subheadline.weight(.medium))
+                .foregroundColor(iconColor)
+                .multilineTextAlignment(.center)
+                .lineSpacing(2)
+                .padding(.horizontal, 20)
+            
             VStack(spacing: 12) {
                 Button {
-                    showPaywall = true
+                    showProFeatures = true
                 } label: {
                     HStack(spacing: 8) {
                         Image(systemName: "crown.fill")
-                        Text("Upgrade to Pro")
+                        Text("pro.upgrade".localized)
                             .fontWeight(.semibold)
                             .lineLimit(1)
                             .minimumScaleFactor(0.9)
@@ -62,9 +68,9 @@ struct PaywallGateView: View {
                 }
                 
                 Button {
-                    showFeatures = true
+                    showProFeatures = true
                 } label: {
-                    Text("View All Pro Features")
+                    Text("pro.viewAllFeatures".localized)
                         .font(.subheadline)
                         .foregroundColor(.blue)
                         .lineLimit(1)
@@ -80,12 +86,7 @@ struct PaywallGateView: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemGroupedBackground))
         )
-        .sheet(isPresented: $showPaywall) {
-            NavigationStack {
-                PaywallView()
-            }
-        }
-        .sheet(isPresented: $showFeatures) {
+        .sheet(isPresented: $showProFeatures) {
             NavigationStack {
                 ProFeaturesView()
             }

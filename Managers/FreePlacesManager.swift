@@ -8,6 +8,7 @@
 import Foundation
 import CoreLocation
 import SwiftUI
+import MapKit
 
 // MARK: - Free Place Model
 struct FreePlace: Identifiable, Equatable {
@@ -132,7 +133,7 @@ class FreePlacesManager: ObservableObject {
         // Overpass queries can be slow and return a large payload.
         // For a snappier UX we go straight to Nominatim with a smaller limit
         // and tight bounding box, which is usually fast enough.
-        let results = await searchWithNominatim(
+        var results = await searchWithNominatim(
             location: location,
             radius: radius,
             category: category,
@@ -140,6 +141,27 @@ class FreePlacesManager: ObservableObject {
             offset: offset,
             limit: limit
         )
+
+        // Fallback: if OpenStreetMap/Nominatim did not return anything,
+        // try Apple's on-device Maps search which does not require an API key
+        // and is extremely reliable worldwide (including big cities like Tokyo).
+        if results.isEmpty {
+            print("🔁 No results from OpenStreetMap, falling back to Apple Maps local search…")
+            let appleResults = await searchWithAppleLocalSearch(
+                location: location,
+                radius: radius,
+                category: category,
+                query: query,
+                limit: limit
+            )
+
+            if !appleResults.isEmpty {
+                print("✅ Apple Maps local search returned \(appleResults.count) places")
+                // Clear any previous API-specific error message since we now have data.
+                errorMessage = nil
+                results = appleResults
+            }
+        }
 
         // Ensure the loading indicator is visible long enough to notice,
         // but don't artificially slow down fast results.
@@ -151,6 +173,151 @@ class FreePlacesManager: ObservableObject {
         }
         
         return results
+    }
+
+    // MARK: - Apple Maps Local Search Fallback
+    private func searchWithAppleLocalSearch(
+        location: CLLocationCoordinate2D,
+        radius: Int,
+        category: String?,
+        query: String?,
+        limit: Int
+    ) async -> [FreePlace] {
+        // Apple Maps search is only available when MapKit is present.
+        // This app targets iOS, so this should always be true.
+        let center = CLLocation(latitude: location.latitude, longitude: location.longitude)
+        let region = MKCoordinateRegion(
+            center: center.coordinate,
+            latitudinalMeters: CLLocationDistance(radius * 2),
+            longitudinalMeters: CLLocationDistance(radius * 2)
+        )
+
+        if #available(iOS 14.0, *) {
+            // Broad Apple Maps POI search around the destination region.
+            // We rely on MapKit's own ranking instead of manually filtering categories,
+            // which keeps this compatible with all SDK versions.
+            let request = MKLocalPointsOfInterestRequest(coordinateRegion: region)
+
+            let search = MKLocalSearch(request: request)
+
+            do {
+                let response = try await search.start()
+                let items = Array(response.mapItems.prefix(limit))
+
+                let places: [FreePlace] = items.compactMap { item in
+                    let coord = item.placemark.coordinate
+                    let name = item.name ?? "Place"
+                    let address = item.placemark.title ?? item.placemark.subtitle ?? ""
+                    let categoryLabel = mapPOICategoryToCategory(item.pointOfInterestCategory)
+                    let id = "\(coord.latitude),\(coord.longitude),\(name)"
+
+                    return FreePlace(
+                        id: id,
+                        name: name,
+                        address: address,
+                        location: coord,
+                        category: categoryLabel,
+                        type: item.pointOfInterestCategory?.rawValue
+                    )
+                }
+
+                return places
+            } catch {
+                print("❌ Apple Maps local search failed: \(error.localizedDescription)")
+                if errorMessage == nil {
+                    errorMessage = "Apple Maps search failed. Please try again."
+                }
+                return []
+            }
+        } else {
+            // Fallback for older OS versions: basic text search.
+            let request = MKLocalSearch.Request()
+            request.region = region
+            request.naturalLanguageQuery = query ?? "things to do"
+
+            let search = MKLocalSearch(request: request)
+
+            do {
+                let response = try await search.start()
+                let items = Array(response.mapItems.prefix(limit))
+
+                let places: [FreePlace] = items.compactMap { item in
+                    let coord = item.placemark.coordinate
+                    let name = item.name ?? "Place"
+                    let address = item.placemark.title ?? item.placemark.subtitle ?? ""
+                    let categoryLabel = mapPOICategoryToCategory(item.pointOfInterestCategory)
+                    let id = "\(coord.latitude),\(coord.longitude),\(name)"
+
+                    return FreePlace(
+                        id: id,
+                        name: name,
+                        address: address,
+                        location: coord,
+                        category: categoryLabel,
+                        type: item.pointOfInterestCategory?.rawValue
+                    )
+                }
+
+                return places
+            } catch {
+                print("❌ Apple Maps text search failed: \(error.localizedDescription)")
+                if errorMessage == nil {
+                    errorMessage = "Apple Maps search failed. Please try again."
+                }
+                return []
+            }
+        }
+    }
+
+    // Map a simple string category to Apple POI categories.
+    @available(iOS 14.0, *)
+    private func mapStringCategoryToPOICategories(_ category: String) -> [MKPointOfInterestCategory] {
+        switch category {
+        case let c where c.contains("restaurant"), let c where c.contains("food"):
+            return [.restaurant, .cafe]
+        case let c where c.contains("museum"), let c where c.contains("gallery"):
+            return [.museum]
+        case let c where c.contains("park"), let c where c.contains("garden"):
+            return [.park]
+        case let c where c.contains("shopping"), let c where c.contains("shop"), let c where c.contains("mall"):
+            return [.store]
+        case let c where c.contains("nightlife"), let c where c.contains("bar"), let c where c.contains("pub"):
+            return [.nightlife]
+        case let c where c.contains("hotel"), let c where c.contains("lodging"):
+            return [.hotel]
+        default:
+            return [
+                .museum,
+                .park,
+                .restaurant,
+                .cafe,
+                .nightlife
+            ]
+        }
+    }
+
+    // Map Apple's POI categories into the app's high-level category strings.
+    private func mapPOICategoryToCategory(_ poiCategory: MKPointOfInterestCategory?) -> String {
+        guard let poiCategory = poiCategory else {
+            return "Activity"
+        }
+
+        switch poiCategory {
+        case .museum, .theater, .movieTheater:
+            return "Museum"
+        case .park:
+            return "Park"
+        case .restaurant, .cafe:
+            return "Restaurant"
+        case .nightlife:
+            return "Nightlife"
+        case .hotel:
+            return "Hotel"
+        case .store:
+            return "Shopping"
+        default:
+            return "Activity"
+        }
     }
     
     // MARK: - Overpass API Search (Better for POI searches)

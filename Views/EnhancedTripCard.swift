@@ -24,11 +24,10 @@ struct EnhancedTripCard: View {
                     endPoint: .bottomTrailing
                 )
                 .overlay(
-                    // Subtle pattern overlay
                     LinearGradient(
                         colors: [
-                            Color.white.opacity(0.1),
-                            Color.clear
+                            Color.white.opacity(0.18),
+                            Color.white.opacity(0.05)
                         ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
@@ -50,9 +49,9 @@ struct EnhancedTripCard: View {
                     
                     VStack(alignment: .leading, spacing: 6) {
                         Text(trip.name)
-                            .font(.system(size: 22, weight: .bold))
+                            .font(.system(size: 24, weight: .bold, design: .serif))
                             .foregroundColor(.white)
-                            .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+                            .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 1)
                             .accessibilityIdentifier("trip_name")
                             .accessibilityLabel(trip.name)
                         
@@ -72,22 +71,21 @@ struct EnhancedTripCard: View {
             .clipShape(
                 UnevenRoundedRectangle(
                     cornerRadii: .init(
-                        topLeading: 20,
+                        topLeading: 22,
                         bottomLeading: 0,
                         bottomTrailing: 0,
-                        topTrailing: 20
+                        topTrailing: 22
                     )
                 )
             )
             
-            // Content section with improved design
             VStack(alignment: .leading, spacing: 16) {
                 // Stats Row with better spacing
                 HStack(spacing: 0) {
                     StatItem(
                         icon: "clock.fill",
                         value: "\(trip.duration)",
-                        label: "days",
+                        label: "trips.days".localized,
                         color: .blue
                     )
                     
@@ -98,7 +96,7 @@ struct EnhancedTripCard: View {
                     StatItem(
                         icon: "mappin.circle.fill",
                         value: "\(trip.destinations?.count ?? 0)",
-                        label: "places",
+                        label: "trips.places".localized,
                         color: .green
                     )
                     
@@ -108,10 +106,10 @@ struct EnhancedTripCard: View {
                             .padding(.horizontal, 12)
                         
                         StatItem(
-                            icon: "dollarsign.circle.fill",
+                            icon: settingsManager.currencyIconName(filled: true),
                             value: formatBudget(budget),
-                            label: "budget",
-                            color: .orange
+                            label: "trips.budget".localized,
+                            color: .blue
                         )
                     }
                 }
@@ -119,13 +117,13 @@ struct EnhancedTripCard: View {
                 .padding(.vertical, 16)
             }
             .background(
-                Color(.systemBackground)
+                Color(red: 0.96, green: 0.98, blue: 1.0)
                     .clipShape(
                         UnevenRoundedRectangle(
                             cornerRadii: .init(
                                 topLeading: 0,
-                                bottomLeading: 20,
-                                bottomTrailing: 20,
+                                bottomLeading: 22,
+                                bottomTrailing: 22,
                                 topTrailing: 0
                             )
                         )
@@ -133,35 +131,10 @@ struct EnhancedTripCard: View {
             )
         }
         .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color(.systemBackground))
-                .shadow(
-                    color: Color.black.opacity(0.08),
-                    radius: 20,
-                    x: 0,
-                    y: 10
-                )
-                .shadow(
-                    color: Color.black.opacity(0.04),
-                    radius: 5,
-                    x: 0,
-                    y: 2
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 20)
-                .stroke(
-                    LinearGradient(
-                        colors: [
-                            Color.white.opacity(0.4),
-                            Color.white.opacity(0.1),
-                            Color.clear
-                        ],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    ),
-                    lineWidth: 1
-                )
+            RoundedRectangle(cornerRadius: 22)
+                .fill(Color(red: 1.0, green: 0.99, blue: 0.98))
+                .shadow(color: Color.black.opacity(0.04), radius: 24, x: 0, y: 12)
+                .shadow(color: Color(red: 0.95, green: 0.5, blue: 0.3).opacity(0.05), radius: 12, x: 0, y: 4)
         )
         .scaleEffect(isPressed ? 0.97 : 1.0)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
@@ -170,13 +143,15 @@ struct EnhancedTripCard: View {
     private var gradientColors: [Color] {
         switch trip.category.lowercased() {
         case "business":
-            return [Color(red: 0.2, green: 0.4, blue: 0.9), Color(red: 0.1, green: 0.3, blue: 0.8)]
-        case "vacation", "leisure":
-            return [Color(red: 1.0, green: 0.5, blue: 0.2), Color(red: 1.0, green: 0.3, blue: 0.5)]
+            return [Color(red: 0.35, green: 0.55, blue: 0.95), Color(red: 0.5, green: 0.65, blue: 1.0)]
+        case "relaxation", "vacation", "leisure":
+            return [Color(red: 1.0, green: 0.65, blue: 0.45), Color(red: 1.0, green: 0.5, blue: 0.6)]
         case "adventure":
-            return [Color(red: 0.2, green: 0.7, blue: 0.4), Color(red: 0.1, green: 0.6, blue: 0.7)]
+            return [Color(red: 0.25, green: 0.75, blue: 0.55), Color(red: 0.4, green: 0.8, blue: 0.65)]
+        case "family":
+            return [Color(red: 1.0, green: 0.55, blue: 0.7), Color(red: 0.95, green: 0.5, blue: 0.85)]
         default:
-            return [Color(red: 0.6, green: 0.3, blue: 0.9), Color(red: 0.3, green: 0.5, blue: 0.9)]
+            return [Color(red: 0.95, green: 0.5, blue: 0.35), Color(red: 1.0, green: 0.65, blue: 0.45)]
         }
     }
     
@@ -206,11 +181,11 @@ struct StatItem: View {
             VStack(spacing: 2) {
                 Text(value)
                     .font(.system(size: 18, weight: .bold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(Color(red: 0.18, green: 0.16, blue: 0.2))
                 
                 Text(label.uppercased())
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color(red: 0.45, green: 0.42, blue: 0.48))
                     .tracking(0.5)
             }
         }
@@ -256,11 +231,11 @@ struct StatusIndicator: View {
     
     private var statusText: String {
         if trip.isUpcoming {
-            return "Upcoming"
+            return "trips.upcoming".localized
         } else if trip.isCurrent {
-            return "Active"
+            return "trips.statusActive".localized
         } else {
-            return "Past"
+            return "trips.statusPast".localized
         }
     }
 }
@@ -279,7 +254,7 @@ struct CountdownBadge: View {
         HStack(spacing: 5) {
             Image(systemName: "clock.fill")
                 .font(.system(size: 10, weight: .bold))
-            Text("\(daysUntilTrip)d")
+            Text("enhancedTripCard.daysuntiltripd".localized)
                 .font(.system(size: 12, weight: .bold))
         }
         .foregroundColor(.white)
@@ -305,7 +280,9 @@ struct CountdownBadge: View {
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: TripModel.self, configurations: config)
+    guard let container = try? ModelContainer(for: TripModel.self, configurations: config) else {
+        return AnyView(Text("Preview unavailable"))
+    }
     let sampleTrip = TripModel(
         name: "Paris Adventure",
         startDate: Calendar.current.date(byAdding: .day, value: 15, to: Date()) ?? Date(),
@@ -314,10 +291,11 @@ struct CountdownBadge: View {
         category: "Adventure",
         budget: 2000.0
     )
-    
-    EnhancedTripCard(trip: sampleTrip)
-        .padding()
-        .modelContainer(container)
+    return AnyView(
+        EnhancedTripCard(trip: sampleTrip)
+            .padding()
+            .modelContainer(container)
+    )
 }
 
 

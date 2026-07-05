@@ -21,8 +21,8 @@ final class AppSettings {
     
     init(
         id: UUID = singletonID,
-        currencyCode: String = "USD",
-        currencySymbol: String = "$"
+        currencyCode: String = "GBP",
+        currencySymbol: String = "£"
     ) {
         self.id = id
         self.currencyCode = currencyCode
@@ -78,7 +78,7 @@ struct Currency: Hashable, Identifiable {
             return enhanced.legacy
         }
         // Fallback to old list
-        return allCurrencies.first { $0.code == code } ?? Currency(code: "USD", symbol: "$", name: "US Dollar")
+        return allCurrencies.first { $0.code == code } ?? Currency(code: "GBP", symbol: "£", name: "British Pound")
     }
 }
 

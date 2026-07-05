@@ -50,7 +50,7 @@ struct SmartTemplateLibraryView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
-                    TextField("Search templates...", text: $searchText)
+                    TextField("search.templates".localized, text: $searchText)
                         .textFieldStyle(.plain)
                     if !searchText.isEmpty {
                         Button(action: { searchText = "" }) {
@@ -66,7 +66,7 @@ struct SmartTemplateLibraryView: View {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 12) {
                         TemplateCategoryChip(
-                            title: "All",
+                            title: "category.all".localized,
                             isSelected: selectedCategory == nil
                         ) {
                             selectedCategory = nil
@@ -104,11 +104,11 @@ struct SmartTemplateLibraryView: View {
                     .padding()
                 }
             }
-            .navigationTitle("Trip Templates")
+            .navigationTitle("templates.title".localized)
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("common.done".localized) {
                         dismiss()
                     }
                 }
@@ -171,7 +171,7 @@ struct TemplateLibraryCard: View {
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                     
-                    Text("\(template.suggestedDuration) days")
+                    Text("\(template.suggestedDuration) \("trips.days".localized)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -256,7 +256,7 @@ struct TemplateDetailView: View {
                     // Suggested Destinations
                     if !template.suggestedDestinations.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Suggested Destinations")
+                            Text("templates.suggestedDestinations".localized)
                                 .font(.headline)
                             
                             ForEach(template.suggestedDestinations, id: \.self) { destination in
@@ -276,7 +276,7 @@ struct TemplateDetailView: View {
                     // Suggested Itinerary
                     if !template.suggestedItinerary.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Suggested Itinerary")
+                            Text("templates.suggestedItinerary".localized)
                                 .font(.headline)
                             
                             ForEach(Array(template.suggestedItinerary.enumerated()), id: \.offset) { index, activity in
@@ -303,7 +303,7 @@ struct TemplateDetailView: View {
                     // Suggested Packing
                     if !template.suggestedPackingItems.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Suggested Packing List")
+                            Text("templates.suggestedPacking".localized)
                                 .font(.headline)
                             
                             LazyVGrid(columns: [
@@ -329,10 +329,10 @@ struct TemplateDetailView: View {
                     // Budget Info
                     if let budget = template.suggestedBudget {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Suggested Budget")
+                            Text("templates.suggestedBudget".localized)
                                 .font(.headline)
                             
-                            Text("$\(Int(budget))")
+                            Text(SettingsManager.shared.formatAmount(budget))
                                 .font(.title.bold())
                                 .foregroundColor(templateColor)
                         }
@@ -344,16 +344,16 @@ struct TemplateDetailView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Template Details")
+            .navigationTitle("templates.details".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Apply Template") {
+                    Button("templates.apply".localized) {
                         onApply(template)
                     }
                     .fontWeight(.semibold)

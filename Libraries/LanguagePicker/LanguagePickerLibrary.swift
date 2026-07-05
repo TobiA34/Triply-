@@ -189,11 +189,11 @@ public struct LanguagePickerView: View {
                     languageList
                 }
             }
-            .navigationTitle("Select Language")
+            "languagePickerLibrary.select.language".localized
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("common.done".localized) {
                         dismiss()
                     }
                 }
@@ -220,7 +220,7 @@ public struct LanguagePickerView: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
                 LanguageFilterPill(
-                    title: "Popular",
+                    "languagePickerLibrary.popular".localized,
                     icon: "star.fill",
                     isSelected: showPopularOnly && selectedRegion == nil,
                     action: {
@@ -263,7 +263,7 @@ public struct LanguagePickerView: View {
                         }
                     }
                 } header: {
-                    Text("Popular Languages")
+                    "languagePickerLibrary.popular.languages".localized
                 }
             } else {
                 ForEach(LanguageRegion.allCases, id: \.self) { region in
@@ -295,10 +295,10 @@ public struct LanguagePickerView: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 50))
                 .foregroundColor(.secondary)
-            Text("No languages found")
+            "languagePickerLibrary.no.languages.found".localized
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Text("Try a different search term")
+            "search.tryDifferent".localized
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -388,6 +388,7 @@ struct LanguageFilterPill: View {
 
 // MARK: - Preview
 #Preview {
-    LanguagePickerView(selectedLanguage: .constant(LanguageDatabase.shared.allLanguages.first!))
+    let language = LanguageDatabase.shared.allLanguages.first ?? EnhancedLanguage(code: "en", name: "English", nativeName: "English", flag: "🇬🇧", region: .europe, isPopular: true)
+    LanguagePickerView(selectedLanguage: .constant(language))
 }
 

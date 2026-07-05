@@ -98,7 +98,7 @@ struct OpenTripIntent: AppIntent {
     static var description = IntentDescription("Open a trip in Triply")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip")
+    @Parameter(title: "spotlightIntegration.trip")
     var trip: TripEntity
     
     func perform() async throws -> some IntentResult {
@@ -211,7 +211,7 @@ struct OpenTripIntent: AppIntent {
     static var description = IntentDescription("Open a trip in Triply")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip")
+    @Parameter(title: "spotlightIntegration.trip")
     var trip: TripEntity
     
     func perform() async throws -> some IntentResult {

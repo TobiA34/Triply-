@@ -13,19 +13,19 @@ struct TripOptimizerView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var optimizer = TripOptimizer.shared
     @StateObject private var settingsManager = SettingsManager.shared
-    @StateObject private var iap = IAPManager.shared
+    @StateObject private var proLimiter = ProLimiter.shared
     @State private var suggestions: [OptimizationSuggestion] = []
     @State private var optimalBudget: Double?
     
     var body: some View {
-        if !iap.isPro {
+        if !proLimiter.isPro {
             PaywallGateView(
-                featureName: "Itinerary Optimizer",
-                featureDescription: "Optimize your trip itinerary with AI-powered suggestions for routes, timing, and activities.",
-                icon: "calendar.badge.clock",
-                iconColor: Color.indigo
+                featureName: "Route Optimizer",
+                featureDescription: "Optimize your itinerary for the shortest travel time and best order of visits.",
+                icon: "wand.and.stars",
+                iconColor: .blue
             )
-            .navigationTitle("Optimize Itinerary")
+            .navigationTitle("Optimize")
         } else {
             optimizerContent
         }
@@ -41,13 +41,13 @@ struct TripOptimizerView: View {
                             Image(systemName: "lightbulb.fill")
                                 .font(.title2)
                                 .foregroundColor(.yellow)
-                            Text("Recommended Budget")
+                            Text("tripOptimizerView.recommended.budget".localized)
                                 .font(.headline)
                         }
                         
                         HStack {
                             VStack(alignment: .leading) {
-                                Text("AI Suggested")
+                                Text("tripOptimizerView.ai.suggested".localized)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Text(settingsManager.formatAmount(optimalBudget))
@@ -57,7 +57,7 @@ struct TripOptimizerView: View {
                             Spacer()
                             if let currentBudget = trip.budget {
                                 VStack(alignment: .trailing) {
-                                    Text("Your Budget")
+                                    Text("tripOptimizerView.your.budget".localized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                     Text(settingsManager.formatAmount(currentBudget))
@@ -85,9 +85,9 @@ struct TripOptimizerView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50))
                             .foregroundColor(.green)
-                        Text("No Optimizations Needed")
+                        Text("tripOptimizerView.no.optimizations.needed".localized)
                             .font(.headline)
-                        Text("Your trip is well planned!")
+                        Text("tripOptimizerView.your.trip.is.well.planned".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -95,7 +95,7 @@ struct TripOptimizerView: View {
                     .padding(.vertical, 40)
                 } else {
                     VStack(alignment: .leading, spacing: 16) {
-                        Text("Optimization Suggestions")
+                        Text("tripOptimizerView.optimization.suggestions".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -112,7 +112,7 @@ struct TripOptimizerView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Trip Optimizer")
+        "optimizer.title".localized
         .onAppear {
             suggestions = optimizer.optimizeTrip(trip)
             optimalBudget = optimizer.calculateOptimalBudget(for: trip)
@@ -154,7 +154,7 @@ struct OptimizationCardView: View {
                         .font(.headline)
                     Spacer()
                     if suggestion.priority == .high {
-                        Text("HIGH")
+                        Text("tripOptimizerView.high".localized)
                             .font(.caption2)
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -173,7 +173,7 @@ struct OptimizationCardView: View {
                     HStack {
                         Image(systemName: "arrow.down.circle.fill")
                             .foregroundColor(.green)
-                        Text("Potential savings: \(settingsManager.formatAmount(savings))")
+                        Text("tripOptimizerView.potential.savings.settingsmanagerformatamountsavings".localized)
                             .font(.caption)
                             .fontWeight(.semibold)
                             .foregroundColor(.green)

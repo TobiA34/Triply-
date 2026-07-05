@@ -1,6 +1,6 @@
 //
 //  ContactFormView.swift
-//  Itinero
+//  Triply
 //
 //  Created on 2025
 //
@@ -45,11 +45,10 @@ struct ContactFormView: View {
                         
                         TextEditor(text: $message)
                             .font(.system(size: 17))
-                            .foregroundColor(.primary)
                             .padding(.horizontal, 16)
-                            .padding(.vertical, 16)
+                            .padding(.vertical, 12)
                             .scrollContentBackground(.hidden)
-                            .frame(height: 300)
+                            .frame(height: 200)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
                                     .fill(Color(.systemGray6))

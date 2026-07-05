@@ -64,7 +64,7 @@ struct AIInsightsView: View {
                 }
             }
         }
-        .navigationTitle("AI Insights")
+        Text("aIInsightsView.ai.insights".localized)
         .navigationBarTitleDisplayMode(.large)
         .onAppear {
             // Load settings asynchronously (non-blocking)
@@ -97,7 +97,7 @@ struct AIInsightsView: View {
             let percentage = (spent / budget) * 100
             insights.append(AIInsight(
                 type: .budget,
-                title: "Budget Health",
+                title: "aIInsightsView.budget.health".localized,
                 value: "\(Int(percentage))%",
                 icon: percentage > 80 ? "exclamationmark.triangle.fill" : "checkmark.circle.fill",
                 color: percentage > 80 ? .red : .green,
@@ -109,7 +109,7 @@ struct AIInsightsView: View {
         let days = trip.duration
         insights.append(AIInsight(
             type: .duration,
-            title: "Trip Duration",
+            title: "aIInsightsView.trip.duration".localized,
             value: "\(days) days",
             icon: "calendar",
             color: .blue,
@@ -120,7 +120,7 @@ struct AIInsightsView: View {
         let destinationCount = trip.destinations?.count ?? 0
         insights.append(AIInsight(
             type: .destinations,
-            title: "Destinations",
+            title: "destination.title".localized,
             value: "\(destinationCount)",
             icon: "mappin.circle.fill",
             color: .purple,
@@ -131,7 +131,7 @@ struct AIInsightsView: View {
         let expenseCount = trip.expenses?.count ?? 0
         insights.append(AIInsight(
             type: .expenses,
-            title: "Expenses",
+            title: "expense.title".localized,
             value: "\(expenseCount)",
             icon: "creditcard.fill",
             color: .orange,
@@ -142,7 +142,7 @@ struct AIInsightsView: View {
         if trip.isUpcoming {
             insights.append(AIInsight(
                 type: .weather,
-                title: "Weather Check",
+                title: "aIInsightsView.weather.check".localized,
                 value: "Soon",
                 icon: "cloud.sun.fill",
                 color: .cyan,
@@ -154,7 +154,7 @@ struct AIInsightsView: View {
         let packingCount = trip.packingList?.count ?? 0
         insights.append(AIInsight(
             type: .packing,
-            title: "Packing List",
+            title: "packing.title".localized,
             value: "\(packingCount) items",
             icon: "suitcase.fill",
             color: .indigo,
@@ -209,11 +209,11 @@ struct AIHeaderView: View {
                     .symbolEffect(.pulse, options: .repeating)
             }
             
-            Text("AI Insights")
+            Text("aIInsightsView.ai.insights".localized)
                 .font(.title)
                 .fontWeight(.bold)
             
-            Text("Smart analysis for: \(trip.name)")
+            Text("aIInsightsView.smart.analysis.for.tripname".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -254,7 +254,7 @@ struct GeneratingView: View {
                     .foregroundColor(.purple)
             }
             
-            Text("Analyzing your trip...")
+            Text("aIInsightsView.analyzing.your.trip".localized)
                 .font(.headline)
                 .foregroundColor(.secondary)
         }
@@ -387,11 +387,11 @@ struct EmptyInsightsView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.purple.opacity(0.5))
             
-            Text("No Insights Yet")
+            Text("aIInsightsView.no.insights.yet".localized)
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("AI is analyzing your trip data to provide personalized insights")
+            Text("aIInsightsView.ai.is.analyzing.your.trip".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

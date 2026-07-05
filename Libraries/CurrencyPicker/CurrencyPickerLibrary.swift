@@ -1,6 +1,6 @@
 //
 //  CurrencyPickerLibrary.swift
-//  Itinero
+//  Triply
 //
 //  A comprehensive currency picker library with search, flags, and grouping
 //
@@ -386,8 +386,10 @@ struct FilterPill: View {
 
 // MARK: - Preview
 #Preview {
-    CurrencyPickerView(selectedCurrency: .constant(CurrencyDatabase.shared.allCurrencies.first!))
+    let currency = CurrencyDatabase.shared.allCurrencies.first ?? EnhancedCurrency(code: "USD", symbol: "$", name: "US Dollar", flag: "🇺🇸", region: .americas, isPopular: true)
+    CurrencyPickerView(selectedCurrency: .constant(currency))
 }
+
 
 
 

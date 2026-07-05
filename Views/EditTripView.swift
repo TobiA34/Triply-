@@ -1,6 +1,6 @@
 //
 //  EditTripView.swift
-//  Itinero
+//  Triply
 //
 //  Created on 2024
 //
@@ -12,6 +12,7 @@ struct EditTripView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     @Bindable var trip: TripModel
+    private let settingsManager = SettingsManager.shared
     
     @State private var tripName: String
     @State private var startDate: Date
@@ -19,6 +20,8 @@ struct EditTripView: View {
     @State private var notes: String
     @State private var selectedCategory: String
     @State private var budget: String
+    @State private var errorMessage = ""
+    @State private var showErrorAlert = false
     
     private let categories = ["General", "Adventure", "Business", "Relaxation", "Family"]
     
@@ -29,68 +32,149 @@ struct EditTripView: View {
         _endDate = State(initialValue: trip.endDate)
         _notes = State(initialValue: trip.notes)
         _selectedCategory = State(initialValue: trip.category)
-        _budget = State(initialValue: trip.budget != nil ? String(Int(trip.budget!)) : "")
+        _budget = State(initialValue: trip.budget.map { String(Int($0)) } ?? "")
     }
     
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Trip Details") {
-                    TextField("Trip Name", text: $tripName)
-                        .textInputAutocapitalization(.words)
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Trip Name
+                    ModernTextField(
+                        title: "Trip Name",
+                        text: $tripName,
+                        icon: "airplane",
+                        isRequired: true,
+                        errorMessage: fieldErrors["name"]
+                    )
+                    .textInputAutocapitalization(.words)
                     
-                    Picker("Category", selection: $selectedCategory) {
-                        ForEach(categories, id: \.self) { category in
-                            Text(category).tag(category)
+                    // Category
+                    ModernPicker(
+                        title: "Category",
+                        selection: $selectedCategory,
+                        options: categories.map { (value: $0, label: $0) },
+                        icon: "tag.fill",
+                        isRequired: true
+                    )
+                    
+                    // Start Date
+                    ModernDatePicker(
+                        title: "Start Date",
+                        date: $startDate,
+                        icon: "calendar",
+                        displayedComponents: .date
+                    )
+                    
+                    // End Date
+                    ModernDatePicker(
+                        title: "End Date",
+                        date: $endDate,
+                        icon: "calendar",
+                        displayedComponents: .date,
+                        inRange: startDate...
+                    )
+                    
+                    // Budget
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.secondary)
+                            Text("Budget (Optional)")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.secondary)
                         }
+                        
+                        HStack(spacing: 12) {
+                            Text(settingsManager.currentCurrency.symbol)
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.secondary)
+                                .frame(width: 30)
+                            
+                            TextField("0.00", text: $budget)
+                                .font(.system(size: 17))
+                                .keyboardType(.decimalPad)
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.systemGray6))
+                        )
                     }
                     
-                    DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
-                    DatePicker("End Date", selection: $endDate, in: startDate..., displayedComponents: .date)
+                    // Notes
+                    ModernTextEditor(
+                        title: "Notes",
+                        text: $notes,
+                        icon: "note.text",
+                        height: 120
+                    )
+                    
+                    // Save Button
+                    ModernButton(
+                        title: "Save Changes",
+                        action: saveTrip,
+                        icon: "checkmark.circle.fill",
+                        isDisabled: !isFormValid
+                    )
                 }
-                
-                Section("Budget (Optional)") {
-                    HStack {
-                        Text("$")
-                            .foregroundColor(.secondary)
-                        TextField("0.00", text: $budget)
-                            .keyboardType(.decimalPad)
-                    }
-                }
-                
-                Section("Notes") {
-                    TextEditor(text: $notes)
-                        .frame(minHeight: 100)
-                }
+                .padding(20)
             }
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Edit Trip")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         dismiss()
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        saveTrip()
-                    }
-                    .disabled(tripName.isEmpty)
-                }
+            }
+            .alert("Validation Error", isPresented: $showErrorAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(errorMessage)
             }
         }
     }
     
+    @State private var fieldErrors: [String: String] = [:]
+    
+    var isFormValid: Bool {
+        validateForm().isValid
+    }
+    
+    private func validateForm() -> ValidationResult {
+        let nameResult = FormValidator.validateTripName(tripName)
+        if !nameResult.isValid {
+            return nameResult
+        }
+        
+        if endDate < startDate {
+            return .invalid("End date must be after start date")
+        }
+        
+        return .valid
+    }
+    
     private func saveTrip() {
+        // Validate before saving
+        let validation = validateForm()
+        guard validation.isValid else {
+            errorMessage = validation.errorMessage ?? "Please check your trip details"
+            showErrorAlert = true
+            return
+        }
+        
         trip.name = tripName
         trip.startDate = startDate
         trip.endDate = endDate
         trip.notes = notes
         trip.category = selectedCategory
         trip.budget = Double(budget) ?? nil
-        
-        // Force change detection
-        trip.notes = trip.notes
+        trip.lastModified = Date()
         
         do {
             try modelContext.save()
@@ -110,3 +194,13 @@ struct EditTripView: View {
     ))
     .modelContainer(for: [TripModel.self, DestinationModel.self], inMemory: true)
 }
+
+
+//
+//  Created on 2024
+//
+
+import SwiftUI
+import SwiftData
+
+

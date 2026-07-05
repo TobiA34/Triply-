@@ -34,7 +34,7 @@ struct MoveToFolderView: View {
                         HStack {
                             Image(systemName: "folder.badge.minus")
                                 .foregroundColor(.secondary)
-                            Text("Remove from Folder")
+                            Text("moveToFolderView.remove.from.folder".localized)
                                 .foregroundColor(.primary)
                             Spacer()
                             if document.folder == nil {
@@ -44,13 +44,13 @@ struct MoveToFolderView: View {
                         }
                     }
                 } header: {
-                    Text("Current Location")
+                    Text("moveToFolderView.current.location".localized)
                 }
                 
                 // Folders list
                 if tripFolders.isEmpty {
                     Section {
-                        Text("No folders available. Create a folder first.")
+                        Text("moveToFolderView.no.folders.available.create.a".localized)
                             .foregroundColor(.secondary)
                             .font(.subheadline)
                     }
@@ -90,15 +90,15 @@ struct MoveToFolderView: View {
                             }
                         }
                     } header: {
-                        Text("Folders")
+                        Text("documents.folders".localized)
                     }
                 }
             }
-            .navigationTitle("Move to Folder")
+            .navigationTitle("documents.moveToFolder".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("common.done".localized) {
                         dismiss()
                     }
                 }

@@ -34,7 +34,7 @@ struct CurrencySelectionView: View {
 
 #Preview {
     NavigationStack {
-        CurrencySelectionView(selectedCurrency: .constant(Currency.currency(for: "USD")))
+        CurrencySelectionView(selectedCurrency: .constant(Currency.currency(for: "GBP")))
     }
 }
 

@@ -48,8 +48,8 @@ struct ExpenseSplittingView: View {
                 if !proLimiter.isPro {
                     Section {
                         ExpenseSplitProFeatureBanner(
-                            title: "Smart Expense Splitting",
-                            description: "Split expenses fairly among travel companions with multiple split methods.",
+                            title: "expense.smartSplitting".localized,
+                            description: "expense.smartSplittingDesc".localized,
                             icon: "person.2.fill",
                             iconColor: .green
                         ) {
@@ -61,18 +61,18 @@ struct ExpenseSplittingView: View {
                 // Expense Info
                 Section {
                     HStack {
-                        Text("Total Amount")
+                        Text("expense.totalAmount".localized)
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("$\(expense.amount, specifier: "%.2f")")
+                        Text(SettingsManager.shared.formatAmount(expense.amount))
                             .font(.headline)
                     }
                     
                     HStack {
-                        Text("Split Amount")
+                        Text("expense.splitAmount".localized)
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("$\(totalSplit, specifier: "%.2f")")
+                        Text(SettingsManager.shared.formatAmount(totalSplit))
                             .font(.headline)
                             .foregroundColor(isSplitValid ? .green : .red)
                     }
@@ -81,25 +81,25 @@ struct ExpenseSplittingView: View {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.orange)
-                            Text("Difference: $\(abs(expense.amount - totalSplit), specifier: "%.2f")")
+                            Text("expense.difference".localized(SettingsManager.shared.formatAmount(abs(expense.amount - totalSplit))))
                                 .font(.caption)
                                 .foregroundColor(.orange)
                         }
                     }
                 } header: {
-                    Text("Expense Details")
+                    Text("expense.details".localized)
                 }
                 
                 // Split Method
                 if proLimiter.isPro {
                     Section {
-                        Picker("Split Method", selection: $splitMethod) {
+                        Picker("expense.splitMethod".localized, selection: $splitMethod) {
                             ForEach(SplitMethod.allCases, id: \.self) { method in
                                 Text(method.rawValue).tag(method)
                             }
                         }
                     } header: {
-                        Text("Split Method")
+                        Text("expense.splitMethod".localized)
                     } footer: {
                         Text(splitMethod.description)
                     }
@@ -115,7 +115,7 @@ struct ExpenseSplittingView: View {
                             } label: {
                                 HStack {
                                     Image(systemName: "person.badge.plus")
-                                    Text("Add Participant")
+                                    Text("expense.addParticipant".localized)
                                 }
                             }
                         } else {
@@ -142,15 +142,15 @@ struct ExpenseSplittingView: View {
                             } label: {
                                 HStack {
                                     Image(systemName: "person.badge.plus")
-                                    Text("Add Participant")
+                                    Text("expense.addParticipant".localized)
                                 }
                             }
                         }
                     } header: {
-                        Text("Participants")
+                        Text("expense.participants".localized)
                     } footer: {
                         if participants.isEmpty {
-                            Text("Add people to split this expense with")
+                            Text("expense.participantsHint".localized)
                         } else {
                             Text("\(participants.count) participant\(participants.count == 1 ? "" : "s")")
                         }
@@ -160,14 +160,14 @@ struct ExpenseSplittingView: View {
                     if !participants.isEmpty && isSplitValid {
                         Section {
                             VStack(alignment: .leading, spacing: 12) {
-                                Text("Split Summary")
+                                Text("expense.splitSummary".localized)
                                     .font(.headline)
                                 
                                 ForEach(participants) { participant in
                                     HStack {
                                         Text(participant.name)
                                         Spacer()
-                                        Text("$\(participant.amount, specifier: "%.2f")")
+                                        Text(SettingsManager.shared.formatAmount(participant.amount))
                                             .fontWeight(.semibold)
                                     }
                                 }
@@ -175,10 +175,10 @@ struct ExpenseSplittingView: View {
                                 Divider()
                                 
                                 HStack {
-                                    Text("Total")
+                                    Text("expense.totalLabel".localized)
                                         .fontWeight(.bold)
                                     Spacer()
-                                    Text("$\(totalSplit, specifier: "%.2f")")
+                                    Text(SettingsManager.shared.formatAmount(totalSplit))
                                         .fontWeight(.bold)
                                         .foregroundColor(.green)
                                 }
@@ -187,16 +187,16 @@ struct ExpenseSplittingView: View {
                     }
                 }
             }
-            .navigationTitle("Split Expense")
+            .navigationTitle("expense.splitExpense".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save Split") {
+                    Button("expense.saveSplit".localized) {
                         saveSplit()
                     }
                     .disabled(!proLimiter.isPro || !isSplitValid)
@@ -313,16 +313,16 @@ struct ParticipantRow: View {
             switch splitMethod {
             case .equal:
                 HStack {
-                    Text("Amount:")
+                    Text("expense.amountLabel".localized)
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text("$\(participant.amount, specifier: "%.2f")")
+                    Text(SettingsManager.shared.formatAmount(participant.amount))
                         .fontWeight(.semibold)
                 }
                 
             case .percentage:
                 HStack {
-                    TextField("Percentage", text: $percentageText)
+                    TextField("expense.percentage".localized, text: $percentageText)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(.roundedBorder)
                         .frame(width: 100)
@@ -338,15 +338,15 @@ struct ParticipantRow: View {
                     
                     Spacer()
                     
-                    Text("$\(participant.amount, specifier: "%.2f")")
+                    Text(SettingsManager.shared.formatAmount(participant.amount))
                         .fontWeight(.semibold)
                 }
                 
             case .amount:
                 HStack {
-                    Text("$")
+                    Text(SettingsManager.shared.currentCurrency.symbol)
                         .foregroundColor(.secondary)
-                    TextField("Amount", text: $amountText)
+                    TextField("expense.amountPlaceholder".localized, text: $amountText)
                         .keyboardType(.decimalPad)
                         .textFieldStyle(.roundedBorder)
                         .onChange(of: amountText) { _, newValue in
@@ -378,22 +378,22 @@ struct AddParticipantView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Participant Name", text: $name)
+                    TextField("expense.participantName".localized, text: $name)
                         .textInputAutocapitalization(.words)
                 } header: {
-                    Text("Add Participant")
+                    Text("expense.addParticipant".localized)
                 }
             }
-            .navigationTitle("New Participant")
+            .navigationTitle("expense.newParticipant".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
+                    Button("common.add".localized) {
                         onAdd()
                         dismiss()
                     }
@@ -431,7 +431,7 @@ struct ExpenseSplitProFeatureBanner: View {
             } label: {
                 HStack {
                     Image(systemName: "crown.fill")
-                    Text("Upgrade to Pro")
+                    Text("pro.upgrade".localized)
                 }
                 .font(.headline)
                 .foregroundColor(.white)
@@ -455,7 +455,7 @@ struct ExpenseSplitProFeatureBanner: View {
 
 #Preview {
     ExpenseSplittingView(expense: Expense(
-        title: "Dinner",
+        "expenseSplittingView.dinner".localized,
         amount: 100.0,
         category: "Food",
         date: Date()

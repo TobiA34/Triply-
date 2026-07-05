@@ -9,6 +9,25 @@ import SwiftUI
 import SwiftData
 import WidgetKit
 
+/// How trips are ordered within each section (Current / Upcoming / Past).
+private enum TripListSortOrder: String, CaseIterable, Identifiable {
+    case startDateAscending
+    case startDateDescending
+    case nameAZ
+    case nameZA
+
+    var id: String { rawValue }
+
+    var localizedTitle: String {
+        switch self {
+        case .startDateAscending: return "trips.sort.startDateAsc".localized
+        case .startDateDescending: return "trips.sort.startDateDesc".localized
+        case .nameAZ: return "trips.sort.nameAZ".localized
+        case .nameZA: return "trips.sort.nameZA".localized
+        }
+    }
+}
+
 struct TripListView: View {
     @Environment(\.modelContext) private var modelContext
     @EnvironmentObject var themeManager: ThemeManager
@@ -22,6 +41,8 @@ struct TripListView: View {
     @State private var showingPaywall = false
     @State private var limitAlertMessage: String?
     @State private var showLimitAlert = false
+    @State private var contentAppeared = false
+    @State private var sortOrder: TripListSortOrder = .startDateAscending
     
     private var categories: [String] {
         ["All", "Adventure", "Business", "Relaxation", "Family", "General"]
@@ -63,59 +84,132 @@ struct TripListView: View {
         
         return result
     }
+
+    private func applySort(_ list: [TripModel]) -> [TripModel] {
+        switch sortOrder {
+        case .startDateAscending:
+            return list.sorted { $0.startDate < $1.startDate }
+        case .startDateDescending:
+            return list.sorted { $0.startDate > $1.startDate }
+        case .nameAZ:
+            return list.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        case .nameZA:
+            return list.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedDescending }
+        }
+    }
     
     var upcomingTrips: [TripModel] {
-        filteredTrips.filter { $0.isUpcoming }
+        applySort(filteredTrips.filter { $0.isUpcoming })
     }
     
     var currentTrips: [TripModel] {
-        filteredTrips.filter { $0.isCurrent }
+        applySort(filteredTrips.filter { $0.isCurrent })
     }
     
     var pastTrips: [TripModel] {
-        filteredTrips.filter { $0.isPast }
+        applySort(filteredTrips.filter { $0.isPast })
     }
-    
-    var body: some View {
-        let bgColor = themeBackgroundColor
-        return NavigationStack {
-            ZStack {
-                // Theme background - reactive to theme changes
-                bgColor
-                    .ignoresSafeArea()
-                
-                if trips.isEmpty {
-                    EmptyStateView()
-                } else {
-                    ScrollView {
-                        VStack(spacing: 20) {
-                            // Search Bar
-                            SearchBar(text: $searchText)
-                            
-                            // Enhanced Stats Card
-                            EnhancedStatsCardView(trips: trips)
-                                .padding(.horizontal)
-                            
-                            // Current Trips
-                            if !currentTrips.isEmpty {
-                                TripSectionView(title: "Current Trips", trips: currentTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
-                            }
-                            
-                            // Upcoming Trips
-                            if !upcomingTrips.isEmpty {
-                                TripSectionView(title: "Upcoming", trips: upcomingTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
-                            }
-                            
-                            // Past Trips
-                            if !pastTrips.isEmpty {
-                                TripSectionView(title: "Past Trips", trips: pastTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
+
+    private var tripListScrollContent: some View {
+        VStack(spacing: DesignSystem.Spacing.lg) {
+            TripListHeroHeader()
+                .padding(.horizontal, DesignSystem.Spacing.md)
+                .padding(.top, DesignSystem.Spacing.xs)
+            if !proLimiter.isPro {
+                ProHomePaywallBanner {
+                    showingPaywall = true
+                }
+                .environmentObject(themeManager)
+            }
+            SearchBar(text: $searchText)
+            HStack {
+                Spacer(minLength: 0)
+                Menu {
+                    ForEach(TripListSortOrder.allCases) { option in
+                        Button {
+                            sortOrder = option
+                            HapticManager.shared.selection()
+                        } label: {
+                            if sortOrder == option {
+                                Label(option.localizedTitle, systemImage: "checkmark")
+                            } else {
+                                Text(option.localizedTitle)
                             }
                         }
-                        .padding(.vertical)
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "arrow.up.arrow.down.circle.fill")
+                            .font(.title3)
+                        Text("trips.sort".localized)
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .foregroundColor(themeManager.currentPalette.accent)
+                    .padding(.horizontal, DesignSystem.Spacing.sm)
+                    .padding(.vertical, 8)
+                    .background(
+                        Capsule()
+                            .fill(themeManager.currentPalette.accent.opacity(0.12))
+                    )
+                }
+                .accessibilityLabel("trips.sort".localized)
+            }
+            .padding(.horizontal, DesignSystem.Spacing.md)
+            EnhancedStatsCardView(trips: trips)
+                .padding(.horizontal, DesignSystem.Spacing.md)
+            if !currentTrips.isEmpty {
+                TripSectionView(title: "trips.current".localized, trips: currentTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail, contentAppeared: contentAppeared)
+            }
+            if !upcomingTrips.isEmpty {
+                TripSectionView(title: "trips.upcoming".localized, trips: upcomingTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail, contentAppeared: contentAppeared)
+            }
+            if !pastTrips.isEmpty {
+                TripSectionView(title: "trips.past".localized, trips: pastTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail, contentAppeared: contentAppeared)
+            }
+        }
+        .padding(.vertical)
+    }
+
+    private var tripListMainContent: some View {
+        ZStack {
+            themeBackgroundColor
+                .ignoresSafeArea()
+            if trips.isEmpty {
+                EmptyStateView(onCreateTap: {
+                    let check = proLimiter.canCreateTrip(currentTripCount: trips.count)
+                    if check.allowed { showingAddTrip = true }
+                    else { limitAlertMessage = check.reason; showLimitAlert = true }
+                })
+            } else {
+                ScrollView {
+                    tripListScrollContent
+                }
+                .refreshable {
+                    await MainActor.run {
+                        WidgetDataSync.shared.syncTrips(trips)
+                        WidgetCenter.shared.reloadAllTimelines()
+                        HapticManager.shared.selection()
+                    }
+                }
+                .opacity(contentAppeared ? 1 : 0)
+                .onAppear {
+                    if !trips.isEmpty {
+                        withAnimation(DesignSystem.Animation.springBouncy) {
+                            contentAppeared = true
+                        }
                     }
                 }
             }
-            .navigationTitle("My Trips")
+        }
+    }
+    
+    var body: some View {
+        NavigationStack {
+            tripListMainContent
+            .onChange(of: trips.isEmpty) { _, isEmpty in
+                if isEmpty { contentAppeared = false }
+            }
+            .navigationTitle("trips.title".localized)
             .background(themeBackgroundColor)
             // .observeLanguage() // Method not available
             .toolbar {
@@ -132,11 +226,15 @@ struct TripListView: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.title2)
                     }
+                    .accessibilityLabel("trips.addTrip".localized)
+                    .accessibilityHint("Opens the form to create a new trip")
+                    .accessibilityIdentifier("Add Trip")
                 }
             }
             .fullScreenCover(isPresented: $showingAddTrip) {
                 NavigationStack {
                     AddTripView()
+                        .environmentObject(themeManager)
                 }
             }
             .fullScreenCover(isPresented: $showingSettings) {
@@ -161,7 +259,7 @@ struct TripListView: View {
                 }
             }
             .onChange(of: trips.count) { _, _ in
-                // Sync whenever trips change
+                checkPendingDeepLink()
                 Task { @MainActor in
                     WidgetDataSync.shared.syncTrips(trips)
                     WidgetCenter.shared.reloadAllTimelines()
@@ -173,7 +271,12 @@ struct TripListView: View {
                    let tripId = UUID(uuidString: tripIdString),
                    let trip = trips.first(where: { $0.id == tripId }) {
                     selectedTripForDetail = trip
+                } else {
+                    checkPendingDeepLink()
                 }
+            }
+            .onAppear {
+                checkPendingDeepLink()
             }
             .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("NavigateToActiveTrip"))) { _ in
                 if let activeTrip = trips.first(where: { $0.isCurrent }) {
@@ -189,13 +292,14 @@ struct TripListView: View {
             .fullScreenCover(item: $selectedTripForDetail) { trip in
                 NavigationStack {
                     TripDetailView(trip: trip)
+                        .environmentObject(themeManager)
                 }
             }
-            .alert("Limit Reached", isPresented: $showLimitAlert) {
-                Button("Upgrade to Pro") {
+            .alert("alert.limitReached".localized, isPresented: $showLimitAlert) {
+                Button("pro.upgrade".localized) {
                     showingPaywall = true
                 }
-                Button("Cancel", role: .cancel) { }
+                Button("common.cancel".localized, role: .cancel) { }
             } message: {
                 if let message = limitAlertMessage {
                     Text(message)
@@ -208,27 +312,49 @@ struct TripListView: View {
             }
         }
     }
+    
+    /// Opens trip from cold-launch deep link when trips are available.
+    private func checkPendingDeepLink() {
+        guard let idString = UserDefaults.standard.string(forKey: "PendingOpenTripId"),
+              let tripId = UUID(uuidString: idString),
+              let trip = trips.first(where: { $0.id == tripId }) else { return }
+        UserDefaults.standard.removeObject(forKey: "PendingOpenTripId")
+        selectedTripForDetail = trip
+    }
 }
 
 struct SearchBar: View {
     @Binding var text: String
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
-        HStack {
+        HStack(spacing: DesignSystem.Spacing.sm) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(.secondary)
-            TextField("Search", text: $text)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
+            TextField("search.placeholder".localized, text: $text)
                 .textFieldStyle(.plain)
             if !text.isEmpty {
-                Button(action: { text = "" }) {
+                Button(action: {
+                    text = ""
+                    HapticManager.shared.selection()
+                }) {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundColor(.secondary)
+                        .font(.system(size: 18))
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
                 }
             }
         }
-        .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .padding(.horizontal, DesignSystem.Spacing.md)
+        .padding(.vertical, DesignSystem.Spacing.sm + 2)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(themeManager.currentPalette.background.opacity(0.95))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 18)
+                        .stroke(themeManager.currentPalette.accent.opacity(0.12), lineWidth: 1)
+                )
+        )
         .padding(.horizontal)
     }
 }
@@ -255,66 +381,99 @@ struct CategoryFilterView: View {
 }
 
 struct CategoryChip: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let title: String
     let isSelected: Bool
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.selection()
+            action()
+        }) {
             Text(title)
                 .font(.subheadline)
                 .fontWeight(isSelected ? .semibold : .regular)
-                .foregroundColor(isSelected ? .white : .primary)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
-                .background(isSelected ? Color.blue : Color(.systemGray5))
-                .cornerRadius(20)
+                .foregroundColor(isSelected ? .white : themeManager.currentPalette.text)
+                .padding(.horizontal, DesignSystem.Spacing.md)
+                .padding(.vertical, DesignSystem.Spacing.xs)
+                .background(isSelected ? themeManager.currentPalette.accent : Color(.systemGray5))
+                .clipShape(Capsule())
         }
+        .buttonStyle(.plain)
+        .scaleEffect(isSelected ? 1.02 : 1)
+        .animation(DesignSystem.Animation.spring, value: isSelected)
     }
 }
 
 struct TripSectionView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let title: String
     let trips: [TripModel]
     let modelContext: ModelContext
     @Binding var selectedTripForDetail: TripModel?
+    var contentAppeared: Bool = true
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: DesignSystem.Spacing.sm) {
             Text(title)
-                .font(.title2)
-                .fontWeight(.semibold)
-                .padding(.horizontal)
+                .font(.system(size: 20, weight: .bold, design: .rounded))
+                .foregroundColor(themeManager.currentPalette.text)
+                .padding(.horizontal, DesignSystem.Spacing.md)
             
             ForEach(Array(trips.enumerated()), id: \.element.id) { index, trip in
                 EnhancedTripCardWrapper(
                     trip: trip,
                     onCardTap: {
+                        HapticManager.shared.selection()
                         selectedTripForDetail = trip
                     }
                 )
-                .padding(.horizontal)
+                .padding(.horizontal, DesignSystem.Spacing.md)
                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                     Button(role: .destructive) {
                         deleteTrip(trip)
                         HapticManager.shared.error()
                     } label: {
-                        Label("Delete", systemImage: "trash")
+                        Label("common.delete".localized, systemImage: "trash")
                     }
                     
                     Button {
                         duplicateTrip(trip)
                         HapticManager.shared.success()
                     } label: {
-                        Label("Duplicate", systemImage: "doc.on.doc")
+                        Label("trips.duplicate".localized, systemImage: "doc.on.doc")
                     }
                     .tint(.blue)
                 }
+                .opacity(contentAppeared ? 1 : 0)
+                .offset(y: contentAppeared ? 0 : 14)
                 .transition(.asymmetric(
                     insertion: .move(edge: .trailing).combined(with: .opacity),
                     removal: .scale.combined(with: .opacity)
                 ))
+                .animation(.spring(response: 0.52, dampingFraction: 0.82).delay(Double(index) * 0.06), value: contentAppeared)
                 .animation(.spring(response: 0.5, dampingFraction: 0.8).delay(Double(index) * 0.1), value: trips.count)
+                .contextMenu {
+                    Button {
+                        HapticManager.shared.selection()
+                        selectedTripForDetail = trip
+                    } label: {
+                        Label("trips.openTrip".localized, systemImage: "arrow.right.circle")
+                    }
+                    Button {
+                        duplicateTrip(trip)
+                        HapticManager.shared.success()
+                    } label: {
+                        Label("trips.duplicate".localized, systemImage: "doc.on.doc")
+                    }
+                    Button(role: .destructive) {
+                        deleteTrip(trip)
+                        HapticManager.shared.error()
+                    } label: {
+                        Label("common.delete".localized, systemImage: "trash")
+                    }
+                }
             }
         }
     }
@@ -378,7 +537,61 @@ struct EnhancedTripCardWrapper: View {
 struct CardButtonStyle: ButtonStyle {
     func makeBody(configuration: ButtonStyle.Configuration) -> some View {
         configuration.label
-            .opacity(configuration.isPressed ? 0.95 : 1.0)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .opacity(configuration.isPressed ? 0.96 : 1.0)
+            .animation(DesignSystem.Animation.quick, value: configuration.isPressed)
+    }
+}
+
+// MARK: - Trip list hero (fun, travel-exciting home header)
+struct TripListHeroHeader: View {
+    @EnvironmentObject var themeManager: ThemeManager
+    @State private var appeared = false
+
+    var body: some View {
+        HStack(spacing: DesignSystem.Spacing.md) {
+            ZStack {
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.lg)
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                themeManager.currentPalette.accent,
+                                themeManager.currentPalette.accent.opacity(0.8)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
+                    .frame(width: 48, height: 48)
+                Image(systemName: "sparkles")
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundStyle(.white)
+            }
+            .shadow(color: themeManager.currentPalette.accent.opacity(0.35), radius: 8, x: 0, y: 4)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("trips.title".localized)
+                    .font(.system(size: 26, weight: .bold, design: .serif))
+                    .foregroundColor(themeManager.currentPalette.text)
+                Text("trips.hero.tagline".localized)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(DesignSystem.Spacing.md)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(themeManager.currentPalette.background.opacity(0.92))
+                .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 24, x: 0, y: 12)
+        )
+        .opacity(appeared ? 1 : 0)
+        .offset(y: appeared ? 0 : 8)
+        .onAppear {
+            withAnimation(DesignSystem.Animation.springBouncy) {
+                appeared = true
+            }
+        }
     }
 }
 
@@ -432,22 +645,22 @@ struct TripRowView: View {
                 }
                 
                 VStack {
-                    Text("\(trip.duration)")
+                    Text("tripListView.tripduration".localized)
                         .font(.title3)
                         .fontWeight(.bold)
-                        .foregroundColor(.blue)
-                    Text("days")
+                        .foregroundColor(Color(red: 0.9, green: 0.4, blue: 0.25))
+                    Text("trips.days".localized)
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
-                .background(Color.blue.opacity(0.1))
+                .background(Color(red: 0.95, green: 0.5, blue: 0.35).opacity(0.15))
                 .cornerRadius(10)
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(Color(red: 1.0, green: 0.99, blue: 0.98))
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: 2)
     }
@@ -466,8 +679,19 @@ struct CategoryBadge: View {
         }
     }
     
+    private var localizedCategory: String {
+        switch category {
+        case "Adventure": return "category.adventure".localized
+        case "Business": return "category.business".localized
+        case "Relaxation": return "category.relaxation".localized
+        case "Family": return "category.family".localized
+        case "General": return "category.general".localized
+        default: return category
+        }
+    }
+    
     var body: some View {
-        Text(category)
+        Text(localizedCategory)
             .font(.caption)
             .fontWeight(.semibold)
             .foregroundColor(.white)
@@ -479,81 +703,172 @@ struct CategoryBadge: View {
 }
 
 struct EmptyStateView: View {
-    
+    @EnvironmentObject var themeManager: ThemeManager
+    var onCreateTap: (() -> Void)?
+    @State private var iconAppeared = false
+    @State private var textAppeared = false
+    @State private var buttonAppeared = false
+    @State private var floatPhase: CGFloat = 0
+
+    private let travelIcons = ["airplane.departure", "map.fill", "sun.max.fill", "globe.americas.fill"]
+
     var body: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "airplane.departure")
-                .font(.system(size: 60))
-                .foregroundColor(.blue.opacity(0.6))
-            
-            Text("No Trips Yet")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            Text("Start planning your next adventure!")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+        VStack(spacing: DesignSystem.Spacing.xl) {
+            // Energetic cluster of travel icons
+            ZStack {
+                ForEach(Array(travelIcons.enumerated()), id: \.offset) { i, name in
+                    let angle = Double(i) * .pi / 2 + floatPhase * .pi * 0.5
+                    let r: CGFloat = 52 + CGFloat(i % 2) * 8
+                    Image(systemName: name)
+                        .font(.system(size: i == 0 ? 44 : 28, weight: .medium))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [
+                                    themeManager.currentPalette.accent,
+                                    themeManager.currentPalette.accent.opacity(0.75)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .offset(x: cos(angle) * r * 0.4, y: sin(angle) * r * 0.4)
+                        .opacity(iconAppeared ? 1 : 0)
+                        .scaleEffect(iconAppeared ? 1 : 0.3)
+                }
+                Circle()
+                    .fill(themeManager.currentPalette.accent.opacity(0.08))
+                    .frame(width: 140, height: 140)
+                    .blur(radius: 2)
+                    .scaleEffect(iconAppeared ? 1 : 0.6)
+            }
+            .padding(.top, DesignSystem.Spacing.xxl)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                    floatPhase = 1
+                }
+            }
+
+            VStack(spacing: DesignSystem.Spacing.xs) {
+                Text("trips.empty".localized)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(themeManager.currentPalette.text)
+                Text("trips.empty.description.long".localized)
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, DesignSystem.Spacing.lg)
+            }
+            .opacity(textAppeared ? 1 : 0)
+            .offset(y: textAppeared ? 0 : 12)
+
+            if let action = onCreateTap {
+                Button(action: {
+                    HapticManager.shared.impact(.light)
+                    action()
+                }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title3)
+                        Text("trips.empty.createFirst".localized)
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, DesignSystem.Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        themeManager.currentPalette.accent,
+                                        themeManager.currentPalette.accent.opacity(0.85)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, DesignSystem.Spacing.xxl)
+                .padding(.top, DesignSystem.Spacing.sm)
+                .scaleEffect(buttonAppeared ? 1 : 0.9)
+                .opacity(buttonAppeared ? 1 : 0)
+            }
         }
-        .padding()
-        // .observeLanguage() // Method not available
+        .padding(DesignSystem.Spacing.lg)
+        .onAppear {
+            withAnimation(DesignSystem.Animation.springBouncy) {
+                iconAppeared = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(DesignSystem.Animation.spring) {
+                    textAppeared = true
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
+                withAnimation(DesignSystem.Animation.spring) {
+                    buttonAppeared = true
+                }
+            }
+        }
     }
 }
 
-// Enhanced Stats Card with multiple metrics
+// Enhanced Stats Card – travel-energetic look
 struct EnhancedStatsCardView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let trips: [TripModel]
-    
+    @State private var appeared = false
+
     private var totalDays: Int { trips.reduce(0) { $0 + $1.duration } }
     private var totalTrips: Int { trips.count }
     private var upcomingCount: Int { trips.filter { $0.isUpcoming }.count }
     private var currentCount: Int { trips.filter { $0.isCurrent }.count }
     private var totalDestinations: Int { trips.reduce(0) { $0 + ($1.destinations?.count ?? 0) } }
     private var totalBudget: Double { trips.compactMap { $0.budget }.reduce(0, +) }
-    
+
     var body: some View {
         VStack(spacing: 16) {
-            // Main stats row
             HStack(spacing: 16) {
                 StatsCardItem(
                     icon: "airplane.departure",
                     value: "\(totalTrips)",
-                    label: "Total Trips",
+                    label: "trips.totalTrips".localized,
                     color: .blue
                 )
                 StatsCardItem(
                     icon: "clock.fill",
                     value: "\(totalDays)",
-                    label: "days",
+                    label: "trips.days".localized,
                     color: .orange
                 )
                 StatsCardItem(
                     icon: "mappin.circle.fill",
                     value: "\(totalDestinations)",
-                    label: "Destinations",
+                    label: "destination.title".localized,
                     color: .green
                 )
             }
-            
-            // Secondary stats row
+
             HStack(spacing: 16) {
                 StatsCardItem(
                     icon: "calendar.badge.clock",
                     value: "\(upcomingCount)",
-                    label: "Upcoming",
+                    label: "trips.upcoming".localized,
                     color: .purple
                 )
                 StatsCardItem(
                     icon: "airplane.departure",
                     value: "\(currentCount)",
-                    label: "Current Trips",
+                    label: "trips.current".localized,
                     color: .blue
                 )
                 if totalBudget > 0 {
                     StatsCardItem(
                         icon: SettingsManager.shared.currencyIconName(),
                         value: SettingsManager.shared.formatAmount(totalBudget),
-                        label: "Total Budget",
+                        label: "trips.totalBudgetLabel".localized,
                         color: .green
                     )
                 } else {
@@ -563,21 +878,18 @@ struct EnhancedStatsCardView: View {
         }
         .padding(20)
         .background(
-            RoundedRectangle(cornerRadius: 20)
-                .fill(.ultraThinMaterial)
-                .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 4)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 20)
-                        .stroke(
-                            LinearGradient(
-                                colors: [Color.white.opacity(0.3), Color.white.opacity(0.1)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1
-                        )
-                )
+            RoundedRectangle(cornerRadius: 22)
+                .fill(themeManager.currentPalette.background)
+                .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 24, x: 0, y: 10)
+                .shadow(color: .black.opacity(0.03), radius: 10, x: 0, y: 4)
         )
+        .opacity(appeared ? 1 : 0)
+        .offset(y: appeared ? 0 : 6)
+        .onAppear {
+            withAnimation(DesignSystem.Animation.springBouncy) {
+                appeared = true
+            }
+        }
     }
 }
 

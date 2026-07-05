@@ -16,12 +16,12 @@ struct ThemeDefaultsView: View {
     
     init() {
         _selectedPalette = State(initialValue: ThemeManager.shared.defaultPalette)
-        _accent = State(initialValue: ThemeManager.shared.customAccentColor)
+        _accent = State(initialValue: ThemeManager.shared.customAccentColor ?? ThemeManager.shared.defaultPalette.palette(for: .light).accent)
     }
     
     var body: some View {
         Form {
-            Section(header: Text("Default Palette")) {
+            Section(header: "themeDefaultsView.default.palette".localized) {
                 Picker("Palette", selection: $selectedPalette) {
                     ForEach(DefaultPalette.allCases) { palette in
                         HStack(spacing: 12) {
@@ -33,18 +33,18 @@ struct ThemeDefaultsView: View {
                     }
                 }
             }
-            Section(header: Text("Default Accent")) {
+            Section(header: "themeDefaultsView.default.accent".localized) {
                 ColorPicker("Accent Color", selection: $accent, supportsOpacity: true)
             }
-            Section(header: Text("Preview")) {
+            Section(header: "settings.preview".localized) {
                 let preview = selectedPalette.palette(for: .light)
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Buttons & Accents")
+                    Text("themeDefaultsView.buttons.accents".localized)
                         .foregroundColor(preview.text)
-                    Button("Primary") {}
+                    Button("misc.primary".localized) {}
                         .buttonStyle(.borderedProminent)
                         .tint(accent)
-                    Button("Secondary") {}
+                    Button("misc.secondary".localized) {}
                         .buttonStyle(.bordered)
                         .tint(accent)
                 }
@@ -54,13 +54,13 @@ struct ThemeDefaultsView: View {
                 .cornerRadius(12)
             }
         }
-        .navigationTitle("Theme Defaults")
+        "themeDefaultsView.theme.defaults".localized
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") { dismiss() }
+                Button("common.cancel".localized) { dismiss() }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
+                Button("common.save".localized) {
                     themeManager.setDefaultPalette(selectedPalette)
                     themeManager.setAccentColor(accent)
                     dismiss()

@@ -9,47 +9,98 @@ import Foundation
 import SwiftUI
 
 extension String {
-    /// Returns a localized string using the current language from LocalizationManager
-    /// Thread-safe: UserDefaults is thread-safe for reading
+    /// Supported app language codes (must match Localizable_<code>.strings and SupportedLanguage).
+    private static let supportedLanguageCodes: Set<String> = ["en", "es", "fr", "de", "it", "pt", "ja", "ko", "zh-Hans"]
+    
+    /// Resolves the device locale to a supported app language code.
+    /// Uses: 1) iPhone preferred language (e.g. Spanish in Spain → es), 2) region fallback (e.g. Region Spain → es).
+    private static func deviceLanguageCode() -> String {
+        // 1) Primary: first preferred language (e.g. "es-ES", "es-MX", "fr-FR" → es, fr)
+        if let preferred = Locale.preferredLanguages.first, !preferred.isEmpty {
+            let code = languageCode(from: preferred)
+            if supportedLanguageCodes.contains(code) { return code }
+        }
+        // 2) Fallback: current locale language (e.g. Locale.current from region)
+        if let current = Locale.current.language.languageCode?.identifier {
+            let code = languageCode(from: current)
+            if supportedLanguageCodes.contains(code) { return code }
+        }
+        // 3) Region-based: infer from device region (e.g. Spain → Spanish, France → French)
+        if let region = Locale.current.region?.identifier {
+            let code = languageCodeFromRegion(region)
+            if supportedLanguageCodes.contains(code) { return code }
+        }
+        return "en"
+    }
+    
+    /// Parses a locale identifier (e.g. "es-ES", "zh-Hans-US") into our app language code.
+    private static func languageCode(from localeIdentifier: String) -> String {
+        let parts = localeIdentifier.split(separator: "-").map(String.init)
+        let lang = parts.first ?? "en"
+        if lang == "zh" {
+            if parts.count > 1, parts[1].lowercased() == "hans" { return "zh-Hans" }
+            if parts.count > 1, ["cn", "hans"].contains(parts[1].lowercased()) { return "zh-Hans" }
+            return "zh-Hans"
+        }
+        return lang
+    }
+    
+    /// Maps a region code (e.g. ES, FR, MX) to a supported language code when language list didn't match.
+    private static func languageCodeFromRegion(_ region: String) -> String {
+        let r = region.uppercased()
+        switch r {
+        case "ES", "MX", "AR", "CO", "CL", "PE", "VE", "EC", "GT", "CU", "BO", "DO", "HN", "PY", "SV", "UY", "CR", "PA", "NI": return "es"
+        case "FR", "BE", "CA", "CH", "LU", "MC", "SN", "CI": return "fr"
+        case "DE", "AT", "CH", "LI", "LU": return "de"
+        case "IT", "CH", "SM", "VA": return "it"
+        case "PT", "BR", "AO", "MZ": return "pt"
+        case "JP": return "ja"
+        case "KR": return "ko"
+        case "CN", "SG", "TW": return "zh-Hans"
+        case "GB", "US", "AU", "CA", "IE", "NZ", "ZA", "IN": return "en"
+        default: return "en"
+        }
+    }
+    
+    /// Returns a localized string using the device language (no dropdown override).
+    /// Loads from Localizable_<lang>.strings (e.g. Localizable_fr.strings) or .lproj bundles, then Localizable.strings.
     var localized: String {
-        // Get current language from UserDefaults
-        let languageCode = UserDefaults.standard.string(forKey: "app_language") ?? "en"
+        let languageCode = String.deviceLanguageCode()
         
-        // Try to load from Localizable.strings file directly
+        // 1) Try language-specific .lproj bundle (e.g. fr.lproj/Localizable.strings)
+        if languageCode != "en",
+           let lprojPath = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
+           let langBundle = Bundle(path: lprojPath) {
+            let value = langBundle.localizedString(forKey: self, value: nil, table: "Localizable")
+            if value != self { return value }
+        }
+        
+        // 2) Try language-specific table file (e.g. Localizable_fr.strings)
+        if languageCode != "en",
+           let path = Bundle.main.path(forResource: "Localizable_\(languageCode)", ofType: "strings"),
+           let dict = NSDictionary(contentsOfFile: path) as? [String: String],
+           let value = dict[self] {
+            return value
+        }
+        
+        // 3) Try base Localizable.strings (English)
         if let path = Bundle.main.path(forResource: "Localizable", ofType: "strings"),
            let dict = NSDictionary(contentsOfFile: path) as? [String: String],
            let value = dict[self] {
             return value
         }
         
-        // Fallback: try NSLocalizedString (works with .lproj bundles if they exist)
-        let localizedString = NSLocalizedString(self, comment: "")
-        if localizedString != self {
-            return localizedString
-        }
+        // 4) NSLocalizedString fallback
+        let fallback = NSLocalizedString(self, comment: "")
+        if fallback != self { return fallback }
         
-        // Final fallback: return key itself
         return self
     }
     
     /// Returns a localized string with arguments
     /// Thread-safe: UserDefaults is thread-safe for reading
     func localized(_ arguments: CVarArg...) -> String {
-        // UserDefaults is thread-safe for reading, so we can access it directly
-        let languageCode = UserDefaults.standard.string(forKey: "app_language") ?? "en"
-        
-        // Get format string
-        var format = NSLocalizedString(self, comment: "")
-        
-        // If we have a language bundle for the selected language, use it
-        if languageCode != "en", let path = Bundle.main.path(forResource: languageCode, ofType: "lproj"),
-           let bundle = Bundle(path: path) {
-            let bundleString = bundle.localizedString(forKey: self, value: nil, table: nil)
-            if bundleString != self {
-                format = bundleString
-            }
-        }
-        
+        let format = self.localized
         return String(format: format, arguments: arguments)
     }
 }

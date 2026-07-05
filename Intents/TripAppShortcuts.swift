@@ -15,10 +15,10 @@ struct QuickAddTripShortcut: AppIntent {
     static var description = IntentDescription("Quickly add a new trip to Itinero")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip Name")
+    @Parameter(title: "trips.name")
     var tripName: String
     
-    @Parameter(title: "Destination")
+    @Parameter(title: "tripAppShortcuts.destination")
     var destination: String?
     
     func perform() async throws -> some IntentResult {
@@ -72,10 +72,10 @@ struct QuickAddExpenseShortcut: AppIntent {
     static var description = IntentDescription("Quickly add an expense to your active trip")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Amount")
+    @Parameter(title: "expense.amount")
     var amount: Double
     
-    @Parameter(title: "Category")
+    @Parameter(title: "trips.category")
     var category: String?
     
     func perform() async throws -> some IntentResult {
@@ -141,10 +141,10 @@ import Foundation
 //     static var description = IntentDescription("Quickly add a new trip to Itinero")
 //     static var openAppWhenRun: Bool = true
     
-//     @Parameter(title: "Trip Name")
+//     @Parameter("trips.name".localized)
 //     var tripName: String
     
-//     @Parameter(title: "Destination")
+//     @Parameter("tripAppShortcuts.destination".localized)
 //     var destination: String?
     
 //     func perform() async throws -> some IntentResult {
@@ -198,10 +198,10 @@ struct QuickAddExpenseShortcut: AppIntent {
     static var description = IntentDescription("Quickly add an expense to your active trip")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Amount")
+    @Parameter(title: "expense.amount")
     var amount: Double
     
-    @Parameter(title: "Category")
+    @Parameter(title: "trips.category")
     var category: String?
     
     func perform() async throws -> some IntentResult {

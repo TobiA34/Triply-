@@ -1,6 +1,6 @@
 //
 //  EditDocumentView.swift
-//  Itinero
+//  Triply
 //
 //  Created on 2025
 //
@@ -38,7 +38,7 @@ struct EditDocumentView: View {
         _documentType = State(initialValue: document.type)
         _title = State(initialValue: document.title)
         _notes = State(initialValue: document.notes)
-        _amountText = State(initialValue: document.amount != nil ? String(format: "%.2f", document.amount!) : "")
+        _amountText = State(initialValue: document.amount.map { String(format: "%.2f", $0) } ?? "")
         _date = State(initialValue: document.date ?? Date())
     }
     
@@ -51,7 +51,7 @@ struct EditDocumentView: View {
                             Image(uiImage: image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(maxHeight: 250)
+                                .frame(maxHeight: 200)
                                 .cornerRadius(8)
                                 .overlay(
                                     ScanningOverlay(isScanning: $ticketScanner.isProcessing)
@@ -79,7 +79,7 @@ struct EditDocumentView: View {
                                 }
                             }
                         }
-                        .frame(maxHeight: 250)
+                        .frame(maxHeight: 200)
                         
                         if !hasScanned && document.type == "ticket" {
                             Button {
@@ -115,7 +115,7 @@ struct EditDocumentView: View {
                         
                         if let ticketInfo = ticketScanner.ticketInfo {
                             VStack(alignment: .leading, spacing: 8) {
-                                Text("Scanned Information")
+                                Text("documents.scannedInfo".localized)
                                     .font(.headline)
                                     .padding(.bottom, 4)
                                 
@@ -153,7 +153,7 @@ struct EditDocumentView: View {
                         }
                     } else if let imageData = document.fileData {
                         ProgressView()
-                            .frame(height: 250)
+                            .frame(height: 200)
                             .onAppear {
                                 loadImageAsync(from: imageData)
                             }
@@ -161,19 +161,19 @@ struct EditDocumentView: View {
                         Image(systemName: document.icon)
                             .font(.system(size: 60))
                             .foregroundColor(.blue)
-                            .frame(height: 250)
+                            .frame(height: 200)
                     }
                 }
                 
                 Section("Document Type") {
                     Picker("Type", selection: $documentType) {
-                        Text("Ticket").tag("ticket")
-                        Text("Receipt").tag("receipt")
-                        Text("Reservation").tag("reservation")
+                        Text("documents.type.ticket".localized).tag("ticket")
+                        Text("documents.type.receipt".localized).tag("receipt")
+                        Text("documents.type.reservation".localized).tag("reservation")
                         Text("Passport").tag("passport")
                         Text("Visa").tag("visa")
                         Text("Travel Insurance").tag("insurance")
-                        Text("Other").tag("other")
+                        Text("documents.type.other".localized).tag("other")
                     }
                 }
                 
