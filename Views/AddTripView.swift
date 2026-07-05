@@ -71,8 +71,9 @@ struct AddTripView: View {
     @State private var showingPriorityPicker = false
     @State private var errorMessage = ""
     @State private var isSaving = false
-    @State private var showTemplates = true  // Show templates by default
-    @State private var showTips = true  // Show tips by default
+    @State private var showTemplates = false  // Collapsed by default to keep the create flow fast
+    @State private var showTips = true  // Show tips by default (inside More options)
+    @State private var showMoreOptions = false  // "More options" disclosure collapsed by default
     @State private var fieldErrors: [String: String] = [:]
     
     private let categories = ["General", "Adventure", "Business", "Relaxation", "Family", "Romantic", "Solo", "Group"]
@@ -209,65 +210,20 @@ struct AddTripView: View {
             .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
             
-            // Cover Photo Section
-            Section {
-                Button(action: { showingImagePicker = true }) {
-                    ZStack {
-                        if let data = coverImageData, let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(height: 160)
-                                .clipped()
-                                .overlay(Color.black.opacity(0.3))
-                        } else {
-                            Rectangle()
-                                .fill(themeManager.currentPalette.accent.opacity(0.1))
-                                .frame(height: 160)
-                        }
-                        
-                        VStack(spacing: 8) {
-                            Image(systemName: "camera.fill")
-                                .font(.system(size: 32))
-                            Text(coverImageData == nil ? "Add Cover Photo" : "Change Photo")
-                                .font(.headline)
-                        }
-                        .foregroundColor(coverImageData == nil ? themeManager.currentPalette.accent : .white)
-                    }
-                }
-            }
-            .listRowInsets(EdgeInsets())
-            .listRowBackground(Color.clear)
-            .cornerRadius(16)
-            .padding(.bottom, 8)
-            .listRowSeparator(.hidden)
-            
             // Quick Templates
             quickTemplatesSection
-            
-            // Tips & Suggestions
-            tipsSection
-            
+
             // Basic Information
             basicInfoSection
-            
+
             // Destinations
             destinationsSection
-            
-            // Budget Breakdown
+
+            // Total Budget
             budgetSection
-            
-            // Travel Details
-            travelDetailsSection
-            
-            // Additional Options
-            additionalOptionsSection
-            
-            // Notes
-            notesSection
-            
-            // Quick Stats Preview
-            statsPreviewSection
+
+            // Everything else lives behind a single collapsed disclosure
+            moreOptionsSection
         }
         .scrollContentBackground(.hidden)
         .background(themeManager.currentPalette.background)
@@ -450,10 +406,43 @@ struct AddTripView: View {
         }
     }
     
-    // MARK: - Tips Section
-    private var tipsSection: some View {
-        Section {
+    // MARK: - Cover Photo (inside More options)
+    private var coverPhotoContent: some View {
+        Button(action: { showingImagePicker = true }) {
+            ZStack {
+                if let data = coverImageData, let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(height: 160)
+                        .clipped()
+                        .overlay(Color.black.opacity(0.3))
+                } else {
+                    Rectangle()
+                        .fill(themeManager.currentPalette.accent.opacity(0.1))
+                        .frame(height: 160)
+                }
+
+                VStack(spacing: 8) {
+                    Image(systemName: "camera.fill")
+                        .font(.system(size: 32))
+                    Text(coverImageData == nil ? "Add Cover Photo" : "Change Photo")
+                        .font(.headline)
+                }
+                .foregroundColor(coverImageData == nil ? themeManager.currentPalette.accent : .white)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Tips (inside More options)
+    private var tipsContent: some View {
             VStack(alignment: .leading, spacing: DesignSystem.Spacing.sm) {
+                Text("addTrip.helpfulTips".localized)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 HStack {
                     Label("addTrip.tipsSuggestions".localized, systemImage: "lightbulb.fill")
                         .font(.system(size: 17, weight: .semibold))
@@ -512,22 +501,15 @@ struct AddTripView: View {
                     }
                 }
             }
-            .padding(.vertical, DesignSystem.Spacing.sm)
-            .listRowBackground(
-                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
-                    .fill(Color(.secondarySystemGroupedBackground))
-            )
-        } header: {
-            Text("addTrip.helpfulTips".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(themeManager.currentPalette.secondaryText)
-        }
     }
-    
-    // MARK: - Stats Preview Section
-    private var statsPreviewSection: some View {
-        Section {
+
+    // MARK: - Stats Preview (inside More options)
+    private var statsPreviewContent: some View {
             VStack(spacing: 12) {
+                Text("addTrip.preview".localized)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 Text("addTrip.tripSummary".localized)
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -580,18 +562,8 @@ struct AddTripView: View {
                     )
                 }
             }
-            .padding(.vertical, DesignSystem.Spacing.sm)
-            .listRowBackground(
-                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
-                    .fill(Color(.secondarySystemGroupedBackground))
-            )
-        } header: {
-            Text("addTrip.preview".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(themeManager.currentPalette.secondaryText)
-        }
     }
-    
+
     // MARK: - Helper Functions
     private func getCategoryTip() -> String {
         switch selectedCategory {
@@ -1109,7 +1081,33 @@ struct AddTripView: View {
                     }
                 }
                 
-                // Budget Breakdown
+                if totalBudget > 0 {
+                    Divider()
+                    HStack {
+                        Text("addTrip.estimatedTotal".localized)
+                            .fontWeight(.semibold)
+                        Spacer()
+                        Text("\(settingsManager.currentCurrency.symbol)\(String(format: "%.2f", totalBudget))")
+                            .font(.title3)
+                            .fontWeight(.bold)
+                            .foregroundColor(.blue)
+                    }
+                }
+            }
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
+        } header: {
+            Text("trips.budget".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
+        }
+    }
+
+    // MARK: - Budget Breakdown (inside More options)
+    private var budgetBreakdownContent: some View {
                 VStack(alignment: .leading, spacing: 12) {
                     Text("addTrip.budgetBreakdown".localized)
                         .font(.subheadline)
@@ -1196,36 +1194,15 @@ struct AddTripView: View {
                         }
                     }
                 }
-                
-                if totalBudget > 0 {
-                    Divider()
-                    HStack {
-                        Text("addTrip.estimatedTotal".localized)
-                            .fontWeight(.semibold)
-                        Spacer()
-                        Text("\(settingsManager.currentCurrency.symbol)\(String(format: "%.2f", totalBudget))")
-                            .font(.title3)
-                            .fontWeight(.bold)
-                            .foregroundColor(.blue)
-                    }
-                }
-            }
-            .padding(.vertical, DesignSystem.Spacing.sm)
-            .listRowBackground(
-                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
-                    .fill(Color(.secondarySystemGroupedBackground))
-            )
-        } header: {
-            Text("trips.budget".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(themeManager.currentPalette.secondaryText)
-        }
     }
-    
-    // MARK: - Travel Details Section
-    private var travelDetailsSection: some View {
-        Section {
+
+    // MARK: - Travel Details (inside More options)
+    private var travelDetailsContent: some View {
             VStack(spacing: 16) {
+                Text("addTrip.travelDetails".localized)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 // Travel Companions
                 VStack(alignment: .leading, spacing: 8) {
                     Label("addTrip.travelCompanions".localized, systemImage: "person.2.fill")
@@ -1326,21 +1303,10 @@ struct AddTripView: View {
                     .pickerStyle(.segmented)
                 }
             }
-            .padding(.vertical, DesignSystem.Spacing.sm)
-            .listRowBackground(
-                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
-                    .fill(Color(.secondarySystemGroupedBackground))
-            )
-        } header: {
-            Text("addTrip.travelDetails".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(themeManager.currentPalette.secondaryText)
-        }
     }
-    
-    // MARK: - Additional Options Section
-    private var additionalOptionsSection: some View {
-        Section {
+
+    // MARK: - Additional Options (inside More options)
+    private var additionalOptionsContent: some View {
             VStack(spacing: 16) {
                 // Tags
                 VStack(alignment: .leading, spacing: 8) {
@@ -1428,22 +1394,15 @@ struct AddTripView: View {
                     }
                 }
             }
-            .padding(.vertical, DesignSystem.Spacing.sm)
-            .listRowBackground(
-                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
-                    .fill(Color(.secondarySystemGroupedBackground))
-            )
-        } header: {
-            Text("addTrip.additionalOptions".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(themeManager.currentPalette.secondaryText)
-        }
     }
-    
-    // MARK: - Notes Section
-    private var notesSection: some View {
-        Section {
+
+    // MARK: - Notes (inside More options)
+    private var notesContent: some View {
             VStack(alignment: .leading, spacing: 12) {
+                Text("addTrip.additionalNotes".localized)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 Label("addTrip.notes".localized, systemImage: "note.text")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -1497,26 +1456,42 @@ struct AddTripView: View {
                             .font(.caption)
                     }
                     .foregroundColor(.secondary)
+
+                    Text("addTrip.notesHint".localized)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
+    }
+
+    // MARK: - More Options Section
+    private var moreOptionsSection: some View {
+        Section {
+            DisclosureGroup(isExpanded: $showMoreOptions) {
+                VStack(alignment: .leading, spacing: DesignSystem.Spacing.lg) {
+                    coverPhotoContent
+                    budgetBreakdownContent
+                    travelDetailsContent
+                    additionalOptionsContent
+                    notesContent
+                    tipsContent
+                    statsPreviewContent
+                }
+                .padding(.top, DesignSystem.Spacing.sm)
+            } label: {
+                Label("addTrip.additionalOptions".localized, systemImage: "slider.horizontal.3")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundColor(themeManager.currentPalette.text)
+            }
+            .tint(themeManager.currentPalette.accent)
             .padding(.vertical, DesignSystem.Spacing.sm)
             .listRowBackground(
                 RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
                     .fill(Color(.secondarySystemGroupedBackground))
             )
-        } header: {
-            Text("addTrip.additionalNotes".localized)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(themeManager.currentPalette.secondaryText)
-        } footer: {
-            if notes.isEmpty {
-                Text("addTrip.notesHint".localized)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
         }
     }
-    
+
     // MARK: - Helper Functions
     private func addTag() {
         let trimmed = newTag.trimmingCharacters(in: .whitespaces)
