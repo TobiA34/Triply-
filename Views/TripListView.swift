@@ -33,7 +33,6 @@ struct TripListView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @Query(sort: \TripModel.startDate, order: .forward) private var trips: [TripModel]
     @StateObject private var proLimiter = ProLimiter.shared
-    @ObservedObject private var iapManager = IAPManager.shared
     @State private var searchText = ""
     @State private var selectedCategory: String? = nil
     @State private var showingAddTrip = false
@@ -110,75 +109,35 @@ struct TripListView: View {
     var pastTrips: [TripModel] {
         applySort(filteredTrips.filter { $0.isPast })
     }
-    
-    var body: some View {
-        let bgColor = themeBackgroundColor
-        return NavigationStack {
-            ZStack {
-                // Theme background - reactive to theme changes
-                bgColor
-                    .ignoresSafeArea()
-                
-                if trips.isEmpty {
-                    VStack(spacing: 0) {
-                        Spacer()
-                        EmptyStateView {
-                            let check = proLimiter.canCreateTrip(currentTripCount: trips.count)
-                            if check.allowed {
-                                showingAddTrip = true
-                            } else {
-                                limitAlertMessage = check.reason
-                                showLimitAlert = true
-                            }
-                        }
-                        Spacer()
-                        if !iapManager.isPro {
-                            ProUpsellBanner {
-                                Task {
-                                    if await IAPManager.shared.preparePaywall() {
-                                        showingPaywall = true
-                                    }
-                                }
-                            }
-                            .padding(.horizontal)
-                            .padding(.bottom, 12)
+
+    private var tripListScrollContent: some View {
+        VStack(spacing: DesignSystem.Spacing.lg) {
+            TripListHeroHeader()
+                .padding(.horizontal, DesignSystem.Spacing.md)
+                .padding(.top, DesignSystem.Spacing.xs)
+            if !proLimiter.isPro {
+                ProHomePaywallBanner {
+                    Task {
+                        if await IAPManager.shared.preparePaywall() {
+                            showingPaywall = true
                         }
                     }
-                } else {
-                    ScrollView {
-                        VStack(spacing: 20) {
-                            // Pro upsell banner
-                            if !iapManager.isPro {
-                                ProUpsellBanner {
-                                Task {
-                                    if await IAPManager.shared.preparePaywall() {
-                                        showingPaywall = true
-                                    }
-                                }
-                            }
-                                    .padding(.horizontal)
-                            }
-
-                            // Search Bar
-                            SearchBar(text: $searchText)
-                            
-                            // Enhanced Stats Card
-                            EnhancedStatsCardView(trips: trips)
-                                .padding(.horizontal)
-                            
-                            // Current Trips
-                            if !currentTrips.isEmpty {
-                                TripSectionView(title: "Current Trips", trips: currentTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
-                            }
-                            
-                            // Upcoming Trips
-                            if !upcomingTrips.isEmpty {
-                                TripSectionView(title: "Upcoming", trips: upcomingTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
-                            }
-                            
-                            // Past Trips
-                            if !pastTrips.isEmpty {
-                                TripSectionView(title: "Past Trips", trips: pastTrips, modelContext: modelContext, selectedTripForDetail: $selectedTripForDetail)
+                }
+                .environmentObject(themeManager)
+            }
+            SearchBar(text: $searchText)
+            HStack {
+                Spacer(minLength: 0)
+                Menu {
+                    ForEach(TripListSortOrder.allCases) { option in
+                        Button {
+                            sortOrder = option
+                            HapticManager.shared.selection()
+                        } label: {
+                            if sortOrder == option {
+                                Label(option.localizedTitle, systemImage: "checkmark")
+                            } else {
+                                Text(option.localizedTitle)
                             }
                         }
                     }
@@ -340,8 +299,8 @@ struct TripListView: View {
                         .environmentObject(themeManager)
                 }
             }
-            .alert("Limit Reached", isPresented: $showLimitAlert) {
-                Button("Upgrade to Pro") {
+            .alert("alert.limitReached".localized, isPresented: $showLimitAlert) {
+                Button("pro.upgrade".localized) {
                     Task {
                         if await IAPManager.shared.preparePaywall() {
                             showingPaywall = true
@@ -752,36 +711,115 @@ struct CategoryBadge: View {
 }
 
 struct EmptyStateView: View {
-    var onCreateTrip: (() -> Void)? = nil
+    @EnvironmentObject var themeManager: ThemeManager
+    var onCreateTap: (() -> Void)?
+    @State private var iconAppeared = false
+    @State private var textAppeared = false
+    @State private var buttonAppeared = false
+    @State private var floatPhase: CGFloat = 0
+
+    private let travelIcons = ["airplane.departure", "map.fill", "sun.max.fill", "globe.americas.fill"]
 
     var body: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "airplane.departure")
-                .font(.system(size: 52, weight: .light))
-                .foregroundStyle(.blue.gradient)
-                .padding(.bottom, 4)
-
-            Text("No Trips Yet")
-                .font(.title2.bold())
-
-            Text("Plan your next adventure — build an itinerary,\ntrack your budget and pack smart.")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-
-            if let onCreateTrip {
-                Button(action: onCreateTrip) {
-                    Label("Create Your First Trip", systemImage: "plus")
-                        .font(.headline)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+        VStack(spacing: DesignSystem.Spacing.xl) {
+            // Energetic cluster of travel icons
+            ZStack {
+                ForEach(Array(travelIcons.enumerated()), id: \.offset) { i, name in
+                    let angle = Double(i) * .pi / 2 + floatPhase * .pi * 0.5
+                    let r: CGFloat = 52 + CGFloat(i % 2) * 8
+                    Image(systemName: name)
+                        .font(.system(size: i == 0 ? 44 : 28, weight: .medium))
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [
+                                    themeManager.currentPalette.accent,
+                                    themeManager.currentPalette.accent.opacity(0.75)
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .offset(x: cos(angle) * r * 0.4, y: sin(angle) * r * 0.4)
+                        .opacity(iconAppeared ? 1 : 0)
+                        .scaleEffect(iconAppeared ? 1 : 0.3)
                 }
-                .buttonStyle(.borderedProminent)
-                .buttonBorderShape(.capsule)
-                .padding(.top, 12)
+                Circle()
+                    .fill(themeManager.currentPalette.accent.opacity(0.08))
+                    .frame(width: 140, height: 140)
+                    .blur(radius: 2)
+                    .scaleEffect(iconAppeared ? 1 : 0.6)
+            }
+            .padding(.top, DesignSystem.Spacing.xxl)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 5).repeatForever(autoreverses: true)) {
+                    floatPhase = 1
+                }
+            }
+
+            VStack(spacing: DesignSystem.Spacing.xs) {
+                Text("trips.empty".localized)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(themeManager.currentPalette.text)
+                Text("trips.empty.description.long".localized)
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, DesignSystem.Spacing.lg)
+            }
+            .opacity(textAppeared ? 1 : 0)
+            .offset(y: textAppeared ? 0 : 12)
+
+            if let action = onCreateTap {
+                Button(action: {
+                    HapticManager.shared.impact(.light)
+                    action()
+                }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title3)
+                        Text("trips.empty.createFirst".localized)
+                            .font(.headline)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, DesignSystem.Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                            .fill(
+                                LinearGradient(
+                                    colors: [
+                                        themeManager.currentPalette.accent,
+                                        themeManager.currentPalette.accent.opacity(0.85)
+                                    ],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, DesignSystem.Spacing.xxl)
+                .padding(.top, DesignSystem.Spacing.sm)
+                .scaleEffect(buttonAppeared ? 1 : 0.9)
+                .opacity(buttonAppeared ? 1 : 0)
             }
         }
-        .padding(32)
+        .padding(DesignSystem.Spacing.lg)
+        .onAppear {
+            withAnimation(DesignSystem.Animation.springBouncy) {
+                iconAppeared = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation(DesignSystem.Animation.spring) {
+                    textAppeared = true
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.22) {
+                withAnimation(DesignSystem.Animation.spring) {
+                    buttonAppeared = true
+                }
+            }
+        }
     }
 }
 
