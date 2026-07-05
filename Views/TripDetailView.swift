@@ -153,10 +153,6 @@ struct TripDetailView: View {
                                 SnapshotTilesGrid(trip: trip, selectedTab: $selectedTab)
                                     .padding(.horizontal, 16)
 
-                                // Quick Links Grid (Itinerary / Expenses / Packing)
-                                TripQuickLinksGrid(selectedTab: $selectedTab)
-                                    .padding(.horizontal, 16)
-
                                 // Progress Card
                                 TripProgressCard(trip: trip)
                                     .padding(.horizontal, 16)

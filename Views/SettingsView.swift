@@ -35,9 +35,7 @@ struct SettingsView: View {
     var body: some View {
         Form {
             proSection
-            preferencesSection
             currencySection
-            previewSection
             featureRequestsSection
             aboutSection
             contactSection
@@ -99,30 +97,25 @@ struct SettingsView: View {
             NavigationLink {
                 CurrencySelectionView(selectedCurrency: $selectedCurrency)
             } label: {
-                HStack {
+                HStack(spacing: 12) {
+                    settingsIcon("dollarsign.circle.fill", background: .green)
                     Text("Currency")
                         .foregroundColor(.primary)
                     Spacer()
-                    HStack(spacing: 8) {
-                        Text(selectedCurrency.symbol)
-                            .font(.headline)
-                            .foregroundColor(.primary)
-                        Text(selectedCurrency.name)
-                            .foregroundColor(Color(white: 0.4))
-                    }
+                    Text("\(selectedCurrency.symbol) \(selectedCurrency.code)")
+                        .foregroundColor(.secondary)
                 }
             }
             
             NavigationLink(destination: CurrencyConverterView()) {
-                HStack {
-                    Image(systemName: "arrow.left.arrow.right.circle.fill")
-                        .foregroundColor(.orange)
+                HStack(spacing: 12) {
+                    settingsIcon("arrow.left.arrow.right", background: .orange)
                     Text("Currency Converter")
                         .foregroundColor(.primary)
                 }
             }
         } header: {
-            Text("Select Currency")
+            Text("Preferences")
         }
     }
     
@@ -161,15 +154,10 @@ struct SettingsView: View {
             NavigationLink {
                 FeatureRequestsView()
             } label: {
-                HStack {
-                    Image(systemName: "lightbulb.fill")
-                        .foregroundColor(.yellow)
+                HStack(spacing: 12) {
+                    settingsIcon("lightbulb.fill", background: .yellow)
                     Text("Feature Requests")
                         .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundColor(Color(white: 0.4))
                 }
             }
         } header: {
@@ -182,9 +170,8 @@ struct SettingsView: View {
     private var aboutSection: some View {
         Section {
             VStack(alignment: .leading, spacing: 12) {
-                HStack {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundColor(.blue)
+                HStack(spacing: 12) {
+                    settingsIcon("info.circle.fill", background: .blue)
                     Text("About Itinero")
                         .font(.headline)
                         .foregroundColor(.primary)
@@ -210,9 +197,8 @@ struct SettingsView: View {
             NavigationLink {
                 InlineContactSupportView()
             } label: {
-                HStack {
-                    Image(systemName: "envelope.fill")
-                        .foregroundColor(.blue)
+                HStack(spacing: 12) {
+                    settingsIcon("envelope.fill", background: .blue)
                     Text("Contact Support")
                         .foregroundColor(.primary)
                 }
@@ -221,15 +207,10 @@ struct SettingsView: View {
             NavigationLink {
                 QuickFeedbackView()
             } label: {
-                HStack {
-                    Image(systemName: "paperplane.fill")
-                        .foregroundColor(.green)
+                HStack(spacing: 12) {
+                    settingsIcon("paperplane.fill", background: .green)
                     Text("Quick Feedback")
                         .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundColor(Color(white: 0.4))
                 }
             }
         } header: {
@@ -242,172 +223,77 @@ struct SettingsView: View {
     private var proSection: some View {
         Section {
             if iapManager.isPro {
-                // Pro Active State - Glass card with status
-                if #available(iOS 26, *) {
-                    HStack(spacing: 16) {
-                        Image(systemName: "crown.fill")
-                            .font(.title3)
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [.yellow, .orange],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-
+                HStack(spacing: 12) {
+                    settingsIcon("crown.fill", background: .yellow)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Itinero Pro")
+                            .foregroundColor(.primary)
+                        Text("Subscription active")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                    Image(systemName: "checkmark.seal.fill")
+                        .foregroundColor(.green)
+                }
+            } else {
+                Button {
+                    Task {
+                        if await iapManager.preparePaywall() {
+                            showPaywall = true
+                        }
+                    }
+                } label: {
+                    HStack(spacing: 12) {
+                        settingsIcon("crown.fill", background: .purple)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text("Itinero Pro")
-                                .font(.headline)
-                            Text("Active")
+                            Text("Upgrade to Itinero Pro")
+                                .foregroundColor(.primary)
+                            Text(proBenefitLine)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-
                         Spacer()
-
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.headline)
-                            .foregroundColor(.green)
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundColor(Color(white: 0.7))
                     }
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 14)
-                    .background(.regularMaterial)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 12))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color.green.opacity(0.3), lineWidth: 1)
-                    )
-                } else {
-                    HStack {
-                        Label("Itinero Pro", systemImage: "crown.fill")
-                        Spacer()
-                        Text("Active")
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.vertical, 8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(8)
                 }
-            } else {
-                // Pro Promo Card - Glass-styled with benefits
-                if #available(iOS 26, *) {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(spacing: 12) {
-                            Image(systemName: "sparkles")
-                                .font(.title2)
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.purple, .pink],
-                                        startPoint: .topLeading,
-                                        endPoint: .bottomTrailing
-                                    )
-                                )
-
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text("Unlock Itinero Pro")
-                                    .font(.headline)
-                                Text("AI plans, smart packing & exports")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-
-                        Button {
-                            showPaywall = true
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "crown.fill")
-                                Text("Upgrade")
-                                    .accessibilityIdentifier("upgrade_pro")
-                                    .fontWeight(.semibold)
-                                Spacer()
-                                if let price = iapManager.currentOffering?.availablePackages.first?.localizedPriceString {
-                                    Text(price)
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .foregroundColor(.white)
-                            .background(
-                                LinearGradient(
-                                    colors: [.purple, .blue],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(10)
-                        }
-                        .buttonStyle(.glassProminent)
-                    }
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 14)
-                    .background(.regularMaterial)
-                    .glassEffect(.regular, in: .rect(cornerRadius: 12))
-                } else {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(spacing: 12) {
-                            Image(systemName: "sparkles")
-                                .font(.title2)
-                                .foregroundColor(.purple)
-
-                            VStack(alignment: .leading, spacing: 1) {
-                                Text("Unlock Itinero Pro")
-                                    .font(.headline)
-                                Text("AI plans, smart packing & exports")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                        }
-
-                        Button {
-                            showPaywall = true
-                        } label: {
-                            HStack(spacing: 8) {
-                                Image(systemName: "crown.fill")
-                                Text("Upgrade")
-                                    .accessibilityIdentifier("upgrade_pro")
-                                    .fontWeight(.semibold)
-                                Spacer()
-                                if let price = iapManager.currentOffering?.availablePackages.first?.localizedPriceString {
-                                    Text(price)
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 10)
-                            .foregroundColor(.white)
-                            .background(
-                                LinearGradient(
-                                    colors: [.purple, .blue],
-                                    startPoint: .leading,
-                                    endPoint: .trailing
-                                )
-                            )
-                            .cornerRadius(10)
-                        }
-                    }
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 14)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
-                }
+                .accessibilityIdentifier("upgrade_pro")
             }
-
-            Divider()
 
             Button {
                 Task { await iapManager.restorePurchases() }
             } label: {
-                Label("Restore Purchases", systemImage: "arrow.clockwise")
+                HStack(spacing: 12) {
+                    settingsIcon("arrow.clockwise", background: .blue)
+                    Text("Restore Purchases")
+                        .foregroundColor(.primary)
+                }
             }
+
             Link(destination: IAPManager.termsOfUseURL) {
-                Label("Terms of Use", systemImage: "doc.text")
+                HStack(spacing: 12) {
+                    settingsIcon("doc.text.fill", background: .gray)
+                    Text("Terms of Use")
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundColor(Color(white: 0.7))
+                }
             }
+
             Link(destination: IAPManager.privacyPolicyURL) {
-                Label("Privacy Policy", systemImage: "hand.raised")
+                HStack(spacing: 12) {
+                    settingsIcon("hand.raised.fill", background: .gray)
+                    Text("Privacy Policy")
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "arrow.up.right")
+                        .font(.caption)
+                        .foregroundColor(Color(white: 0.7))
+                }
             }
         } header: {
             Text("Itinero Pro")
@@ -420,6 +306,24 @@ struct SettingsView: View {
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
+        }
+    }
+
+    private var proBenefitLine: String {
+        if let package = iapManager.currentOffering?.availablePackages.first {
+            return "Unlimited trips & Instagram import · from \(package.localizedPriceString)"
+        }
+        return "Unlimited trips, activities & more"
+    }
+
+    private func settingsIcon(_ systemName: String, background: Color) -> some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 7, style: .continuous)
+                .fill(background)
+                .frame(width: 30, height: 30)
+            Image(systemName: systemName)
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(.white)
         }
     }
     

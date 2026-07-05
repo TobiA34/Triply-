@@ -50,17 +50,19 @@ struct EnhancedTripCard: View {
                     
                     VStack(alignment: .leading, spacing: 6) {
                         Text(trip.name)
-                            .font(.system(size: 22, weight: .bold))
+                            .font(.title3.bold())
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
                             .accessibilityIdentifier("trip_name")
                             .accessibilityLabel(trip.name)
-                        
+                            .lineLimit(2)
+
                         HStack(spacing: 6) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.caption.weight(.medium))
                             Text(trip.formattedDateRange)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
                         .foregroundColor(.white.opacity(0.95))
                         .shadow(color: .black.opacity(0.15), radius: 1, x: 0, y: 1)
@@ -72,10 +74,10 @@ struct EnhancedTripCard: View {
             .clipShape(
                 UnevenRoundedRectangle(
                     cornerRadii: .init(
-                        topLeading: 20,
+                        topLeading: 16,
                         bottomLeading: 0,
                         bottomTrailing: 0,
-                        topTrailing: 20
+                        topTrailing: 16
                     )
                 )
             )
@@ -124,8 +126,8 @@ struct EnhancedTripCard: View {
                         UnevenRoundedRectangle(
                             cornerRadii: .init(
                                 topLeading: 0,
-                                bottomLeading: 20,
-                                bottomTrailing: 20,
+                                bottomLeading: 16,
+                                bottomTrailing: 16,
                                 topTrailing: 0
                             )
                         )
@@ -133,7 +135,7 @@ struct EnhancedTripCard: View {
             )
         }
         .background(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.systemBackground))
                 .shadow(
                     color: Color.black.opacity(0.08),
@@ -149,7 +151,7 @@ struct EnhancedTripCard: View {
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: 16)
                 .stroke(
                     LinearGradient(
                         colors: [
@@ -278,9 +280,9 @@ struct CountdownBadge: View {
     var body: some View {
         HStack(spacing: 5) {
             Image(systemName: "clock.fill")
-                .font(.system(size: 10, weight: .bold))
-            Text("\(daysUntilTrip)d")
-                .font(.system(size: 12, weight: .bold))
+                .font(.caption2.weight(.bold))
+            Text("in \(daysUntilTrip)d")
+                .font(.caption.weight(.bold))
         }
         .foregroundColor(.white)
         .padding(.horizontal, 10)

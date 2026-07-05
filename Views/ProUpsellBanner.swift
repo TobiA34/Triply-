@@ -38,7 +38,7 @@ struct ProUpsellBanner: View {
                     Text("Unlock Itinero Pro")
                         .font(.subheadline.weight(.semibold))
                         .foregroundColor(.primary)
-                    Text("AI plans, smart packing & exports · \(priceLine)")
+                    Text("Unlimited trips, activities & more · \(priceLine)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
@@ -56,7 +56,7 @@ struct ProUpsellBanner: View {
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("home_pro_banner")
-        .accessibilityLabel("Unlock Itinero Pro. AI plans, smart packing and exports, \(priceLine)")
+        .accessibilityLabel("Unlock Itinero Pro. Unlimited trips, activities, and more. \(priceLine)")
     }
 
     @ViewBuilder

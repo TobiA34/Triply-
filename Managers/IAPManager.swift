@@ -54,8 +54,20 @@ final class IAPManager: NSObject, ObservableObject {
             currentOffering = offerings.current
             lastErrorMessage = nil
         } catch {
-            lastErrorMessage = "Unable to load subscription options. Please try again later. (\(error.localizedDescription))"
+            print("Failed to load offerings: \(error)")
+            lastErrorMessage = "Subscriptions aren't available right now. Please check your connection and try again."
         }
+    }
+
+    /// Loads offerings if needed. Returns true when the paywall has packages
+    /// to sell — callers must not present the paywall otherwise, so users
+    /// never see a configuration error alert.
+    func preparePaywall() async -> Bool {
+        if currentOffering?.availablePackages.isEmpty == false {
+            return true
+        }
+        await loadProducts()
+        return currentOffering?.availablePackages.isEmpty == false
     }
 
     /// Purchases the first available package of the current offering.

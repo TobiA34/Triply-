@@ -23,6 +23,7 @@ struct PackingListView: View {
     @State private var selectedCategory: String? = nil
     @State private var viewMode: ViewMode = .category
     @State private var selectedBag: String? = nil
+    @State private var limitMessage: String?
     
     enum ViewMode: String, CaseIterable {
         case category = "Category"
@@ -166,6 +167,14 @@ struct PackingListView: View {
                     )
                 }
             }
+        }
+        .alert("Limit Reached", isPresented: Binding(
+            get: { limitMessage != nil },
+            set: { if !$0 { limitMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(limitMessage ?? "")
         }
     }
 }
@@ -765,6 +774,11 @@ struct SuggestionSection: View {
     
     private func addItem(from suggestion: PackingSuggestion) {
         let existingItems = trip.packingList ?? []
+
+        // Check Pro limit - silently return if limit reached
+        let limitCheck = ProLimiter.shared.canAddPackingItem(currentItemCount: existingItems.count)
+        guard limitCheck.allowed else { return }
+
         if !existingItems.contains(where: { $0.name == suggestion.item }) {
             let newItem = PackingItem(
                 name: suggestion.item,
@@ -774,13 +788,13 @@ struct SuggestionSection: View {
                 isEssential: suggestion.priority == .essential
             )
             modelContext.insert(newItem)
-            
+
             if trip.packingList == nil {
                 trip.packingList = []
             }
             trip.packingList?.append(newItem)
             trip.lastModified = Date()
-            
+
             try? modelContext.save()
             HapticManager.shared.success()
         }
@@ -803,6 +817,7 @@ struct AddPackingItemView: View {
     @State private var isEssential: Bool = false
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var photoData: Data? = nil
+    @State private var limitMessage: String?
     
     private let categories = ["Clothing", "Electronics", "Toiletries", "Documents", "Health", "Accessories", "Footwear", "Essentials", "General"]
     
@@ -900,6 +915,15 @@ struct AddPackingItemView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
                         let existingItems = trip.packingList ?? []
+
+                        // Check Pro limit
+                        let limitCheck = ProLimiter.shared.canAddPackingItem(currentItemCount: existingItems.count)
+                        if !limitCheck.allowed {
+                            // Show alert and return without dismissing
+                            limitMessage = limitCheck.reason
+                            return
+                        }
+
                         let weight = Double(estimatedWeight) ?? nil
                         let newItem = PackingItem(
                             name: name,
@@ -914,13 +938,13 @@ struct AddPackingItemView: View {
                             isEssential: isEssential
                         )
                         modelContext.insert(newItem)
-                        
+
                         if trip.packingList == nil {
                             trip.packingList = []
                         }
                         trip.packingList?.append(newItem)
                         trip.lastModified = Date()
-                        
+
                         do {
                             try modelContext.save()
                             HapticManager.shared.success()
@@ -935,6 +959,14 @@ struct AddPackingItemView: View {
                     .disabled(name.isEmpty)
                 }
             }
+        }
+        .alert("Limit Reached", isPresented: Binding(
+            get: { limitMessage != nil },
+            set: { if !$0 { limitMessage = nil } }
+        )) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(limitMessage ?? "")
         }
     }
 }

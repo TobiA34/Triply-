@@ -42,10 +42,16 @@ struct ContentView: View {
                 if !newValue && oldValue {
                     let hasSeenPaywall = UserDefaults.standard.bool(forKey: "itinero_has_seen_post_onboarding_paywall")
                     if !hasSeenPaywall && !iapManager.isPro {
-                        // Show paywall once after onboarding
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                            showPostOnboardingPaywall = true
-                            UserDefaults.standard.set(true, forKey: "itinero_has_seen_post_onboarding_paywall")
+                        // Show paywall once after onboarding — but only when
+                        // packages actually loaded, so new users never see a
+                        // configuration error, and keep the one-time flag
+                        // unspent otherwise.
+                        Task {
+                            try? await Task.sleep(nanoseconds: 500_000_000)
+                            if await iapManager.preparePaywall() {
+                                showPostOnboardingPaywall = true
+                                UserDefaults.standard.set(true, forKey: "itinero_has_seen_post_onboarding_paywall")
+                            }
                         }
                     }
                 }

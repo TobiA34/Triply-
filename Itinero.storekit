@@ -1,118 +1,87 @@
 {
-  "identifier" : "Itinero",
-  "nonRenewingSubscriptions" : [
-
-  ],
-  "products" : [
-
-  ],
-  "settings" : {
-    "_applicationInternalID" : "6757012086",
-    "_developerTeamID" : "S39536K3H7",
-    "_failTransactionsEnabled" : false,
-    "_locale" : "en_GB",
-    "_storefront" : "GBR",
-    "_storeKitErrors" : [
-
-    ]
+  "identifier": "Itinero",
+  "nonRenewingSubscriptions": [],
+  "products": [],
+  "settings": {
+    "_failTransactionsEnabled": false
   },
-  "subscriptionGroups" : [
+  "subscriptionGroups": [
     {
-      "id" : "22015257",
-      "localizations" : [
-
-      ],
-      "name" : "Itinero Pro",
-      "subscriptions" : [
+      "id": "22015257",
+      "localizations": [],
+      "name": "Itinero Pro",
+      "subscriptions": [
         {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "1.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "6761684843",
-          "introductoryOffer" : null,
-          "localizations" : [
+          "adHocOffers": [],
+          "displayPrice": "1.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6761684843",
+          "introductoryOffer": null,
+          "localizations": [
             {
-              "description" : "Weekly access to Itinero Pro",
-              "displayName" : "Itinero Pro Weekly",
-              "locale" : "en_GB"
+              "description": "Weekly access to Itinero Pro",
+              "displayName": "Itinero Pro Weekly",
+              "locale": "en_GB"
             }
           ],
-          "productID" : "itinero_pro_weekly_sub",
-          "recurringSubscriptionPeriod" : "P1W",
-          "referenceName" : "Itinero Pro Weekly",
-          "subscriptionGroupID" : "22015257",
-          "type" : "RecurringSubscription",
-          "winbackOffers" : [
-
-          ]
+          "productID": "itinero_pro_weekly_sub",
+          "recurringSubscriptionPeriod": "P1W",
+          "referenceName": "Itinero Pro Weekly",
+          "subscriptionGroupID": "22015257",
+          "type": "RecurringSubscription",
+          "codeOffers": [],
+          "winbackOffers": []
         },
         {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "4.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "6761684798",
-          "introductoryOffer" : null,
-          "localizations" : [
+          "adHocOffers": [],
+          "displayPrice": "4.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6761684798",
+          "introductoryOffer": null,
+          "localizations": [
             {
-              "description" : "Monthly access to Itinero Pro",
-              "displayName" : "Itinero Pro Monthly",
-              "locale" : "en_GB"
+              "description": "Monthly access to Itinero Pro",
+              "displayName": "Itinero Pro Monthly",
+              "locale": "en_GB"
             }
           ],
-          "productID" : "triply_pro_monthly_sub",
-          "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Itinero Pro Monthly",
-          "subscriptionGroupID" : "22015257",
-          "type" : "RecurringSubscription",
-          "winbackOffers" : [
-
-          ]
+          "productID": "triply_pro_monthly_sub",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Itinero Pro Monthly",
+          "subscriptionGroupID": "22015257",
+          "type": "RecurringSubscription",
+          "codeOffers": [],
+          "winbackOffers": []
         },
         {
-          "adHocOffers" : [
-
-          ],
-          "codeOffers" : [
-
-          ],
-          "displayPrice" : "29.99",
-          "familyShareable" : false,
-          "groupNumber" : 1,
-          "internalID" : "6761684845",
-          "introductoryOffer" : null,
-          "localizations" : [
+          "adHocOffers": [],
+          "displayPrice": "29.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6761684845",
+          "introductoryOffer": null,
+          "localizations": [
             {
-              "description" : "A full year of Itinero Pro",
-              "displayName" : "Itinero Pro Yearly",
-              "locale" : "en_GB"
+              "description": "A full year of Itinero Pro",
+              "displayName": "Itinero Pro Yearly",
+              "locale": "en_GB"
             }
           ],
-          "productID" : "triply_pro_annual_sub",
-          "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Itinero Pro Yearly",
-          "subscriptionGroupID" : "22015257",
-          "type" : "RecurringSubscription",
-          "winbackOffers" : [
-
-          ]
+          "productID": "triply_pro_annual_sub",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Itinero Pro Yearly",
+          "subscriptionGroupID": "22015257",
+          "type": "RecurringSubscription",
+          "codeOffers": [],
+          "winbackOffers": []
         }
       ]
     }
   ],
-  "version" : {
-    "major" : 4,
-    "minor" : 0
+  "version": {
+    "major": 2,
+    "minor": 0
   }
 }

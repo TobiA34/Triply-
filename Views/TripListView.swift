@@ -88,7 +88,13 @@ struct TripListView: View {
                 if trips.isEmpty {
                     VStack(spacing: 0) {
                         if !iapManager.isPro {
-                            ProUpsellBanner { showingPaywall = true }
+                            ProUpsellBanner {
+                                Task {
+                                    if await IAPManager.shared.preparePaywall() {
+                                        showingPaywall = true
+                                    }
+                                }
+                            }
                                 .padding(.horizontal)
                                 .padding(.top, 8)
                         }
@@ -99,7 +105,13 @@ struct TripListView: View {
                         VStack(spacing: 20) {
                             // Pro upsell banner
                             if !iapManager.isPro {
-                                ProUpsellBanner { showingPaywall = true }
+                                ProUpsellBanner {
+                                Task {
+                                    if await IAPManager.shared.preparePaywall() {
+                                        showingPaywall = true
+                                    }
+                                }
+                            }
                                     .padding(.horizontal)
                             }
 
@@ -207,7 +219,11 @@ struct TripListView: View {
             }
             .alert("Limit Reached", isPresented: $showLimitAlert) {
                 Button("Upgrade to Pro") {
-                    showingPaywall = true
+                    Task {
+                        if await IAPManager.shared.preparePaywall() {
+                            showingPaywall = true
+                        }
+                    }
                 }
                 Button("Cancel", role: .cancel) { }
             } message: {

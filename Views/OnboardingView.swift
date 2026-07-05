@@ -28,9 +28,9 @@ struct OnboardingView: View {
                 description: "Manage destinations, expenses, and itineraries effortlessly"
             ),
             OnboardingPage(
-                icon: "brain.head.profile",
-                title: "AI-Powered Insights",
-                description: "Get smart suggestions and analyze your trip notes with AI"
+                icon: "creditcard.fill",
+                title: "Track Budgets & Expenses",
+                description: "Keep tabs on spending and maximize your travel budget"
             ),
             OnboardingPage(
                 icon: "sparkles",

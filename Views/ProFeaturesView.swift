@@ -222,7 +222,11 @@ struct ProFeaturesView: View {
                 VStack(spacing: 12) {
                     if #available(iOS 26, *) {
                         Button {
-                            showPaywall = true
+                            Task {
+                                if await iapManager.preparePaywall() {
+                                    showPaywall = true
+                                }
+                            }
                         } label: {
                             HStack(spacing: 8) {
                                 Image(systemName: "crown.fill")
@@ -244,7 +248,11 @@ struct ProFeaturesView: View {
                         .buttonStyle(.glassProminent)
                     } else {
                         Button {
-                            showPaywall = true
+                            Task {
+                                if await iapManager.preparePaywall() {
+                                    showPaywall = true
+                                }
+                            }
                         } label: {
                             HStack(spacing: 8) {
                                 Image(systemName: "crown.fill")
