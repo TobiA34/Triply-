@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import MessageUI
 import UIKit
+import RevenueCat
 
 struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
@@ -20,6 +21,8 @@ struct SettingsView: View {
     @Environment(\.presentationMode) var presentationMode
     
     @State private var selectedCurrency: Currency = Currency.currency(for: "USD")
+    @ObservedObject private var iapManager = IAPManager.shared
+    @State private var showPaywall = false
     
     // Use an explicit init so the sheet doesn't trigger extra loads on appear.
     // Values are pulled from the shared managers that are already initialized
@@ -31,13 +34,13 @@ struct SettingsView: View {
     
     var body: some View {
         Form {
+            proSection
             preferencesSection
             currencySection
             previewSection
             featureRequestsSection
             aboutSection
             contactSection
-            proSection
         }
         // Local keyboard handling so taps on rows stay responsive
         .keyboardDismissable(
@@ -187,7 +190,7 @@ struct SettingsView: View {
                         .foregroundColor(.primary)
                 }
                 
-                Text("Version 1.0.0")
+                Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))")
                     .font(.subheadline)
                     .foregroundColor(Color(white: 0.4))
                 
@@ -237,8 +240,187 @@ struct SettingsView: View {
     }
     
     private var proSection: some View {
-        // In-app purchases removed: no dedicated Pro section in Settings
-                EmptyView()
+        Section {
+            if iapManager.isPro {
+                // Pro Active State - Glass card with status
+                if #available(iOS 26, *) {
+                    HStack(spacing: 16) {
+                        Image(systemName: "crown.fill")
+                            .font(.title3)
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.yellow, .orange],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Itinero Pro")
+                                .font(.headline)
+                            Text("Active")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.headline)
+                            .foregroundColor(.green)
+                    }
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 14)
+                    .background(.regularMaterial)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 12))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.green.opacity(0.3), lineWidth: 1)
+                    )
+                } else {
+                    HStack {
+                        Label("Itinero Pro", systemImage: "crown.fill")
+                        Spacer()
+                        Text("Active")
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 8)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(8)
+                }
+            } else {
+                // Pro Promo Card - Glass-styled with benefits
+                if #available(iOS 26, *) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "sparkles")
+                                .font(.title2)
+                                .foregroundStyle(
+                                    LinearGradient(
+                                        colors: [.purple, .pink],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("Unlock Itinero Pro")
+                                    .font(.headline)
+                                Text("AI plans, smart packing & exports")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+
+                        Button {
+                            showPaywall = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "crown.fill")
+                                Text("Upgrade")
+                                    .accessibilityIdentifier("upgrade_pro")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                if let price = iapManager.currentOffering?.availablePackages.first?.localizedPriceString {
+                                    Text(price)
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .foregroundColor(.white)
+                            .background(
+                                LinearGradient(
+                                    colors: [.purple, .blue],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(10)
+                        }
+                        .buttonStyle(.glassProminent)
+                    }
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 14)
+                    .background(.regularMaterial)
+                    .glassEffect(.regular, in: .rect(cornerRadius: 12))
+                } else {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "sparkles")
+                                .font(.title2)
+                                .foregroundColor(.purple)
+
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text("Unlock Itinero Pro")
+                                    .font(.headline)
+                                Text("AI plans, smart packing & exports")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+
+                        Button {
+                            showPaywall = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "crown.fill")
+                                Text("Upgrade")
+                                    .accessibilityIdentifier("upgrade_pro")
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                if let price = iapManager.currentOffering?.availablePackages.first?.localizedPriceString {
+                                    Text(price)
+                                        .font(.subheadline)
+                                        .fontWeight(.semibold)
+                                }
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .foregroundColor(.white)
+                            .background(
+                                LinearGradient(
+                                    colors: [.purple, .blue],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(10)
+                        }
+                    }
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 14)
+                    .background(Color(.systemGray6))
+                    .cornerRadius(12)
+                }
+            }
+
+            Divider()
+
+            Button {
+                Task { await iapManager.restorePurchases() }
+            } label: {
+                Label("Restore Purchases", systemImage: "arrow.clockwise")
+            }
+            Link(destination: IAPManager.termsOfUseURL) {
+                Label("Terms of Use", systemImage: "doc.text")
+            }
+            Link(destination: IAPManager.privacyPolicyURL) {
+                Label("Privacy Policy", systemImage: "hand.raised")
+            }
+        } header: {
+            Text("Itinero Pro")
+        } footer: {
+            if let info = iapManager.lastInfoMessage {
+                Text(info)
+            } else if let error = iapManager.lastErrorMessage {
+                Text(error)
+            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
+        }
     }
     
     private func resetSelections() {

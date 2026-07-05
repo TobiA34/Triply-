@@ -19,7 +19,7 @@ enum PremiumFeature {
 
 struct ProFeaturesView: View {
     @Environment(\.dismiss) private var dismiss
-    @StateObject private var iapManager = IAPManager.shared
+    @ObservedObject private var iapManager = IAPManager.shared
     @State private var showPaywall = false
     var highlightedFeature: PremiumFeature? = nil
     
@@ -218,38 +218,73 @@ struct ProFeaturesView: View {
                 }
                 .padding(.horizontal)
                 
-                // Upgrade Button
-                VStack(spacing: 16) {
-                    Button {
-                        showPaywall = true
-                    } label: {
-                        HStack {
-                            Image(systemName: "crown.fill")
-                            Text("Upgrade to Pro")
-                                .fontWeight(.semibold)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(
-                            LinearGradient(
-                                colors: [.purple, .blue],
-                                startPoint: .leading,
-                                endPoint: .trailing
+                // Upgrade Button - Glass-styled
+                VStack(spacing: 12) {
+                    if #available(iOS 26, *) {
+                        Button {
+                            showPaywall = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "crown.fill")
+                                Text("Upgrade to Pro")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .foregroundColor(.white)
+                            .background(
+                                LinearGradient(
+                                    colors: [.purple, .blue],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
                             )
-                        )
-                        .foregroundColor(.white)
-                        .cornerRadius(16)
+                            .cornerRadius(12)
+                        }
+                        .buttonStyle(.glassProminent)
+                    } else {
+                        Button {
+                            showPaywall = true
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "crown.fill")
+                                Text("Upgrade to Pro")
+                                    .fontWeight(.semibold)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .foregroundColor(.white)
+                            .background(
+                                LinearGradient(
+                                    colors: [.purple, .blue],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .cornerRadius(12)
+                        }
                     }
-                    
-                    if let proProduct = iapManager.products.first {
-                        Text(proProduct.displayPrice)
-                            .font(.headline)
+
+                    VStack(spacing: 4) {
+                        if let package = iapManager.currentOffering?.availablePackages.first {
+                            HStack(spacing: 4) {
+                                Text("from")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(package.localizedPriceString)
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.primary)
+                                Text("/ week")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+
+                        Text("Cancel anytime • Auto-renewable")
+                            .font(.caption2)
                             .foregroundColor(.secondary)
                     }
-                    
-                    Text("Cancel anytime • Auto-renewable")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 32)

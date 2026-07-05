@@ -11,9 +11,11 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var settingsManager = SettingsManager.shared
     @StateObject private var localizationManager = LocalizationManager.shared
+    @ObservedObject private var iapManager = IAPManager.shared
     @State private var refreshID = UUID()
-    
+
     @State private var showOnboarding = false
+    @State private var showPostOnboardingPaywall = false
     
     var body: some View {
         MainTabView()
@@ -35,6 +37,19 @@ struct ContentView: View {
                     settingsManager.loadSettings(from: modelContext)
                 }
             }
+            .onChange(of: showOnboarding) { oldValue, newValue in
+                // When onboarding dismisses, check if we should show post-onboarding paywall
+                if !newValue && oldValue {
+                    let hasSeenPaywall = UserDefaults.standard.bool(forKey: "itinero_has_seen_post_onboarding_paywall")
+                    if !hasSeenPaywall && !iapManager.isPro {
+                        // Show paywall once after onboarding
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            showPostOnboardingPaywall = true
+                            UserDefaults.standard.set(true, forKey: "itinero_has_seen_post_onboarding_paywall")
+                        }
+                    }
+                }
+            }
             .onChange(of: localizationManager.currentLanguage) { oldValue, newValue in
                 Task { @MainActor in
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -52,6 +67,9 @@ struct ContentView: View {
             .id(refreshID)
             .fullScreenCover(isPresented: $showOnboarding) {
                 OnboardingView(isPresented: $showOnboarding)
+            }
+            .sheet(isPresented: $showPostOnboardingPaywall) {
+                PaywallView()
             }
             .refreshOnLanguageChange()
     }

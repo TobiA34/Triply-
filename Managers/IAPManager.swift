@@ -6,86 +6,128 @@
 //
 
 import Foundation
-import StoreKit
+import RevenueCat
 
 @MainActor
-class IAPManager: ObservableObject {
+final class IAPManager: NSObject, ObservableObject {
     static let shared = IAPManager()
-    
-    // Configure your in-app purchase product identifiers here
-    // Replace with your real product id set in App Store Connect
-    enum ProductID: String, CaseIterable {
-        case pro = "com.triply.app.pro"
-    }
-    
-    // In-app purchases are disabled. Treat all users as Pro.
-    @Published private(set) var isPro: Bool = true
-    @Published private(set) var products: [Product] = []
+
+    /// RevenueCat public SDK key for the production App Store app.
+    private static let revenueCatAPIKey = "appl_hCVOroIcXfOaoshwTdYHYnnpzvU"
+
+    /// Entitlement identifier configured in the RevenueCat dashboard.
+    static let proEntitlementID = "Itinero Pro"
+
+    static let termsOfUseURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    static let privacyPolicyURL = URL(string: "https://gist.github.com/tunds/fb42e2abd3bbd61336d1bee99dbcafec")!
+
+    @Published private(set) var isPro: Bool = false
+    @Published private(set) var currentOffering: Offering?
     @Published var isLoading: Bool = false
     @Published var lastErrorMessage: String?
     @Published var lastInfoMessage: String?
-    
-    // Allow product id override via Info.plist key "IAPProductProId"
-    private var configuredProId: String {
-        if let id = Bundle.main.object(forInfoDictionaryKey: "IAPProductProId") as? String, !id.isEmpty {
-            return id
+
+    /// Call once at app launch, before any other IAPManager use.
+    static func configure() {
+        #if DEBUG
+        Purchases.logLevel = .debug
+        #else
+        Purchases.logLevel = .error
+        #endif
+        Purchases.configure(withAPIKey: revenueCatAPIKey)
+        Purchases.shared.delegate = shared
+        Task {
+            await shared.refreshEntitlements()
+            await shared.loadProducts()
         }
-        return ProductID.pro.rawValue
     }
-    
-    private init() {
-        // Ensure Pro is always enabled
-        setProEntitlement(true)
+
+    private override init() {
+        super.init()
     }
-    
-    // MARK: - Disabled IAP API
-    //
-    // All methods below are now no-ops so the app behaves as fully unlocked
-    // without performing any StoreKit operations.
-    
+
     func loadProducts() async {
-        // No-op: in-app purchases disabled
-        products = []
-                lastInfoMessage = nil
-        lastErrorMessage = nil
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let offerings = try await Purchases.shared.offerings()
+            currentOffering = offerings.current
+            lastErrorMessage = nil
+        } catch {
+            lastErrorMessage = "Unable to load subscription options. Please try again later. (\(error.localizedDescription))"
+        }
     }
-    
+
+    /// Purchases the first available package of the current offering.
+    /// The paywall UI normally drives purchases; this is a programmatic fallback.
     func purchasePro() async -> Bool {
-        // Immediately mark Pro as unlocked
-                setProEntitlement(true)
-        lastInfoMessage = "Pro is unlocked. In-app purchases are disabled in this build."
-        lastErrorMessage = nil
-                    return true
+        if currentOffering == nil {
+            await loadProducts()
+        }
+        guard let package = currentOffering?.availablePackages.first else {
+            lastErrorMessage = "Subscription options are unavailable right now."
+            return false
+        }
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let result = try await Purchases.shared.purchase(package: package)
+            apply(customerInfo: result.customerInfo)
+            return isPro
+        } catch let error as RevenueCat.ErrorCode where error == .purchaseCancelledError {
+            return false
+        } catch {
+            lastErrorMessage = "Purchase failed. Please try again."
+            return false
+        }
     }
-    
+
     func restorePurchases() async {
-        // No-op: always Pro, nothing to restore
-                setProEntitlement(true)
-        lastInfoMessage = "Restore not needed. Pro is already unlocked."
-        lastErrorMessage = nil
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let customerInfo = try await Purchases.shared.restorePurchases()
+            apply(customerInfo: customerInfo)
+            lastInfoMessage = isPro
+                ? "Your Itinero Pro subscription has been restored."
+                : "No previous purchases were found for this Apple Account."
+            lastErrorMessage = nil
+        } catch {
+            lastErrorMessage = "Restore failed. Please try again."
+        }
     }
-    
+
     func observeTransactions() {
-        // No-op: we no longer observe StoreKit transactions
+        // RevenueCat observes transactions itself; updates arrive via the delegate.
     }
-    
+
     func refreshEntitlements() async {
-        // No-op: entitlements are always granted
-        setProEntitlement(true)
+        if let customerInfo = try? await Purchases.shared.customerInfo() {
+            apply(customerInfo: customerInfo)
+        }
     }
-    
-    private func setProEntitlement(_ enabled: Bool) {
-        isPro = enabled
-        UserDefaults.standard.set(enabled, forKey: "iap_is_pro")
-        ThemeManager.shared.setUserTier(.pro)
+
+    func apply(customerInfo: CustomerInfo) {
+        let active = customerInfo.entitlements[Self.proEntitlementID]?.isActive == true
+        isPro = active
+        UserDefaults.standard.set(active, forKey: "iap_is_pro")
+        ThemeManager.shared.setUserTier(active ? .pro : .free)
     }
-    
+
     #if DEBUG
     func debugUnlockPro() {
-        setProEntitlement(true)
+        isPro = true
+        UserDefaults.standard.set(true, forKey: "iap_is_pro")
+        ThemeManager.shared.setUserTier(.pro)
         lastInfoMessage = "Debug: Pro unlocked locally (no real purchase)."
     }
     #endif
 }
 
-
+extension IAPManager: PurchasesDelegate {
+    nonisolated func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
+        Task { @MainActor in
+            self.apply(customerInfo: customerInfo)
+        }
+    }
+}

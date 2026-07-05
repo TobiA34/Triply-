@@ -10,6 +10,7 @@
 		00A8A2DD0E54E2239A16F53B /* Views/EnhancedTripCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD878B6C2511CA5A53ECCA8C /* Views/EnhancedTripCard.swift */; };
 		025A20961ED47503DBC89F62 /* Views/DocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B10CD3686F05D1C26B3E1 /* Views/DocumentsView.swift */; };
 		04279ED3576D880EDE286A98 /* Views/ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB99C52F71A6C5BC22FA447C /* Views/ContentView.swift */; };
+		0576A0E02FFB0EFD0028588A /* WishKit in Frameworks */ = {isa = PBXBuildFile; productRef = BD4DE7BE2F1A65B1004CB35D /* WishKit */; };
 		069FE91D59F89A8F6BD360A9 /* Views/WeatherForecastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C5B99584071C6518D102B00 /* Views/WeatherForecastView.swift */; };
 		074110B4427595472FE68FF9 /* Views/EditDocumentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935AD0C76D56FBD1B1B88F09 /* Views/EditDocumentView.swift */; };
 		0BAA58617E4541A789F0A404 /* Views/NewEditActivitySheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BBACE65FAC8405BAAD54CCE /* Views/NewEditActivitySheet.swift */; };
@@ -163,9 +164,7 @@
 		BD4DE8612F1A8422004CB35D /* CreateWishResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4DE81C2F1A8422004CB35D /* CreateWishResponse.swift */; };
 		BD4DE8622F1A8422004CB35D /* Enum+Compat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4DE7D52F1A8422004CB35D /* Enum+Compat.swift */; };
 		BD4DE8632F1A8422004CB35D /* WishKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4DE8022F1A8422004CB35D /* WishKit.swift */; };
-		BD4DE8652F1A8422004CB35D /* xcschememanagement.plist in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE8042F1A8422004CB35D /* xcschememanagement.plist */; };
 		BD4DE8662F1A8422004CB35D /* swift.yml in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7BF2F1A8422004CB35D /* swift.yml */; };
-		BD4DE8672F1A8422004CB35D /* package.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE8082F1A8422004CB35D /* package.xcworkspace */; };
 		BD4DE8692F1A8422004CB35D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7FE2F1A8422004CB35D /* LICENSE */; };
 		BD4DE86A2F1A8422004CB35D /* banner-min.png in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7E62F1A8422004CB35D /* banner-min.png */; };
 		BD4DE90D2F2AAAFD004CB35D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD4DE90C2F2AAAFC004CB35D /* WidgetKit.framework */; };
@@ -217,6 +216,10 @@
 		N7O8P9Q0R1S2T3U4V5W6X7Y8 /* Views/TripHeroImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = N7O8P9Q0R1S2T3U4V5W6X7Y9 /* Views/TripHeroImageView.swift */; };
 		O8P9Q0R1S2T3U4V5W6X7Y8Z9 /* Views/ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = O8P9Q0R1S2T3U4V5W6X7Y8Z0 /* Views/ImagePickerView.swift */; };
 		P9Q0R1S2T3U4V5W6X7Y8Z9A0 /* Extensions/View+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = P9Q0R1S2T3U4V5W6X7Y8Z9A1 /* Extensions/View+Theme.swift */; };
+		RC00000000000000000000C1 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = RC00000000000000000000B1 /* RevenueCat */; };
+		RC00000000000000000000C2 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = RC00000000000000000000B2 /* RevenueCatUI */; };
+		RC00000000000000000000E1 /* Views/ProUpsellBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = RC00000000000000000000F1 /* Views/ProUpsellBanner.swift */; };
+		RC00000000000000000000E2 /* Managers/ReviewRequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = RC00000000000000000000F2 /* Managers/ReviewRequestManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -395,8 +398,6 @@
 		BD4DE8002F1A8422004CB35D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		BD4DE8012F1A8422004CB35D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		BD4DE8022F1A8422004CB35D /* WishKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishKit.swift; sourceTree = "<group>"; };
-		BD4DE8042F1A8422004CB35D /* xcschememanagement.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = xcschememanagement.plist; sourceTree = "<group>"; };
-		BD4DE8082F1A8422004CB35D /* package.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = package.xcworkspace; sourceTree = "<group>"; };
 		BD4DE80B2F1A8422004CB35D /* CreateCommentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCommentRequest.swift; sourceTree = "<group>"; };
 		BD4DE80D2F1A8422004CB35D /* CommentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentResponse.swift; sourceTree = "<group>"; };
 		BD4DE8102F1A8422004CB35D /* WishState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishState.swift; sourceTree = "<group>"; };
@@ -468,6 +469,8 @@
 		N7O8P9Q0R1S2T3U4V5W6X7Y9 /* Views/TripHeroImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TripHeroImageView.swift; sourceTree = "<group>"; };
 		O8P9Q0R1S2T3U4V5W6X7Y8Z0 /* Views/ImagePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ImagePickerView.swift; sourceTree = "<group>"; };
 		P9Q0R1S2T3U4V5W6X7Y8Z9A1 /* Extensions/View+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Extensions/View+Theme.swift"; sourceTree = "<group>"; };
+		RC00000000000000000000F1 /* Views/ProUpsellBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ProUpsellBanner.swift; sourceTree = "<group>"; };
+		RC00000000000000000000F2 /* Managers/ReviewRequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/ReviewRequestManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -499,6 +502,16 @@
 			files = (
 				BD4DE90F2F2AAAFD004CB35D /* SwiftUI.framework in Frameworks */,
 				BD4DE90D2F2AAAFD004CB35D /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		RC00000000000000000000D1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0576A0E02FFB0EFD0028588A /* WishKit in Frameworks */,
+				RC00000000000000000000C1 /* RevenueCat in Frameworks */,
+				RC00000000000000000000C2 /* RevenueCatUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,6 +563,7 @@
 				D6FC0B8B4D9D106FC578DCC3 /* Views/PackingListView.swift */,
 				C63D80A36E0547D8DCB96D3B /* Views/PaywallGateView.swift */,
 				C460AB6858FC52EB40D57AC2 /* Views/PaywallView.swift */,
+				RC00000000000000000000F1 /* Views/ProUpsellBanner.swift */,
 				662EACE8C14EB56988EC10CB /* Views/PermissionRequestView.swift */,
 				3B0E9C9B163F0A53711C63A3 /* Views/PlanGeneratorView.swift */,
 				A41B65CDCBFA2978F8AD2281 /* Views/ProFeaturesView.swift */,
@@ -681,6 +695,7 @@
 				FFFFF4120D4EEFC2ECE037C5 /* Managers/ExportManager.swift */,
 				10C81529F9C4EA4EA0E8942E /* Managers/HapticManager.swift */,
 				23405345E41C3901B1A7FC6D /* Managers/IAPManager.swift */,
+				RC00000000000000000000F2 /* Managers/ReviewRequestManager.swift */,
 				C3A4AA01909993745144CEC7 /* Managers/LocationManager.swift */,
 				C4772AB318A5B81547914B3C /* Managers/NotificationManager.swift */,
 				A226F74F23BD2E936800A8F0 /* Managers/PackingAssistant.swift */,
@@ -917,47 +932,6 @@
 			path = WishKit;
 			sourceTree = "<group>";
 		};
-		BD4DE8052F1A8422004CB35D /* xcschemes */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8042F1A8422004CB35D /* xcschememanagement.plist */,
-			);
-			path = xcschemes;
-			sourceTree = "<group>";
-		};
-		BD4DE8062F1A8422004CB35D /* Martin.Lasek@alaskaair.com.xcuserdatad */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8052F1A8422004CB35D /* xcschemes */,
-			);
-			path = "Martin.Lasek@alaskaair.com.xcuserdatad";
-			sourceTree = "<group>";
-		};
-		BD4DE8072F1A8422004CB35D /* xcuserdata */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8062F1A8422004CB35D /* Martin.Lasek@alaskaair.com.xcuserdatad */,
-			);
-			path = xcuserdata;
-			sourceTree = "<group>";
-		};
-		BD4DE8092F1A8422004CB35D /* xcode */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8072F1A8422004CB35D /* xcuserdata */,
-				BD4DE8082F1A8422004CB35D /* package.xcworkspace */,
-			);
-			path = xcode;
-			sourceTree = "<group>";
-		};
-		BD4DE80A2F1A8422004CB35D /* .swiftpm */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8092F1A8422004CB35D /* xcode */,
-			);
-			path = .swiftpm;
-			sourceTree = "<group>";
-		};
 		BD4DE80C2F1A8422004CB35D /* Request */ = {
 			isa = PBXGroup;
 			children = (
@@ -1056,7 +1030,6 @@
 		BD4DE8232F1A8422004CB35D /* WishKitShared */ = {
 			isa = PBXGroup;
 			children = (
-				BD4DE80A2F1A8422004CB35D /* .swiftpm */,
 				BD4DE80F2F1A8422004CB35D /* Comment */,
 				BD4DE8112F1A8422004CB35D /* Enum */,
 				BD4DE8132F1A8422004CB35D /* Error */,
@@ -1136,6 +1109,7 @@
 			buildConfigurationList = 2E354DBE4C9E8115234E99D7 /* Build configuration list for PBXNativeTarget "Itinero" */;
 			buildPhases = (
 				B4DE796117718868E46C6183 /* Sources */,
+				RC00000000000000000000D1 /* Frameworks */,
 				404E87F00F5D53CBF0D54A6A /* Resources */,
 				BD4DE9212F2AAAFE004CB35D /* Embed Foundation Extensions */,
 			);
@@ -1148,6 +1122,8 @@
 			name = Itinero;
 			packageProductDependencies = (
 				BD4DE7BE2F1A65B1004CB35D /* WishKit */,
+				RC00000000000000000000B1 /* RevenueCat */,
+				RC00000000000000000000B2 /* RevenueCatUI */,
 			);
 			productName = Itinero;
 			productReference = 0A22333DBCE3EBBE982195CB /* Itinero.app */;
@@ -1184,6 +1160,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				BD4DE7BD2F1A65B1004CB35D /* XCRemoteSwiftPackageReference "wishkit-ios" */,
+				RC00000000000000000000A1 /* XCRemoteSwiftPackageReference "purchases-ios" */,
 			);
 			projectDirPath = "";
 			projectRoot = "";
@@ -1210,9 +1187,7 @@
 				B1C12A3B5A644E26654E8385 /* build.sh in Resources */,
 				FB576931AC3FEF99F53A232B /* create_icon.sh in Resources */,
 				F48B13325FD3573091AB391C /* quick_build.sh in Resources */,
-				BD4DE8652F1A8422004CB35D /* xcschememanagement.plist in Resources */,
 				BD4DE8662F1A8422004CB35D /* swift.yml in Resources */,
-				BD4DE8672F1A8422004CB35D /* package.xcworkspace in Resources */,
 				BD4DE8692F1A8422004CB35D /* LICENSE in Resources */,
 				BD4DE86A2F1A8422004CB35D /* banner-min.png in Resources */,
 				735C56A82CE09E7439698994 /* quick_run.sh in Resources */,
@@ -1316,6 +1291,8 @@
 				8047B3ABD4E59CAF5A481B2E /* Views/PackingListView.swift in Sources */,
 				0C8729DF322654700D65931A /* Views/PaywallGateView.swift in Sources */,
 				66C416D85132B98A7D1A4584 /* Views/PaywallView.swift in Sources */,
+				RC00000000000000000000E1 /* Views/ProUpsellBanner.swift in Sources */,
+				RC00000000000000000000E2 /* Managers/ReviewRequestManager.swift in Sources */,
 				9ACA89FB0C806B08E5E5A3A8 /* Managers/PermissionRequestManager.swift in Sources */,
 				63223F046090F708FCE2546A /* Views/PermissionRequestView.swift in Sources */,
 				9E0BC9F28A98B4FBF51AC961 /* Views/PlanGeneratorView.swift in Sources */,
@@ -1538,7 +1515,7 @@
 				CODE_SIGN_ENTITLEMENTS = Itinero.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = S39536K3H7;
+				DEVELOPMENT_TEAM = N593J3PQL4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -1563,7 +1540,7 @@
 				CODE_SIGN_ENTITLEMENTS = Itinero.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = S39536K3H7;
+				DEVELOPMENT_TEAM = N593J3PQL4;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
@@ -1643,7 +1620,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = S39536K3H7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -1655,7 +1632,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1678,7 +1655,7 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = S39536K3H7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -1686,7 +1663,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 26.1;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app.UITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = auto;
@@ -1712,7 +1689,7 @@
 				CODE_SIGN_ENTITLEMENTS = TriplyWidgetExtension/TriplyWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = S39536K3H7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -1731,7 +1708,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app.TriplyWidgetExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1755,7 +1732,7 @@
 				CODE_SIGN_ENTITLEMENTS = TriplyWidgetExtension/TriplyWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = S39536K3H7;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
@@ -1770,7 +1747,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ntriply.app.TriplyWidgetExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -1834,6 +1811,14 @@
 				minimumVersion = 4.7.0;
 			};
 		};
+		RC00000000000000000000A1 /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1846,6 +1831,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = BD4DE7BD2F1A65B1004CB35D /* XCRemoteSwiftPackageReference "wishkit-ios" */;
 			productName = WishKit;
+		};
+		RC00000000000000000000B1 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = RC00000000000000000000A1 /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCat;
+		};
+		RC00000000000000000000B2 /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = RC00000000000000000000A1 /* XCRemoteSwiftPackageReference "purchases-ios" */;
+			productName = RevenueCatUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

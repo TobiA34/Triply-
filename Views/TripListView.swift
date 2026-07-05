@@ -14,6 +14,7 @@ struct TripListView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @Query(sort: \TripModel.startDate, order: .forward) private var trips: [TripModel]
     @StateObject private var proLimiter = ProLimiter.shared
+    @ObservedObject private var iapManager = IAPManager.shared
     @State private var searchText = ""
     @State private var selectedCategory: String? = nil
     @State private var showingAddTrip = false
@@ -85,10 +86,23 @@ struct TripListView: View {
                     .ignoresSafeArea()
                 
                 if trips.isEmpty {
-                    EmptyStateView()
+                    VStack(spacing: 0) {
+                        if !iapManager.isPro {
+                            ProUpsellBanner { showingPaywall = true }
+                                .padding(.horizontal)
+                                .padding(.top, 8)
+                        }
+                        EmptyStateView()
+                    }
                 } else {
                     ScrollView {
                         VStack(spacing: 20) {
+                            // Pro upsell banner
+                            if !iapManager.isPro {
+                                ProUpsellBanner { showingPaywall = true }
+                                    .padding(.horizontal)
+                            }
+
                             // Search Bar
                             SearchBar(text: $searchText)
                             

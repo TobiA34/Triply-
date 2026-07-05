@@ -10,7 +10,11 @@ import SwiftUI
 struct OnboardingView: View {
     @Binding var isPresented: Bool
     @State private var currentPage = 0
-    
+
+    private let userDefaults = UserDefaults.standard
+    private let hasSeenOnboardingKey = "itinero_has_seen_onboarding"
+    private let hasSeenPostOnboardingPaywallKey = "itinero_has_seen_post_onboarding_paywall"
+
     var pages: [OnboardingPage] {
         [
             OnboardingPage(
@@ -69,6 +73,9 @@ struct OnboardingView: View {
                         }
                         HapticManager.shared.impact(.light)
                     } else {
+                        // Mark onboarding as seen and reset post-onboarding paywall flag
+                        userDefaults.set(true, forKey: hasSeenOnboardingKey)
+                        userDefaults.set(false, forKey: hasSeenPostOnboardingPaywallKey)
                         isPresented = false
                         HapticManager.shared.success()
                     }

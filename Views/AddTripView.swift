@@ -7,12 +7,14 @@
 
 import SwiftUI
 import SwiftData
+import StoreKit
 import UserNotifications
 import WidgetKit
 
 struct AddTripView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.requestReview) private var requestReview
     @StateObject private var searchManager = DestinationSearchManager()
     @StateObject private var proLimiter = ProLimiter.shared
     @StateObject private var templateManager = SmartTemplateManager.shared
@@ -1426,6 +1428,14 @@ struct AddTripView: View {
         
         // Insert trip first
         modelContext.insert(newTrip)
+
+        // Ask for an App Store review once the user has saved enough trips
+        // to have experienced real value (system caps prompts at 3/365 days).
+        if ReviewRequestManager.shouldRequestReviewAfterTripSaved() {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                requestReview()
+            }
+        }
         
         // Add selected destinations - must insert each destination separately
         if !selectedDestinations.isEmpty {

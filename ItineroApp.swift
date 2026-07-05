@@ -10,6 +10,10 @@ import SwiftData
 
 @main
 struct ItineroApp: App {
+    init() {
+        IAPManager.configure()
+    }
+
     @StateObject private var themeManager = ThemeManager.shared
     @StateObject private var dataManager = TripDataManager.shared
     @StateObject private var localizationManager = LocalizationManager.shared
@@ -64,17 +68,14 @@ struct ItineroApp: App {
         do {
             return try ModelContainer(for: Schema([TripModel.self]))
         } catch {
-            // If this fails, there's a serious system issue
-            // Log it and return a container that will at least let the app start
             print("❌ CRITICAL: All container creation attempts failed: \(error)")
-            // Force create - this is the absolute last resort
-            // Use do-catch to prevent crash
+            // Last resort: an in-memory container, which cannot hit disk errors.
             do {
-                return try ModelContainer(for: Schema([TripModel.self]))
+                let config = ModelConfiguration(isStoredInMemoryOnly: true)
+                return try ModelContainer(for: Schema([TripModel.self]), configurations: [config])
             } catch {
-                print("❌ CRITICAL: Final fallback failed: \(error)")
-                // Return a minimal in-memory container that won't crash
-                return try! ModelContainer(for: Schema([TripModel.self]))
+                // SwiftData itself is unusable; nothing meaningful can run.
+                fatalError("Unable to create any ModelContainer: \(error)")
             }
         }
     }
