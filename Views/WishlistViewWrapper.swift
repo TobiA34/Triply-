@@ -20,7 +20,7 @@ struct WishlistViewWrapper: View {
             wishModel: wishModel,
             selectedWishState: $selectedWishState
         )
-        .navigationTitle("Feature Requests")
+        .navigationTitle("settings.featureRequests".localized)
         .navigationBarTitleDisplayMode(.large)
     }
 }

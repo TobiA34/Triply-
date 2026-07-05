@@ -12,6 +12,7 @@ import PhotosUI
 struct PackingListView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
     @Query(sort: \TripModel.startDate, order: .reverse) private var allTrips: [TripModel]
     @StateObject private var packingAssistant = PackingAssistant.shared
     @StateObject private var weatherManager = WeatherManager.shared
@@ -24,6 +25,7 @@ struct PackingListView: View {
     @State private var viewMode: ViewMode = .category
     @State private var selectedBag: String? = nil
     @State private var limitMessage: String?
+    @State private var showingEmbeddedExpenses = false
     
     enum ViewMode: String, CaseIterable {
         case category = "Category"
@@ -46,7 +48,7 @@ struct PackingListView: View {
     }
     
     var itemsByBag: [String: [PackingItem]] {
-        Dictionary(grouping: packingItems.filter { $0.bagName != nil && !$0.bagName!.isEmpty }, by: { $0.bagName ?? "Unassigned" })
+        Dictionary(grouping: packingItems.filter { ($0.bagName ?? "").isEmpty == false }, by: { $0.bagName ?? "Unassigned" })
     }
     
     var packedCount: Int {
@@ -80,6 +82,11 @@ struct PackingListView: View {
                         totalCount: totalCount,
                         totalWeight: totalWeight
                     )
+                }
+
+                // Lightweight expense summary so packing + expenses feel unified
+                EmbeddedExpenseSummaryView(trip: trip) {
+                    showingEmbeddedExpenses = true
                 }
                 
                 // Enhanced Action Buttons
@@ -156,6 +163,11 @@ struct PackingListView: View {
         .fullScreenCover(isPresented: $showingAddItem) {
             AddPackingItemView(trip: trip)
         }
+        .sheet(isPresented: $showingEmbeddedExpenses) {
+            NavigationStack {
+                ExpenseTrackingView(trip: trip)
+            }
+        }
         .onAppear {
             // Load weather for suggestions
             if let firstDestination = trip.destinations?.first {
@@ -181,44 +193,111 @@ struct PackingListView: View {
 
 // MARK: - Helper Views to Reduce Type-Checking Complexity
 
+private struct EmbeddedExpenseSummaryView: View {
+    @Bindable var trip: TripModel
+    @EnvironmentObject var themeManager: ThemeManager
+    private let settingsManager = SettingsManager.shared
+    var onOpenExpenses: () -> Void
+
+    private var totalExpenses: Double {
+        trip.expenses?.reduce(0) { $0 + $1.amount } ?? 0
+    }
+
+    private var budgetRemaining: Double? {
+        guard let budget = trip.budget else { return nil }
+        return budget - totalExpenses
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Expenses")
+                        .font(.headline)
+                        .foregroundColor(themeManager.currentPalette.text)
+                    Text(settingsManager.formatAmount(totalExpenses))
+                        .font(.title3.weight(.semibold))
+                        .foregroundColor(themeManager.currentPalette.accent)
+
+                    if let remaining = budgetRemaining {
+                        Text("Remaining: \(settingsManager.formatAmount(remaining))")
+                            .font(.caption)
+                            .foregroundColor(remaining >= 0 ? .green : .red)
+                    }
+                }
+                Spacer()
+                Button(action: onOpenExpenses) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "creditcard.fill")
+                        Text("Manage")
+                            .fontWeight(.semibold)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(themeManager.currentPalette.accent)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                }
+            }
+
+            Text("Track trip expenses alongside your packing list.")
+                .font(.caption)
+                .foregroundColor(themeManager.currentPalette.secondaryText)
+        }
+        .padding()
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(themeManager.currentPalette.background)
+                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
+        )
+        .padding(.horizontal)
+    }
+}
+
 private struct PackingProgressCardView: View {
     let packedCount: Int
     let totalCount: Int
     let totalWeight: Double
-    
+    @EnvironmentObject var themeManager: ThemeManager
+
     var body: some View {
         VStack(spacing: 16) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Packing Progress")
                         .font(.headline)
+                        .foregroundColor(themeManager.currentPalette.text)
                     Text(String(format: "%d of %d items packed", packedCount, totalCount))
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
                     if totalWeight > 0 {
                         Text(String(format: "Total Weight: %.1f kg", totalWeight))
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(themeManager.currentPalette.secondaryText)
                     }
                 }
                 Spacer()
                 CircularProgressView(progress: Double(packedCount) / Double(max(totalCount, 1)))
                     .frame(width: 70, height: 70)
             }
-            
+
             ProgressView(value: Double(min(packedCount, totalCount)), total: Double(max(totalCount, 1)))
-                .tint(.green)
+                .tint(themeManager.currentPalette.accent)
                 .scaleEffect(x: 1, y: 1.5, anchor: .center)
         }
         .padding()
         .background(
             LinearGradient(
-                colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)],
+                colors: [themeManager.currentPalette.accent.opacity(0.15), themeManager.currentPalette.accent.opacity(0.05)],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
         )
         .cornerRadius(16)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(themeManager.currentPalette.accent.opacity(0.2), lineWidth: 1)
+        )
         .padding(.horizontal)
     }
 }
@@ -229,6 +308,7 @@ private struct PackingActionButtonsView: View {
     @Binding var showingTemplates: Bool
     @Binding var showingDuplicateFrom: Bool
     @Binding var showingExport: Bool
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         VStack(spacing: 12) {
@@ -282,11 +362,16 @@ private struct PackingActionButtonsView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     }
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(Color(.systemGray6))
+                    .background(themeManager.currentPalette.background)
                     .cornerRadius(10)
+                    .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 4, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(themeManager.currentPalette.accent.opacity(0.1), lineWidth: 1)
+                    )
                 }
                 
                 Button(action: { showingDuplicateFrom = true }) {
@@ -298,11 +383,16 @@ private struct PackingActionButtonsView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     }
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(Color(.systemGray6))
+                    .background(themeManager.currentPalette.background)
                     .cornerRadius(10)
+                    .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 4, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(themeManager.currentPalette.accent.opacity(0.1), lineWidth: 1)
+                    )
                 }
                 
                 Button(action: { showingExport = true }) {
@@ -314,11 +404,16 @@ private struct PackingActionButtonsView: View {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     }
-                    .foregroundColor(.primary)
+                    .foregroundColor(themeManager.currentPalette.text)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(Color(.systemGray6))
+                    .background(themeManager.currentPalette.background)
                     .cornerRadius(10)
+                    .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 4, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(themeManager.currentPalette.accent.opacity(0.1), lineWidth: 1)
+                    )
                 }
             }
         }
@@ -413,18 +508,30 @@ private struct PackingItemsSectionView: View {
 }
 
 private struct EmptyPackingListView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     var body: some View {
         VStack(spacing: 16) {
-            Image(systemName: "suitcase")
-                .font(.system(size: 50))
-                .foregroundColor(.secondary.opacity(0.5))
-            Text("No items yet")
-                .font(.headline)
-            Text("Start adding items to your packing list. Use smart suggestions, templates, or copy from previous trips.")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+            ZStack {
+                Circle()
+                    .fill(themeManager.currentPalette.accent.opacity(0.1))
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: "suitcase.fill")
+                    .font(.system(size: 36))
+                    .foregroundColor(themeManager.currentPalette.accent)
+            }
+            
+            VStack(spacing: 6) {
+                Text("Pack like a pro")
+                    .font(.headline)
+                    .foregroundColor(themeManager.currentPalette.text)
+                
+                Text("Don't forget the essentials. Add items manually or use AI to generate a smart packing list.")
+                    .font(.subheadline)
+                    .foregroundColor(themeManager.currentPalette.secondaryText)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
@@ -517,24 +624,27 @@ private struct BagGroupView: View {
 
 struct CircularProgressView: View {
     let progress: Double
-    
+    @EnvironmentObject var themeManager: ThemeManager
+
     var body: some View {
         ZStack {
             Circle()
-                .stroke(Color.gray.opacity(0.3), lineWidth: 8)
+                .stroke(themeManager.currentPalette.accent.opacity(0.15), lineWidth: 8)
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(Color.green, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                .stroke(themeManager.currentPalette.accent, style: StrokeStyle(lineWidth: 8, lineCap: .round))
                 .rotationEffect(.degrees(-90))
             let percentage = max(0, min(100, Int((progress * 100).rounded())))
             Text("\(percentage)%")
                 .font(.caption)
                 .fontWeight(.bold)
+                .foregroundColor(themeManager.currentPalette.text)
         }
     }
 }
 
 struct EnhancedPackingItemRowView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     @Bindable var item: PackingItem
     let trip: TripModel
     let modelContext: ModelContext
@@ -543,16 +653,35 @@ struct EnhancedPackingItemRowView: View {
     
     var body: some View {
         Button(role: .none) {
-            item.isPacked.toggle()
-            trip.lastModified = Date()
-            try? modelContext.save()
-            HapticManager.shared.selection()
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                let wasPacked = item.isPacked
+                item.isPacked.toggle()
+                trip.lastModified = Date()
+                try? modelContext.save()
+                
+                if !wasPacked && item.isPacked {
+                    HapticManager.shared.success()
+                } else {
+                    HapticManager.shared.selection()
+                }
+            }
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: item.isPacked ? "checkmark.circle.fill" : "circle")
-                    .font(.title3)
-                    .foregroundColor(item.isPacked ? .green : .secondary)
-                    .animation(.spring(response: 0.3), value: item.isPacked)
+                ZStack {
+                    Image(systemName: item.isPacked ? "checkmark.circle.fill" : "circle")
+                        .font(.title3)
+                        .foregroundColor(item.isPacked ? .green : .secondary)
+                        .scaleEffect(item.isPacked ? 1.1 : 1.0)
+                        
+                    if item.isPacked {
+                        Circle()
+                            .fill(Color.green.opacity(0.2))
+                            .frame(width: 32, height: 32)
+                            .scaleEffect(item.isPacked ? 1.3 : 1.0)
+                            .opacity(item.isPacked ? 0 : 1)
+                            .animation(.easeOut(duration: 0.4), value: item.isPacked)
+                    }
+                }
                 
                 // Photo thumbnail
                 if let photoData = item.photoData, let uiImage = UIImage(data: photoData) {
@@ -564,14 +693,14 @@ struct EnhancedPackingItemRowView: View {
                         .clipped()
                 } else {
                     RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(.systemGray5))
+                        .fill(themeManager.currentPalette.accent.opacity(0.1))
                         .frame(width: 50, height: 50)
                         .overlay(
                             Image(systemName: item.category.lowercased().contains("cloth") ? "tshirt.fill" :
                                   item.category.lowercased().contains("electron") ? "iphone" :
                                   item.category.lowercased().contains("health") ? "cross.case.fill" :
                                   "suitcase.fill")
-                                .foregroundColor(.secondary)
+                                .foregroundColor(themeManager.currentPalette.accent)
                         )
                 }
                 
@@ -580,7 +709,7 @@ struct EnhancedPackingItemRowView: View {
                         Text(item.name)
                             .font(.headline)
                             .strikethrough(item.isPacked)
-                            .foregroundColor(item.isPacked ? .secondary : .primary)
+                            .foregroundColor(item.isPacked ? themeManager.currentPalette.secondaryText : themeManager.currentPalette.text)
                         
                         if item.isEssential {
                             Image(systemName: "star.fill")
@@ -592,31 +721,31 @@ struct EnhancedPackingItemRowView: View {
                     HStack(spacing: 8) {
                         Text(item.category)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(themeManager.currentPalette.secondaryText)
                         
                         if item.quantity > 1 {
                             Text("×\(item.quantity)")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(themeManager.currentPalette.secondaryText)
                         }
                         
                         if let weight = item.estimatedWeight {
                             Text(String(format: "%.1f kg", weight * Double(item.quantity)))
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(themeManager.currentPalette.secondaryText)
                         }
                         
                         if let bag = item.bagName, !bag.isEmpty {
                             Label(bag, systemImage: "bag.fill")
                                 .font(.caption)
-                                .foregroundColor(.blue)
+                                .foregroundColor(themeManager.currentPalette.accent)
                         }
                     }
                     
                     if !item.notes.isEmpty {
                         Text(item.notes)
                             .font(.caption2)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(themeManager.currentPalette.secondaryText)
                             .lineLimit(1)
                     }
                 }
@@ -648,14 +777,11 @@ struct EnhancedPackingItemRowView: View {
             .padding()
             .background(
                 item.isPacked ?
-                Color.green.opacity(0.1) :
-                (item.isEssential ? Color.yellow.opacity(0.05) : Color(.systemGray6))
+                Color.green.opacity(0.08) :
+                (item.isEssential ? themeManager.currentPalette.accent.opacity(0.12) : themeManager.currentPalette.background)
             )
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(item.isEssential ? Color.yellow.opacity(0.3) : Color.clear, lineWidth: 1)
-            )
+            .cornerRadius(16)
+            .shadow(color: themeManager.currentPalette.accent.opacity(0.04), radius: 12, x: 0, y: 4)
         }
         .buttonStyle(.plain)
         .sheet(isPresented: $showingEdit) {
@@ -737,6 +863,7 @@ struct SuggestionSection: View {
     let color: Color
     let trip: TripModel
     let modelContext: ModelContext
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -763,8 +890,13 @@ struct SuggestionSection: View {
                             .foregroundColor(color)
                     }
                     .padding()
-                    .background(Color(.systemGray6))
+                    .background(themeManager.currentPalette.background)
                     .cornerRadius(12)
+                    .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 4, x: 0, y: 2)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(themeManager.currentPalette.accent.opacity(0.12), lineWidth: 1)
+                    )
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal)

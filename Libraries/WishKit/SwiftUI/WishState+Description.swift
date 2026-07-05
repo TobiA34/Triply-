@@ -28,7 +28,7 @@ extension WishState: Identifiable {
         case .completed:
             WishKit.config.localization.completed
         default:
-            "Not Supported"
+            WishKit.config.localization.notSupported
         }
     }
 }

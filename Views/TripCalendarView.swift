@@ -32,24 +32,24 @@ struct TripCalendarView: View {
             }
             .padding()
         }
-        .navigationTitle("Add to Calendar")
+        .navigationTitle("calendar.addToCalendar".localized)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Done") {
+                Button("common.done".localized) {
                     dismiss()
                 }
             }
         }
-        .alert("Success", isPresented: $showSuccess) {
-            Button("OK") { }
+        .alert("calendar.success".localized, isPresented: $showSuccess) {
+            Button("common.ok".localized) { }
         } message: {
-            Text("Trip added to calendar successfully!")
+            Text("calendar.addSuccess".localized)
         }
-        .alert("Error", isPresented: $showError) {
-            Button("OK") { }
+        .alert("calendar.error".localized, isPresented: $showError) {
+            Button("common.ok".localized) { }
         } message: {
-            Text("Failed to add trip to calendar. Please check permissions.")
+            Text("calendar.addFailed".localized)
         }
         .onAppear {
             // Refresh authorization status
@@ -115,15 +115,15 @@ struct CalendarAuthorizedView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.blue)
             
-            Text("Add to Calendar")
+            Text("calendar.addToCalendar".localized)
                 .font(.title2)
                 .fontWeight(.bold)
             
             VStack(alignment: .leading, spacing: 12) {
-                CalendarInfoRow(label: "Trip", value: trip.name)
-                CalendarInfoRow(label: "Start", value: formatDate(trip.startDate))
-                CalendarInfoRow(label: "End", value: formatDate(trip.endDate))
-                CalendarInfoRow(label: "Duration", value: "\(trip.duration) days")
+                CalendarInfoRow(label: "tripCalendarView.trip".localized, value: trip.name)
+                CalendarInfoRow(label: "tripCalendarView.start".localized, value: formatDate(trip.startDate))
+                CalendarInfoRow(label: "tripCalendarView.end".localized, value: formatDate(trip.endDate))
+                CalendarInfoRow(label: "trips.duration".localized, value: "\(trip.duration) days")
             }
             .padding()
             .background(Color(.systemGray6))
@@ -134,7 +134,7 @@ struct CalendarAuthorizedView: View {
             } label: {
                 HStack {
                     Image(systemName: "calendar.badge.plus")
-                    Text("Add to Calendar")
+                    Text("calendar.addToCalendar".localized)
                 }
                 .foregroundColor(.white)
                 .padding()
@@ -162,11 +162,11 @@ struct CalendarUnauthorizedView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.orange)
             
-            Text("Add to Calendar")
+            Text("calendar.addToCalendar".localized)
                 .font(.title2)
                 .fontWeight(.bold)
             
-            Text("To add this trip and get reminders, your device will ask for calendar access.")
+            Text("calendar.addToCalendarHint".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -176,7 +176,7 @@ struct CalendarUnauthorizedView: View {
             } label: {
                 HStack {
                     Image(systemName: "calendar.badge.plus")
-                    Text("Add to Calendar")
+                    Text("calendar.addToCalendar".localized)
                 }
                 .foregroundColor(.white)
                 .padding()

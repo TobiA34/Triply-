@@ -58,9 +58,9 @@ struct FolderDetailView: View {
                             Image(systemName: "doc.fill")
                                 .font(.system(size: 50))
                                 .foregroundColor(.secondary)
-                            Text("No Documents")
+                            Text("folders.noDocuments".localized)
                                 .font(.headline)
-                            Text("Add documents to this folder to organize them")
+                            Text("folders.addDocumentsHint".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -78,11 +78,11 @@ struct FolderDetailView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("Folder")
+            .navigationTitle("folders.folder".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Done") {
+                    Button("common.done".localized) {
                         dismiss()
                     }
                 }
@@ -100,13 +100,13 @@ struct FolderDetailView: View {
             .sheet(item: $selectedDocument) { document in
                 DocumentDetailView(document: document)
             }
-            .alert("Delete Folder", isPresented: $showingDeleteAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete", role: .destructive) {
+            .alert("folders.deleteFolder".localized, isPresented: $showingDeleteAlert) {
+                Button("common.cancel".localized, role: .cancel) { }
+                Button("common.delete".localized, role: .destructive) {
                     deleteFolder()
                 }
             } message: {
-                Text("Are you sure you want to delete this folder? Documents in this folder will be moved to the main documents list.")
+                Text("folders.deleteFolderMessage".localized)
             }
         }
     }
@@ -133,7 +133,6 @@ struct FolderDetailView: View {
 struct EditFolderView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var iapManager = IAPManager.shared
     
     let folder: DocumentFolder
     
@@ -169,7 +168,7 @@ struct EditFolderView: View {
     ]
     
     var folderIcons: [String] {
-        iapManager.isPro ? proIcons : basicIcons
+        ProLimiter.shared.isPro ? proIcons : basicIcons
     }
     
     // Computed property for current color to use in UI
@@ -188,14 +187,14 @@ struct EditFolderView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Folder Name") {
-                    TextField("Folder Name", text: $folderName)
+                Section("folders.folderName".localized) {
+                    TextField("folders.folderName".localized, text: $folderName)
                         .textInputAutocapitalization(.words)
                 }
                 
                 Section {
                     // Free tier: limited colors, Pro: color picker
-                    if iapManager.isPro {
+                    if ProLimiter.shared.isPro {
                         // Pro: Color Picker
                         VStack(alignment: .leading, spacing: 12) {
                             ColorPicker("Select Folder Color", selection: $selectedColorPicker, supportsOpacity: false)
@@ -206,7 +205,7 @@ struct EditFolderView: View {
                             
                             // Show current selected color preview
                             HStack {
-                                Text("Selected Color:")
+                                Text("folders.selectedColor".localized)
                                     .font(.subheadline)
                                     .foregroundColor(.secondary)
                                 Spacer()
@@ -254,7 +253,7 @@ struct EditFolderView: View {
                                 HStack {
                                     Image(systemName: "crown.fill")
                                         .foregroundColor(.yellow)
-                                    Text("Upgrade to Pro for unlimited colors & custom color picker")
+                                    Text("folders.upgradeColors".localized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                     Spacer()
@@ -269,10 +268,10 @@ struct EditFolderView: View {
                         }
                     }
                 } header: {
-                    Text("Folder Color")
+                    Text("folders.folderColor".localized)
                 } footer: {
-                    if !iapManager.isPro {
-                        Text("Free: 3 colors • Pro: Unlimited colors with color picker")
+                    if !ProLimiter.shared.isPro {
+                        Text("folders.upgradeColorsFooter".localized)
                     }
                 }
                 
@@ -301,16 +300,16 @@ struct EditFolderView: View {
                         }
                         .padding(.vertical, 8)
                     }
-                    .frame(maxHeight: iapManager.isPro ? 400 : 200)
+                    .frame(maxHeight: ProLimiter.shared.isPro ? 400 : 200)
                     
-                    if !iapManager.isPro {
+                    if !ProLimiter.shared.isPro {
                         Button {
                             showPaywall = true
                         } label: {
                             HStack {
                                 Image(systemName: "crown.fill")
                                     .foregroundColor(.yellow)
-                                Text("Upgrade to Pro for \(proIcons.count - basicIcons.count) more icons")
+                                Text("folders.upgradeIcons".localized(proIcons.count - basicIcons.count))
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 Spacer()
@@ -325,32 +324,32 @@ struct EditFolderView: View {
                     }
                 } header: {
                     HStack {
-                        Text("Folder Icon")
+                        Text("folders.folderIcon".localized)
                         Spacer()
-                        if iapManager.isPro {
-                            Text("\(folderIcons.count) icons")
+                        if ProLimiter.shared.isPro {
+                            Text("folders.iconsCount".localized(folderIcons.count))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
                     }
                 } footer: {
-                    if !iapManager.isPro {
-                        Text("Free: \(basicIcons.count) icons • Pro: \(proIcons.count) icons")
+                    if !ProLimiter.shared.isPro {
+                        Text("folders.freeIconsSummary".localized(basicIcons.count, proIcons.count))
                     } else {
-                        Text("\(proIcons.count) icons available")
+                        Text("folders.iconsAvailable".localized(proIcons.count))
                     }
                 }
             }
-            .navigationTitle("Edit Folder")
+            .navigationTitle("folders.editFolder".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Save") {
+                    Button("common.save".localized) {
                         saveFolder()
                     }
                 }

@@ -23,6 +23,7 @@ struct SettingsView: View {
     @State private var selectedCurrency: Currency = Currency.currency(for: "USD")
     @ObservedObject private var iapManager = IAPManager.shared
     @State private var showPaywall = false
+    @State private var showingPaywall: Bool = false
     
     // Use an explicit init so the sheet doesn't trigger extra loads on appear.
     // Values are pulled from the shared managers that are already initialized
@@ -48,6 +49,13 @@ struct SettingsView: View {
         )
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
+        .sheet(isPresented: $showingPaywall) {
+            NavigationStack {
+                PaywallView()
+            }
+            .presentationDetents([.medium, .large])
+            .presentationCornerRadius(24)
+        }
         .onDisappear {
             // Auto-save when leaving settings (when in tab bar)
             saveSettings()
@@ -61,11 +69,7 @@ struct SettingsView: View {
     
     private var preferencesSection: some View {
         Section {
-            preferenceRow(
-                icon: settingsManager.currencyIconName(),
-                color: .green,
-                title: "Currency"
-            )
+            preferenceRow(icon: "dollarsign.circle.fill", color: .green, title: "Currency")
         } header: {
             Text("Preferences")
         } footer: {
@@ -75,14 +79,9 @@ struct SettingsView: View {
     
     private func preferenceRow(icon: String, color: Color, title: String) -> some View {
         HStack {
-            ZStack {
-                Circle()
-                    .fill(color)
-                    .frame(width: 28, height: 28)
-                Image(systemName: icon)
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.white)
-            }
+            Image(systemName: icon)
+                .font(.title2)
+                .foregroundColor(color)
             Text(title)
                 .font(.headline)
                 .foregroundColor(.primary)
@@ -167,6 +166,19 @@ struct SettingsView: View {
     
     private var aboutSection: some View {
         Section {
+            NavigationLink {
+                WhatsNewView()
+            } label: {
+                HStack {
+                    Image(systemName: "sparkles")
+                        .foregroundStyle(
+                            LinearGradient(colors: [.purple, .blue], startPoint: .topLeading, endPoint: .bottomTrailing)
+                        )
+                    Text("settings.whatsNew".localized)
+                        .foregroundColor(.primary)
+                }
+            }
+
             VStack(alignment: .leading, spacing: 12) {
                 HStack(spacing: 12) {
                     settingsIcon("info.circle.fill", background: .blue)
@@ -174,12 +186,13 @@ struct SettingsView: View {
                         .font(.headline)
                         .foregroundColor(.primary)
                 }
-                
-                Text("Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—") (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—"))")
+
+                Text(Bundle.main.appVersionDisplay)
                     .font(.subheadline)
                     .foregroundColor(Color(white: 0.4))
-                
-                Text("Plan your trips with ease. Organize destinations, create itineraries, and track your budget all in one place.")
+                    .textSelection(.enabled)
+
+                Text("app.description".localized)
                     .font(.caption)
                     .foregroundColor(Color(white: 0.4))
                     .padding(.top, 4)
@@ -342,6 +355,52 @@ struct SettingsView: View {
         }
     }
 }
+
+// MARK: - RevenueCat Manager (local to Settings)
+
+// Real implementation when RevenueCat is available.
+#if canImport(RevenueCat)
+@MainActor
+final class RevenueCatManager: ObservableObject {
+    static let shared = RevenueCatManager()
+    private let iap = IAPManager.shared
+    var isPro: Bool { iap.isPro }
+    var lastInfoMessage: String? { iap.lastInfoMessage }
+    var lastErrorMessage: String? { iap.lastErrorMessage }
+
+    private init() {}
+
+    func refreshEntitlements() async {
+        await iap.refreshEntitlements()
+    }
+
+    func restorePurchases() async {
+        await iap.restorePurchases()
+    }
+}
+
+#else
+
+// Fallback stub when RevenueCat SDK isn't linked; avoids scary error text.
+@MainActor
+final class RevenueCatManager: ObservableObject {
+    static let shared = RevenueCatManager()
+
+    @Published private(set) var isPro: Bool = false
+    @Published private(set) var lastInfoMessage: String? = nil
+    @Published private(set) var lastErrorMessage: String? = nil
+
+    private init() {}
+
+    func refreshEntitlements() async {
+        // No-op; use local StoreKit paywall instead.
+    }
+
+    func restorePurchases() async {
+        // No-op for stub.
+    }
+}
+#endif
 
 
 // Inline Contact Form - No dependencies, always works
@@ -723,6 +782,50 @@ private struct WishKitNotAvailableView: View {
         }
         .padding()
         .navigationTitle("Feature Requests")
+    }
+}
+
+// MARK: - What's New (v2 highlights)
+
+/// In-app changelog for major releases; copy lives in Localizable.strings (`v2.*`).
+struct WhatsNewView: View {
+    private let bulletKeys = [
+        "v2.item1",
+        "v2.item2",
+        "v2.item3",
+        "v2.item4",
+    ]
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                Text("v2.title".localized)
+                    .font(.title.bold())
+
+                Text("v2.lead".localized)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                VStack(alignment: .leading, spacing: 14) {
+                    ForEach(Array(bulletKeys.enumerated()), id: \.offset) { _, key in
+                        HStack(alignment: .top, spacing: 12) {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                                .font(.body)
+                            Text(key.localized)
+                                .font(.subheadline)
+                                .foregroundColor(.primary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    }
+                }
+                .padding(.top, 8)
+            }
+            .padding()
+        }
+        .background(Color(.systemGroupedBackground))
+        .navigationTitle("settings.whatsNew".localized)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

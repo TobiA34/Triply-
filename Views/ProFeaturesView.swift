@@ -144,6 +144,21 @@ struct ProFeaturesView: View {
                         ],
                         isHighlighted: highlightedFeature == .packing
                     )
+
+                    // Collaborative Planning
+                    DetailedPremiumFeatureCard(
+                        icon: "person.2.fill",
+                        iconColor: .indigo,
+                        title: "Collaborative Planning",
+                        description: "Invite friends and family to co-create your itinerary, vote on activities, and keep everyone in sync.",
+                        features: [
+                            "Share trips with a link",
+                            "Invite collaborators with roles",
+                            "Let everyone add ideas and activities",
+                            "Keep one up-to-date plan for the whole group"
+                        ],
+                        isHighlighted: false
+                    )
                 }
                 .padding(.horizontal)
                 

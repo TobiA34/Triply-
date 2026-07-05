@@ -11,7 +11,7 @@ import SwiftUI
 struct FeatureRequestsView: View {
     var body: some View {
         WishKit.FeedbackListView()
-            .navigationTitle("Feature Requests")
+            .navigationTitle("settings.featureRequests".localized)
             .navigationBarTitleDisplayMode(.large)
     }
 }

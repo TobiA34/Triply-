@@ -16,6 +16,7 @@ struct ModernTextField: View {
     var keyboardType: UIKeyboardType = .default
     var isRequired: Bool = false
     var errorMessage: String? = nil
+    @State private var showContentFilterAlert = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -50,6 +51,21 @@ struct ModernTextField: View {
                         .stroke(errorMessage != nil ? Color.red : Color.clear, lineWidth: 1.5)
                 )
                 .keyboardType(keyboardType)
+                .onChange(of: text) { oldValue, newValue in
+                    if ContentFilter.containsBlockedContent(newValue) {
+                        Task { @MainActor in
+                            text = oldValue
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                showContentFilterAlert = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    showContentFilterAlert = false
+                                }
+                            }
+                        }
+                    }
+                }
             
             if let error = errorMessage {
                 Text(error)
@@ -57,6 +73,11 @@ struct ModernTextField: View {
                     .foregroundColor(.red)
                     .padding(.leading, 4)
             }
+        }
+        .alert("Content not allowed", isPresented: $showContentFilterAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("This content cannot be used here.")
         }
     }
 }
@@ -70,6 +91,7 @@ struct ModernTextEditor: View {
     var height: CGFloat = 100
     var isRequired: Bool = false
     var errorMessage: String? = nil
+    @State private var showContentFilterAlert = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -96,14 +118,29 @@ struct ModernTextEditor: View {
                 .padding(.vertical, 16)
                 .scrollContentBackground(.hidden)
                 .frame(height: height + 50)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color(.systemGray6))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(errorMessage != nil ? Color.red : Color.clear, lineWidth: 1.5)
-            )
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color(.systemGray6))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .stroke(errorMessage != nil ? Color.red : Color.clear, lineWidth: 1.5)
+                )
+                .onChange(of: text) { oldValue, newValue in
+                    if ContentFilter.containsBlockedContent(newValue) {
+                        Task { @MainActor in
+                            text = oldValue
+                            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                showContentFilterAlert = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+                                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                    showContentFilterAlert = false
+                                }
+                            }
+                        }
+                    }
+                }
             
             if let error = errorMessage {
                 Text(error)
@@ -111,6 +148,11 @@ struct ModernTextEditor: View {
                     .foregroundColor(.red)
                     .padding(.leading, 4)
             }
+        }
+        .alert("Content not allowed", isPresented: $showContentFilterAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("This content cannot be used here.")
         }
     }
 }
@@ -233,7 +275,7 @@ struct ModernDatePicker: View {
     var icon: String? = nil
     var isRequired: Bool = false
     var displayedComponents: DatePickerComponents = [.date]
-    var dateRange: ClosedRange<Date>? = nil
+    var inRange: PartialRangeFrom<Date>? = nil
     
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -253,16 +295,22 @@ struct ModernDatePicker: View {
                 }
             }
             
-            DatePicker("", selection: $date, displayedComponents: displayedComponents)
-                .datePickerStyle(.compact)
-                .foregroundColor(.primary)
-                .tint(.blue)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 20)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color(.systemGray6))
-                )
+            Group {
+                if let inRange = inRange {
+                    DatePicker("", selection: $date, in: inRange, displayedComponents: displayedComponents)
+                } else {
+                    DatePicker("", selection: $date, displayedComponents: displayedComponents)
+                }
+            }
+            .datePickerStyle(.compact)
+            .foregroundColor(.primary)
+            .tint(.blue)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 20)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color(.systemGray6))
+            )
         }
     }
 }
@@ -312,11 +360,11 @@ struct ModernToggle: View {
 struct ModernButton: View {
     let title: String
     let action: () -> Void
-    var style: ButtonStyle = .primary
+    var style: ModernButtonStyle = .primary
     var icon: String? = nil
     var isDisabled: Bool = false
     
-    enum ButtonStyle {
+    enum ModernButtonStyle {
         case primary
         case secondary
         case destructive
@@ -387,4 +435,3 @@ struct ModernCard<Content: View>: View {
             )
     }
 }
-

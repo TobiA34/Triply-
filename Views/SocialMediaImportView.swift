@@ -39,11 +39,11 @@ struct SocialMediaImportView: View {
                         )
                         .padding(.top, 60)
                     
-                    Text("Social Media Import")
+                    Text("social.importTitle".localized)
                         .font(.title.bold())
                         .foregroundColor(.primary)
                     
-                    Text("Import saved posts from Instagram and Pinterest to turn them into trip destinations instantly.")
+                    Text("social.importDescription".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -65,7 +65,7 @@ struct SocialMediaImportView: View {
                     } label: {
                         HStack {
                             Image(systemName: "crown.fill")
-                            Text("Upgrade to Pro")
+                            Text("pro.upgrade".localized)
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
@@ -82,7 +82,7 @@ struct SocialMediaImportView: View {
                     }
                     .padding(.horizontal)
                     
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                     .buttonStyle(.bordered)
@@ -92,7 +92,7 @@ struct SocialMediaImportView: View {
             } else {
                 Form {
                 Section {
-                    TextField("Paste Instagram/TikTok URL", text: $urlText)
+                    TextField("social.pasteUrl".localized, text: $urlText)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .keyboardType(.URL)
@@ -100,7 +100,7 @@ struct SocialMediaImportView: View {
                     if socialManager.isProcessing {
                         HStack {
                             ProgressView()
-                            Text("Extracting location...")
+                            Text("social.extracting".localized)
                                 .foregroundColor(.secondary)
                         }
                     }
@@ -111,9 +111,9 @@ struct SocialMediaImportView: View {
                             .foregroundColor(.red)
                     }
                 } header: {
-                    Text("Social Media Link")
+                    Text("social.linkTitle".localized)
                 } footer: {
-                    Text("Paste a link from Instagram or TikTok to automatically extract location information.")
+                    Text("social.linkDescription".localized)
                 }
                 
                 if let location = extractedLocation {
@@ -122,7 +122,7 @@ struct SocialMediaImportView: View {
                             // Video Title
                             if let videoTitle = location.videoTitle, !videoTitle.isEmpty {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("Video Title")
+                                    Text("social.videoTitle".localized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                     Text(videoTitle)
@@ -142,7 +142,7 @@ struct SocialMediaImportView: View {
                             // Description
                             if let description = location.description, !description.isEmpty {
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text("Description")
+                                    Text("social.description".localized)
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                     Text(description)
@@ -171,7 +171,7 @@ struct SocialMediaImportView: View {
                         }
                         .padding(.vertical, 8)
                     } header: {
-                        Text("Extracted Information")
+                        Text("social.extractedInfo".localized)
                     }
                     
                     Section {
@@ -180,7 +180,7 @@ struct SocialMediaImportView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "plus.circle.fill")
-                                Text("Add to Trip")
+                                Text("social.addToTrip".localized)
                             }
                             .frame(maxWidth: .infinity)
                         }
@@ -198,16 +198,16 @@ struct SocialMediaImportView: View {
                     } label: {
                         HStack {
                             Image(systemName: "doc.on.clipboard")
-                            Text("Paste from Clipboard")
+                            Text("social.pasteFromClipboard".localized)
                         }
                     }
                 }
             }
-            .navigationTitle("Import from Social")
+            .navigationTitle("social.importTitle".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }
@@ -418,7 +418,7 @@ struct AddOptionsSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    Text("Choose how to add this content to your trip")
+                    Text("social.chooseHowToAdd".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
@@ -432,9 +432,9 @@ struct AddOptionsSheet: View {
                             Image(systemName: "mappin.circle.fill")
                                 .foregroundColor(.blue)
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Add as Destination")
+                                Text("social.addAsDestination".localized)
                                     .font(.headline)
-                                Text("Save as a location to visit")
+                                Text("social.saveAsLocation".localized)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -450,9 +450,9 @@ struct AddOptionsSheet: View {
                             Image(systemName: "calendar.badge.plus")
                                 .foregroundColor(.purple)
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Add to Itinerary")
+                                Text("social.addToItinerary".localized)
                                     .font(.headline)
-                                Text("Add as an activity with video info")
+                                Text("social.addAsActivity".localized)
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                             }
@@ -461,11 +461,11 @@ struct AddOptionsSheet: View {
                     }
                 }
             }
-            .navigationTitle("Add to Trip")
+            .navigationTitle("social.addToTrip".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }

@@ -31,13 +31,13 @@ struct StatisticsView: View {
                     // Overview Cards
                     HStack(spacing: 16) {
                         StatCardView(
-                            title: "Total Trips",
+                            title: "trips.totalTrips".localized,
                             value: "\(totalTrips)",
                             icon: "airplane",
                             color: .blue
                         )
                         StatCardView(
-                            title: "Total Days",
+                            title: "statisticsView.total.days".localized,
                             value: "\(totalDays)",
                             icon: "calendar",
                             color: .green
@@ -47,13 +47,13 @@ struct StatisticsView: View {
                     
                     HStack(spacing: 16) {
                         StatCardView(
-                            title: "Upcoming",
+                            title: "trips.upcoming".localized,
                             value: "\(upcomingTrips)",
                             icon: "clock",
                             color: .orange
                         )
                         StatCardView(
-                            title: "Past",
+                            title: "trips.statusPast".localized,
                             value: "\(pastTrips)",
                             icon: "checkmark.circle",
                             color: .purple
@@ -64,14 +64,14 @@ struct StatisticsView: View {
                     // Budget Summary
                     if totalBudget > 0 {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Budget Summary")
+                            Text("statisticsView.budget.summary".localized)
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.horizontal)
                             
                             HStack {
                                 VStack(alignment: .leading) {
-                                    Text("Total Budget")
+                                    Text("trips.totalBudgetLabel".localized)
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                     Text(settingsManager.formatAmount(totalBudget))
@@ -94,7 +94,7 @@ struct StatisticsView: View {
                     // Category Distribution
                     if !categoryDistribution.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Trips by Category")
+                            Text("analytics.tripsByCategory".localized)
                                 .font(.title2)
                                 .fontWeight(.semibold)
                                 .padding(.horizontal)
@@ -103,7 +103,7 @@ struct StatisticsView: View {
                                 HStack {
                                     CategoryBadge(category: category)
                                     Spacer()
-                                    Text("\(categoryDistribution[category] ?? 0)")
+                                    Text("statisticsView.categorydistributioncategory.0".localized)
                                         .font(.headline)
                                 }
                                 .padding()
@@ -116,7 +116,7 @@ struct StatisticsView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("Statistics")
+            .navigationTitle("statistics.title".localized)
             .navigationBarTitleDisplayMode(.large)
             .onAppear {
                 // Settings are loaded globally via SettingsManager.shared

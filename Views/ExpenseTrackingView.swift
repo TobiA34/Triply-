@@ -1,6 +1,6 @@
 //
 //  ExpenseTrackingView.swift
-//  Itinero
+//  Triply
 //
 //  Created on 2024
 //
@@ -12,8 +12,9 @@ import PhotosUI
 struct ExpenseTrackingView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
     @StateObject private var ocrManager = ReceiptOCRManager()
-    @StateObject private var settingsManager = SettingsManager.shared
+    private let settingsManager = SettingsManager.shared
     @State private var showingAddExpense = false
     @State private var selectedExpense: Expense?
     
@@ -40,7 +41,7 @@ struct ExpenseTrackingView: View {
                 VStack(spacing: 16) {
                     HStack {
                         VStack(alignment: .leading) {
-                            Text("Total Expenses")
+                            Text("Total")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                             Text(settingsManager.formatAmount(totalExpenses))
@@ -65,12 +66,16 @@ struct ExpenseTrackingView: View {
                     .padding()
                     .background(
                         LinearGradient(
-                            colors: [Color.red.opacity(0.1), Color.orange.opacity(0.1)],
+                            colors: [themeManager.currentPalette.accent.opacity(0.15), themeManager.currentPalette.accent.opacity(0.05)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     )
                     .cornerRadius(16)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(themeManager.currentPalette.accent.opacity(0.2), lineWidth: 1)
+                    )
                 }
                 .padding(.horizontal)
                 
@@ -85,13 +90,7 @@ struct ExpenseTrackingView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(
-                            LinearGradient(
-                                colors: [Color.red, Color.orange],
-                                startPoint: .leading,
-                                endPoint: .trailing
-                            )
-                        )
+                        .background(themeManager.currentPalette.accent)
                         .cornerRadius(16)
                     }
                     
@@ -142,14 +141,27 @@ struct ExpenseTrackingView: View {
                     }
                 } else {
                     VStack(spacing: 16) {
-                        Image(systemName: "creditcard")
-                            .font(.system(size: 50))
-                            .foregroundColor(.secondary.opacity(0.5))
-                        Text("No expenses yet")
-                            .font(.headline)
-                        Text("Tap 'Add Expense' to start tracking")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
+                        ZStack {
+                            Circle()
+                                .fill(themeManager.currentPalette.accent.opacity(0.1))
+                                .frame(width: 80, height: 80)
+                            
+                            Image(systemName: "receipt")
+                                .font(.system(size: 36))
+                                .foregroundColor(themeManager.currentPalette.accent)
+                        }
+                        
+                        VStack(spacing: 6) {
+                            Text("Ready to track")
+                                .font(.headline)
+                                .foregroundColor(themeManager.currentPalette.text)
+                            
+                            Text("Your budget is perfectly balanced. Tap Add Expense to log your first cost.")
+                                .font(.subheadline)
+                                .foregroundColor(themeManager.currentPalette.secondaryText)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 40)
@@ -179,12 +191,14 @@ struct ExpenseTrackingView: View {
 struct ExpenseRowView: View {
     let expense: Expense
     let settingsManager: SettingsManager
+    @EnvironmentObject var themeManager: ThemeManager
     
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
                 Text(expense.title)
                     .font(.headline)
+                    .foregroundColor(themeManager.currentPalette.text)
                 HStack {
                     Text(expense.date, style: .date)
                         .font(.caption)
@@ -195,7 +209,7 @@ struct ExpenseRowView: View {
                             .font(.caption)
                     }
                 }
-                .foregroundColor(.secondary)
+                .foregroundColor(themeManager.currentPalette.secondaryText)
             }
             Spacer()
             VStack(alignment: .trailing) {
@@ -205,13 +219,18 @@ struct ExpenseRowView: View {
                 if expense.receiptImageData != nil {
                     Image(systemName: "doc.text.image")
                         .font(.caption)
-                        .foregroundColor(.blue)
+                        .foregroundColor(themeManager.currentPalette.accent)
                 }
             }
         }
         .padding()
-        .background(Color(.systemGray6))
-        .cornerRadius(12)
+        .background(themeManager.currentPalette.background)
+        .cornerRadius(16)
+        .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 8, x: 0, y: 2)
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(themeManager.currentPalette.accent.opacity(0.12), lineWidth: 1)
+        )
     }
 }
 
@@ -220,7 +239,7 @@ struct AddExpenseView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
     @StateObject private var ocrManager = ReceiptOCRManager()
-    @StateObject private var settingsManager = SettingsManager.shared
+    private let settingsManager = SettingsManager.shared
     @State private var title = ""
     @State private var limitMessage: String?
     @State private var amount: String = ""
@@ -230,73 +249,185 @@ struct AddExpenseView: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var receiptImage: UIImage?
     @State private var showingImagePicker = false
+    @State private var errorMessage = ""
+    @State private var showErrorAlert = false
     
     private let categories = ["Food", "Transport", "Accommodation", "Entertainment", "Shopping", "Other"]
     
+    var isFormValid: Bool {
+        validateForm().isValid
+    }
+    
+    private func validateForm() -> ValidationResult {
+        let titleResult = FormValidator.validateExpenseTitle(title)
+        if !titleResult.isValid {
+            return titleResult
+        }
+        
+        let amountResult = FormValidator.validateExpenseAmount(amount)
+        if !amountResult.isValid {
+            return amountResult
+        }
+        
+        let dateResult = FormValidator.validateExpenseDate(expenseDate)
+        if !dateResult.isValid {
+            return dateResult
+        }
+        
+        let notesResult = FormValidator.validateNotes(notes)
+        if !notesResult.isValid {
+            return notesResult
+        }
+        
+        return .valid
+    }
+    
     var body: some View {
         NavigationStack {
-            Form {
-                Section("Expense Details") {
-                    TextField("Title", text: $title)
-                        .textInputAutocapitalization(.words)
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Expense Title
+                    ModernTextField(
+                        title: "Expense Title",
+                        text: $title,
+                        icon: "tag.fill",
+                        isRequired: true,
+                        errorMessage: fieldErrors["title"]
+                    )
+                    .textInputAutocapitalization(.words)
                     
-                    HStack {
+                    // Amount
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "dollarsign.circle.fill")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(.secondary)
+                            Text("Amount")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.secondary)
+                            Text("*")
+                                .foregroundColor(.red)
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        
+                        HStack(spacing: 12) {
                         Text(settingsManager.currentCurrency.symbol)
+                                .font(.system(size: 20, weight: .semibold))
                             .foregroundColor(.secondary)
-                        TextField("Amount", text: $amount)
+                                .frame(width: 30)
+                            
+                            TextField("0.00", text: $amount)
+                                .font(.system(size: 20, weight: .semibold))
                             .keyboardType(.decimalPad)
                     }
-                    
-                    Picker("Category", selection: $category) {
-                        ForEach(categories, id: \.self) { cat in
-                            Text(cat).tag(cat)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color(.systemGray6))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(fieldErrors["amount"] != nil ? Color.red : Color.clear, lineWidth: 1.5)
+                        )
+                        
+                        if let error = fieldErrors["amount"] {
+                            Text(error)
+                                .font(.system(size: 12))
+                                .foregroundColor(.red)
+                                .padding(.leading, 4)
                         }
                     }
                     
-                    DatePicker("Date", selection: $expenseDate, displayedComponents: [.date, .hourAndMinute])
-                }
-                
-                Section("Receipt (Optional)") {
+                    // Category
+                    ModernPicker(
+                        title: "Category",
+                        selection: $category,
+                        options: categories.map { (value: $0, label: $0) },
+                        icon: "list.bullet",
+                        isRequired: true
+                    )
+                    
+                    // Date
+                    ModernDatePicker(
+                        title: "Date",
+                        date: $expenseDate,
+                        icon: "calendar",
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                    
+                    // Receipt Section
+                    VStack(alignment: .leading, spacing: 12) {
+                        ModernSectionHeader(title: "Receipt", icon: "camera.fill")
+                        
                     if let receiptImage = receiptImage {
+                            VStack(spacing: 12) {
                         Image(uiImage: receiptImage)
                             .resizable()
                             .scaledToFit()
                             .frame(maxHeight: 200)
-                            .cornerRadius(8)
+                                    .cornerRadius(12)
                         
                         if ocrManager.isProcessing {
                             HStack {
                                 ProgressView()
-                                Text("Scanning receipt...")
-                                    .font(.caption)
-                            }
+                                        Text("Scanning receipt...")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding()
+                                    .frame(maxWidth: .infinity)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color(.systemGray6))
+                                    )
                         } else if !ocrManager.extractedText.isEmpty {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Extracted Text:")
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
+                                    VStack(alignment: .leading, spacing: 8) {
+                                        Text("Extracted Text:")
+                                            .font(.system(size: 13, weight: .semibold))
                                 Text(ocrManager.extractedText)
-                                    .font(.caption)
+                                            .font(.system(size: 14))
                                     .foregroundColor(.secondary)
                             }
                             .padding()
-                            .background(Color(.systemGray6))
-                            .cornerRadius(8)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color(.systemGray6))
+                                    )
                             
                             if let extractedAmount = ocrManager.extractedAmount {
-                                Button("Use Extracted Amount: \(settingsManager.formatAmount(extractedAmount))") {
-                                    amount = String(Int(extractedAmount))
+                                        Button {
+                                            amount = String(format: "%.2f", extractedAmount)
+                                        } label: {
+                                            HStack {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                Text("Use Extracted Amount: \(settingsManager.formatAmount(extractedAmount))")
+                                            }
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(.blue)
+                                        }
+                                    }
                                 }
-                                .font(.caption)
-                            }
-                        }
-                        
-                        Button("Remove Receipt") {
+                                
+                                Button {
                             self.receiptImage = nil
                             ocrManager.extractedText = ""
                             ocrManager.extractedAmount = nil
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "trash")
+                                        Text("Remove Receipt")
                         }
+                                    .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.red)
+                                }
+                            }
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color(.systemGray6))
+                            )
                     } else {
                         PhotosPicker(
                             selection: $selectedPhoto,
@@ -304,31 +435,53 @@ struct AddExpenseView: View {
                         ) {
                             HStack {
                                 Image(systemName: "camera.fill")
-                                Text("Scan Receipt")
+                                    Text("Scan Receipt")
+                                }
+                                .font(.system(size: 17, weight: .medium))
+                                .foregroundColor(.blue)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color(.systemGray6))
+                                )
                             }
                         }
                     }
+                    
+                    // Notes
+                    ModernTextEditor(
+                        title: "Notes",
+                        text: $notes,
+                        icon: "note.text",
+                        height: 100,
+                        errorMessage: fieldErrors["notes"]
+                    )
+                    
+                    // Save Button
+                    ModernButton(
+                        title: "Save Expense",
+                        action: saveExpense,
+                        icon: "checkmark.circle.fill",
+                        isDisabled: !isFormValid
+                    )
                 }
-                
-                Section("Notes") {
-                    TextEditor(text: $notes)
-                        .frame(minHeight: 100)
-                }
+                .padding(20)
             }
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Add Expense")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         dismiss()
                     }
                 }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        saveExpense()
-                    }
-                    .disabled(title.isEmpty || amount.isEmpty)
-                }
+            }
+            .alert("Validation Error", isPresented: $showErrorAlert) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(errorMessage)
             }
             .onChange(of: selectedPhoto) { _, newValue in
                 Task {
@@ -350,7 +503,17 @@ struct AddExpenseView: View {
         }
     }
     
+    @State private var fieldErrors: [String: String] = [:]
+    
     private func saveExpense() {
+        // Validate before saving
+        let validation =  validateForm()
+        guard validation.isValid else {
+            errorMessage = validation.errorMessage ?? "Please check your expense details"
+            showErrorAlert = true
+            return
+        }
+        
         let limitCheck = ProLimiter.shared.canAddExpense(
             currentExpenseCount: trip.expenses?.count ?? 0,
             tripName: trip.name
@@ -379,15 +542,15 @@ struct AddExpenseView: View {
             trip.expenses = []
         }
         trip.expenses?.append(expense)
-        
-        // Update a property to trigger SwiftData change detection
-        trip.notes = trip.notes // Force change detection
+        trip.lastModified = Date() // Trigger change detection efficiently
         
         do {
             try modelContext.save()
             dismiss()
         } catch {
+            #if DEBUG
             print("Failed to save expense: \(error)")
+            #endif
         }
     }
 }
@@ -395,7 +558,7 @@ struct AddExpenseView: View {
 struct ExpenseDetailView: View {
     let expense: Expense
     @Environment(\.dismiss) var dismiss
-    @StateObject private var settingsManager = SettingsManager.shared
+    private let settingsManager = SettingsManager.shared
     
     var body: some View {
         NavigationStack {
@@ -467,4 +630,3 @@ struct ExpenseDetailView: View {
     ))
     .modelContainer(for: [TripModel.self, Expense.self], inMemory: true)
 }
-

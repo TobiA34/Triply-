@@ -109,8 +109,8 @@ class EnhancedLocationManager: NSObject, ObservableObject {
         locationManager.stopUpdatingLocation()
         locationManager.stopMonitoringSignificantLocationChanges()
         
-        if currentLocation != nil {
-            status = .located(currentLocation!)
+        if let location = currentLocation {
+            status = .located(location)
         } else {
             status = .authorized
         }

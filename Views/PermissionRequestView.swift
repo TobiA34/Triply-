@@ -22,31 +22,31 @@ struct PermissionRequestView: View {
     private let permissions: [PermissionItem] = [
         PermissionItem(
             icon: "camera.fill",
-            title: "Camera Access",
+            title: "permissionRequestView.camera.access".localized,
             description: "Take photos of tickets, receipts, and travel documents",
             color: .blue
         ),
         PermissionItem(
             icon: "photo.on.rectangle",
-            title: "Photo Library",
+            title: "permissionRequestView.photo.library".localized,
             description: "Select and save travel documents from your photos",
             color: .purple
         ),
         PermissionItem(
             icon: "location.fill",
-            title: "Location Services",
+            title: "permissionRequestView.location.services".localized,
             description: "Show trip destinations on maps and provide location-based features",
             color: .green
         ),
         PermissionItem(
             icon: "mic.fill",
-            title: "Microphone & Speech",
+            title: "permissionRequestView.microphone.speech".localized,
             description: "Record voice notes and convert them to text",
             color: .orange
         ),
         PermissionItem(
             icon: "calendar",
-            title: "Calendar Access",
+            title: "permissionRequestView.calendar.access".localized,
             description: "Add your trip itinerary and events to your calendar",
             color: .red
         )
@@ -69,12 +69,12 @@ struct PermissionRequestView: View {
                         .font(.system(size: 60))
                         .foregroundColor(.blue)
                     
-                    Text("Welcome to Itinero!")
+                    Text("permissionRequestView.welcome.to.itinero".localized)
                         .font(.largeTitle)
                         .foregroundColor(.primary)
                         .fontWeight(.bold)
                     
-                    Text("We need a few permissions to provide the best travel planning experience")
+                    Text("permissionRequestView.we.need.a.few.permissions".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -100,7 +100,7 @@ struct PermissionRequestView: View {
                     if isRequesting {
                         ProgressView()
                             .scaleEffect(1.2)
-                        Text("Requesting permissions...")
+                        Text("permissionRequestView.requesting.permissions".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     } else {
@@ -118,7 +118,7 @@ struct PermissionRequestView: View {
                                 onComplete()
                             }
                         } label: {
-                            Text("Grant All Permissions")
+                            Text("permissionRequestView.grant.all.permissions".localized)
                                 .font(.headline)
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
@@ -137,7 +137,7 @@ struct PermissionRequestView: View {
                         Button {
                             onComplete()
                         } label: {
-                            Text("Skip for Now")
+                            Text("permissionRequestView.skip.for.now".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }

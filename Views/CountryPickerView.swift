@@ -37,11 +37,11 @@ struct CountryPickerView: View {
                 
                 countriesListView
             }
-            .navigationTitle("Select Country")
+            .navigationTitle("country.selectCountry".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }
@@ -70,7 +70,7 @@ struct CountryPickerView: View {
     private var regionFilterView: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 12) {
-                regionButton(title: "All", isSelected: selectedRegion == nil) {
+                regionButton(title: "country.all".localized, isSelected: selectedRegion == nil) {
                     selectedRegion = nil
                 }
                 
@@ -113,9 +113,9 @@ struct CountryPickerView: View {
             Image(systemName: "globe")
                 .font(.system(size: 50))
                 .foregroundColor(.secondary.opacity(0.5))
-            Text("No countries found")
+            Text("search.noCountries".localized)
                 .font(.headline)
-            Text("Try a different search term")
+            Text("search.tryDifferent".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }

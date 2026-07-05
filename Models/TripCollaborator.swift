@@ -23,14 +23,17 @@ final class TripCollaborator {
         tripId: UUID,
         name: String,
         email: String? = nil,
-        role: String = "viewer"
+        role: String = "viewer",
+        invitedAt: Date = Date(),
+        joinedAt: Date? = nil
     ) {
         self.id = id
         self.tripId = tripId
         self.name = name
         self.email = email
         self.role = role
-        self.invitedAt = Date()
+        self.invitedAt = invitedAt
+        self.joinedAt = joinedAt
     }
 }
 

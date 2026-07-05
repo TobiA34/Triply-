@@ -58,5 +58,26 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.itinero.trip</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>itinero</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+	</array>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
+	<key>RevenueCatAPIKey</key>
+	<string>appl_hCVOroIcXfOaoshwTdYHYnnpzvU</string>
+	<key>AppTermsOfUseURL</key>
+	<string>https://example.com/terms</string>
+	<key>AppPrivacyPolicyURL</key>
+	<string>https://example.com/privacy</string>
 </dict>
 </plist>

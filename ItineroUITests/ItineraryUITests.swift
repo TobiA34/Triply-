@@ -89,6 +89,23 @@ final class ItineraryUITests: XCTestCase {
         }
     }
     
+    /// Auto-Generate Itinerary: tap the button and verify items appear (trip must have destinations and empty itinerary).
+    func testAutoGenerateItinerary() throws {
+        navigateToItinerary()
+        
+        let autoGenerateButton = app.buttons["Auto-Generate Itinerary"].firstMatch
+        guard autoGenerateButton.waitForExistence(timeout: 4), autoGenerateButton.isHittable else {
+            throw XCTSkip("Auto-Generate Itinerary button not found (trip may have itinerary or no destinations)")
+        }
+        autoGenerateButton.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        // After generation we should see itinerary content (e.g. "Explore" or "Arrive" or "Day 1")
+        let exploreText = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Explore' OR label CONTAINS[c] 'Arrive' OR label CONTAINS[c] 'Travel'")).firstMatch
+        let dayText = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] 'Day 1' OR label CONTAINS[c] 'Day 2'")).firstMatch
+        let hasGeneratedContent = exploreText.waitForExistence(timeout: 2) || dayText.waitForExistence(timeout: 2)
+        XCTAssertTrue(hasGeneratedContent, "Auto-generate should produce itinerary items (Explore/Arrive/Travel or Day N)")
+    }
+    
     // MARK: - Helper Methods
     
     private func navigateToTrip() {

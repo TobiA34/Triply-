@@ -30,7 +30,7 @@ public enum LocalWishState: Hashable, Identifiable {
     var description: String {
         switch self {
         case .all:
-            return "All"
+            return WishKit.config.localization.stateAll
         case .library(let wishState):
             return wishState.description
         }
@@ -160,14 +160,14 @@ public struct WishlistViewIOS: View {
                     Image(systemName: "exclamationmark.triangle")
                         .font(.system(size: 40))
                         .foregroundColor(.orange)
-                    Text("Unable to Load Feature Requests")
+                    Text(WishKit.config.localization.loadErrorTitle)
                         .font(.headline)
                     Text(errorMessage)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal)
-                    Button("Retry") {
+                    Button(WishKit.config.localization.retry) {
                         wishModel.fetchList()
                     }
                     .buttonStyle(.borderedProminent)

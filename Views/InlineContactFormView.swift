@@ -21,62 +21,72 @@ struct InlineContactFormView: View {
     }
 
     var body: some View {
+        formContent
+            .navigationTitle("settings.contact".localized)
+            .navigationBarTitleDisplayMode(.inline)
+            .scrollContentBackground(.hidden)
+            .background(background)
+            .onChange(of: name) { _, _ in validate() }
+            .onChange(of: email) { _, _ in validate() }
+            .onChange(of: message) { _, _ in validate() }
+    }
+
+    private var formContent: some View {
         Form {
-            Section(header: Text("Your Information")) {
-                TextField("Name", text: $name)
-                    .textContentType(.name)
-                    .autocapitalization(.words)
-                    .onChange(of: name) { oldValue, newValue in
-                        if ContentFilter.containsBlockedContent(newValue) {
-                            // Defer to avoid publishing during view updates
-                            Task { @MainActor in
-                            name = oldValue
-                            }
-                        }
-                    }
-                TextField("Email", text: $email)
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .autocapitalization(.none)
-                    .onChange(of: email) { oldValue, newValue in
-                        if ContentFilter.containsBlockedContent(newValue) {
-                            // Defer to avoid publishing during view updates
-                            Task { @MainActor in
-                            email = oldValue
-                            }
-                        }
-                    }
+            Section(header: Text("contact.yourInfo".localized)) {
+                nameField
+                emailField
             }
-            Section(header: Text("Message")) {
-                TextEditor(text: $message)
-                    .frame(minHeight: 150)
-                    .onChange(of: message) { oldValue, newValue in
-                        if ContentFilter.containsBlockedContent(newValue) {
-                            // Defer to avoid publishing during view updates
-                            Task { @MainActor in
-                            message = oldValue
-                            }
-                        }
-                    }
+            Section(header: Text("settings.message".localized)) {
+                messageField
             }
             Section {
-                Button {
-                    // Minimal placeholder send action
-                    didSend = true
-                    dismiss()
-                } label: {
-                    Label("Send", systemImage: "paperplane.fill")
-                }
-                .disabled(!isValid)
+                sendButton
             }
         }
-        .navigationTitle("Contact")
-        .navigationBarTitleDisplayMode(.inline)
-        .scrollContentBackground(.hidden)
-        .background(background)
-        .onChange(of: name) { _, _ in validate() }
-        .onChange(of: email) { _, _ in validate() }
-        .onChange(of: message) { _, _ in validate() }
+    }
+
+    private var nameField: some View {
+        TextField("Name", text: $name)
+            .textContentType(.name)
+            .autocapitalization(.words)
+            .onChange(of: name) { oldValue, newValue in
+                if ContentFilter.containsBlockedContent(newValue) {
+                    Task { @MainActor in name = oldValue }
+                }
+            }
+    }
+
+    private var emailField: some View {
+        TextField("Email", text: $email)
+            .textContentType(.emailAddress)
+            .keyboardType(.emailAddress)
+            .autocapitalization(.none)
+            .onChange(of: email) { oldValue, newValue in
+                if ContentFilter.containsBlockedContent(newValue) {
+                    Task { @MainActor in email = oldValue }
+                }
+            }
+    }
+
+    private var messageField: some View {
+        TextEditor(text: $message)
+            .frame(minHeight: 150)
+            .onChange(of: message) { oldValue, newValue in
+                if ContentFilter.containsBlockedContent(newValue) {
+                    Task { @MainActor in message = oldValue }
+                }
+            }
+    }
+
+    private var sendButton: some View {
+        Button {
+            didSend = true
+            dismiss()
+        } label: {
+            Label("misc.send".localized, systemImage: "paperplane.fill")
+        }
+        .disabled(!isValid)
     }
 
     private var isValid: Bool {

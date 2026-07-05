@@ -15,6 +15,7 @@ struct AddTripView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) private var modelContext
     @Environment(\.requestReview) private var requestReview
+    @EnvironmentObject private var themeManager: ThemeManager
     @StateObject private var searchManager = DestinationSearchManager()
     @StateObject private var proLimiter = ProLimiter.shared
     @StateObject private var templateManager = SmartTemplateManager.shared
@@ -49,6 +50,10 @@ struct AddTripView: View {
     @State private var limitAlertMessage: String?
     @State private var showLimitAlert = false
     
+    // Cover Photo
+    @State private var coverImageData: Data? = nil
+    @State private var showingImagePicker = false
+
     // Additional Fields
     @State private var travelCompanions: Int = 1
     @State private var priority: TripPriority = .medium
@@ -71,6 +76,20 @@ struct AddTripView: View {
     @State private var fieldErrors: [String: String] = [:]
     
     private let categories = ["General", "Adventure", "Business", "Relaxation", "Family", "Romantic", "Solo", "Group"]
+    
+    private func localizedCategory(_ category: String) -> String {
+        switch category {
+        case "General": return "addTrip.categoryGeneral".localized
+        case "Adventure": return "addTrip.categoryAdventure".localized
+        case "Business": return "addTrip.categoryBusiness".localized
+        case "Relaxation": return "addTrip.categoryRelaxation".localized
+        case "Family": return "addTrip.categoryFamily".localized
+        case "Romantic": return "addTrip.categoryRomantic".localized
+        case "Solo": return "addTrip.categorySolo".localized
+        case "Group": return "addTrip.categoryGroup".localized
+        default: return category
+        }
+    }
     
     var duration: Int {
         Calendar.current.dateComponents([.day], from: startDate, to: endDate).day ?? 0
@@ -104,7 +123,7 @@ struct AddTripView: View {
         
         // Validate total budget (mandatory)
         if budget.isEmpty {
-            return .invalid("Please enter a total trip budget.")
+            return .invalid("addTrip.enterTotalBudget".localized)
         } else {
             let budgetResult = FormValidator.validateBudget(budget)
             if !budgetResult.isValid {
@@ -165,7 +184,7 @@ struct AddTripView: View {
     
     var formCompletionPercentage: Int {
         var completed = 0
-        let total = 8
+        let total = 9
         
         if !tripName.isEmpty { completed += 1 }
         if selectedCategory != "General" { completed += 1 }
@@ -175,6 +194,8 @@ struct AddTripView: View {
         if !notes.isEmpty { completed += 1 }
         if !tags.isEmpty { completed += 1 }
         if hasInsurance || reminderDaysBefore > 0 { completed += 1 }
+        
+        if coverImageData != nil { completed += 1 }
         
         return Int((Double(completed) / Double(total)) * 100)
     }
@@ -187,6 +208,39 @@ struct AddTripView: View {
             }
             .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
+            
+            // Cover Photo Section
+            Section {
+                Button(action: { showingImagePicker = true }) {
+                    ZStack {
+                        if let data = coverImageData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 160)
+                                .clipped()
+                                .overlay(Color.black.opacity(0.3))
+                        } else {
+                            Rectangle()
+                                .fill(themeManager.currentPalette.accent.opacity(0.1))
+                                .frame(height: 160)
+                        }
+                        
+                        VStack(spacing: 8) {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 32))
+                            Text(coverImageData == nil ? "Add Cover Photo" : "Change Photo")
+                                .font(.headline)
+                        }
+                        .foregroundColor(coverImageData == nil ? themeManager.currentPalette.accent : .white)
+                    }
+                }
+            }
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+            .cornerRadius(16)
+            .padding(.bottom, 8)
+            .listRowSeparator(.hidden)
             
             // Quick Templates
             quickTemplatesSection
@@ -215,36 +269,53 @@ struct AddTripView: View {
             // Quick Stats Preview
             statsPreviewSection
         }
+        .scrollContentBackground(.hidden)
+        .background(themeManager.currentPalette.background)
         .formStyle(.grouped)
-        .navigationTitle("New Trip")
+        .navigationTitle("trips.new".localized)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: { dismiss() }) {
-                    HStack(spacing: 4) {
+                Button(action: {
+                    HapticManager.shared.selection()
+                    dismiss()
+                }) {
+                    HStack(spacing: 6) {
                         Image(systemName: "chevron.left")
-                        Text("Back")
+                            .font(.body.weight(.semibold))
+                        Text("common.back".localized)
                     }
-                    .foregroundColor(.blue)
+                    .foregroundColor(themeManager.currentPalette.accent)
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
+                Button("common.save".localized) {
                     saveTrip()
                 }
                 .disabled(!isFormValid || isSaving)
                 .fontWeight(.semibold)
+                .foregroundColor(isFormValid && !isSaving ? themeManager.currentPalette.accent : .secondary)
+                .accessibilityLabel("common.save".localized)
+                .accessibilityHint("addTrip.accessibilitySaveHint".localized)
+                .accessibilityIdentifier("Save")
             }
         }
-        .alert("Limit Reached", isPresented: $showLimitAlert) {
-            Button("Upgrade to Pro") {
+        .alert("alert.limitReached".localized, isPresented: $showLimitAlert) {
+            Button("pro.upgrade".localized) {
                 showingPaywall = true
             }
-            Button("Cancel", role: .cancel) { }
+            Button("common.cancel".localized, role: .cancel) { }
         } message: {
             if let message = limitAlertMessage {
                 Text(message)
             }
+        }
+        .sheet(isPresented: $showingImagePicker) {
+            ImagePickerView(onImageSelected: { image in
+                if let imageData = image.jpegData(compressionQuality: 0.8) {
+                    coverImageData = imageData
+                }
+            })
         }
         .sheet(isPresented: $showingPaywall) {
             NavigationStack {
@@ -254,7 +325,10 @@ struct AddTripView: View {
         .keyboardDoneButton()
         .fullScreenCover(isPresented: $showingTemplateLibrary) {
             SmartTemplateLibraryView { template in
-                applySmartTemplate(template)
+                Task { @MainActor in
+                    applySmartTemplate(template)
+                    showingTemplateLibrary = false
+                }
             }
         }
         .fullScreenCover(isPresented: $showingDestinationSearch) {
@@ -277,45 +351,50 @@ struct AddTripView: View {
     // MARK: - Quick Templates Section
     private var quickTemplatesSection: some View {
         Section {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: DesignSystem.Spacing.sm) {
                 HStack {
-                    Label("Quick Templates", systemImage: "sparkles")
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                    Label("addTrip.quickTemplates".localized, systemImage: "sparkles")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(themeManager.currentPalette.text)
                     Spacer()
-                    Button(action: { showTemplates.toggle() }) {
-                        Image(systemName: showTemplates ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.secondary)
-                            .font(.caption)
+                    Button(action: {
+                        HapticManager.shared.selection()
+                        showTemplates.toggle()
+                    }) {
+                        Image(systemName: showTemplates ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                            .font(.title3)
+                            .foregroundColor(themeManager.currentPalette.accent)
                     }
                 }
                 
                 if showTemplates {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: DesignSystem.Spacing.sm) {
                         HStack {
-                            Text("Tap a template to quickly fill in common trip details")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            Text("addTrip.tapTemplateHint".localized)
+                                .font(.subheadline)
+                                .foregroundColor(themeManager.currentPalette.secondaryText)
                             
                             Spacer()
                             
                             Button {
+                                HapticManager.shared.selection()
                                 showingTemplateLibrary = true
                             } label: {
-                                HStack(spacing: 4) {
+                                HStack(spacing: 6) {
                                     Image(systemName: "square.grid.2x2")
-                                    Text("Browse All")
+                                    Text("addTrip.browseAll".localized)
+                                        .fontWeight(.medium)
                                 }
-                                .font(.caption)
-                                .foregroundColor(.blue)
+                                .font(.subheadline)
+                                .foregroundColor(themeManager.currentPalette.accent)
                             }
                         }
                         
                         ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 12) {
+                            HStack(spacing: DesignSystem.Spacing.sm) {
                                 TemplateCard(
                                     icon: "beach.umbrella.fill",
-                                    title: "Beach Vacation",
+                                    title: "addTrip.beachVacation".localized,
                                     color: .blue,
                                     action: {
                                         applyTemplate(.beach)
@@ -323,7 +402,7 @@ struct AddTripView: View {
                                 )
                                 TemplateCard(
                                     icon: "mountain.2.fill",
-                                    title: "Mountain Adventure",
+                                    title: "addTrip.mountainAdventure".localized,
                                     color: .green,
                                     action: {
                                         applyTemplate(.mountain)
@@ -331,7 +410,7 @@ struct AddTripView: View {
                                 )
                                 TemplateCard(
                                     icon: "building.2.fill",
-                                    title: "City Break",
+                                    title: "addTrip.cityBreak".localized,
                                     color: .purple,
                                     action: {
                                         applyTemplate(.city)
@@ -339,7 +418,7 @@ struct AddTripView: View {
                                 )
                                 TemplateCard(
                                     icon: "airplane",
-                                    title: "Business Trip",
+                                    title: "addTrip.businessTrip".localized,
                                     color: .orange,
                                     action: {
                                         applyTemplate(.business)
@@ -347,38 +426,46 @@ struct AddTripView: View {
                                 )
                                 TemplateCard(
                                     icon: "heart.fill",
-                                    title: "Romantic Getaway",
+                                    title: "addTrip.romanticGetaway".localized,
                                     color: .pink,
                                     action: {
                                         applyTemplate(.romantic)
                                     }
                                 )
                             }
-                            .padding(.horizontal, 4)
+                            .padding(.horizontal, DesignSystem.Spacing.xxs)
                         }
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Get Started")
-                .font(.headline)
+            Text("addTrip.getStarted".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
     // MARK: - Tips Section
     private var tipsSection: some View {
         Section {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: DesignSystem.Spacing.sm) {
                 HStack {
-                    Label("Tips & Suggestions", systemImage: "lightbulb.fill")
-                        .font(.headline)
-                        .foregroundColor(.primary)
+                    Label("addTrip.tipsSuggestions".localized, systemImage: "lightbulb.fill")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(themeManager.currentPalette.text)
                     Spacer()
-                    Button(action: { showTips.toggle() }) {
-                        Image(systemName: showTips ? "chevron.up" : "chevron.down")
-                            .foregroundColor(.secondary)
-                            .font(.caption)
+                    Button(action: {
+                        HapticManager.shared.selection()
+                        showTips.toggle()
+                    }) {
+                        Image(systemName: showTips ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                            .font(.title3)
+                            .foregroundColor(themeManager.currentPalette.accent)
                     }
                 }
                 
@@ -393,15 +480,15 @@ struct AddTripView: View {
                         if !selectedDestinations.isEmpty {
                             TipRow(
                                 icon: "mappin.circle.fill",
-                                text: "Add multiple destinations to create a multi-city trip",
+                                text: "addTrip.tipMultiCity".localized,
                                 color: .blue
                             )
                         }
                         
                         if totalBudget > 0 {
                             TipRow(
-                                icon: "dollarsign.circle.fill",
-                                text: "Break down your budget by category for better tracking",
+                                icon: settingsManager.currencyIconName(filled: true),
+                                text: "addTrip.tipBudget".localized,
                                 color: .green
                             )
                         }
@@ -409,7 +496,7 @@ struct AddTripView: View {
                         if duration > 7 {
                             TipRow(
                                 icon: "calendar.badge.clock",
-                                text: "For longer trips, consider adding an itinerary to stay organized",
+                                text: "addTrip.tipItinerary".localized,
                                 color: .purple
                             )
                         }
@@ -418,17 +505,22 @@ struct AddTripView: View {
                         if selectedDestinations.isEmpty && totalBudget == 0 {
                             TipRow(
                                 icon: "arrow.right.circle.fill",
-                                text: "Start planning your trip by adding destinations and setting a budget",
+                                text: "addTrip.tipStartPlanning".localized,
                                 color: .blue
                             )
                         }
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Helpful Tips")
-                .font(.headline)
+            Text("addTrip.helpfulTips".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
@@ -436,7 +528,7 @@ struct AddTripView: View {
     private var statsPreviewSection: some View {
         Section {
             VStack(spacing: 12) {
-                Text("Trip Summary")
+                Text("addTrip.tripSummary".localized)
                     .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
@@ -444,22 +536,22 @@ struct AddTripView: View {
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         StatCard(
                             icon: "calendar",
-                            label: "Duration",
-                            value: "\(duration) \(duration == 1 ? "day" : "days")",
+                            label: "trips.duration".localized,
+                            value: "\(duration) \(duration == 1 ? "trips.day".localized : "trips.days".localized)",
                             color: .blue
                         )
                         
                         StatCard(
                             icon: "person.2.fill",
-                            label: "Travelers",
+                            label: "addTripView.travelers".localized,
                             value: "\(travelCompanions)",
                             color: .purple
                         )
                         
                         if totalBudget > 0 {
                             StatCard(
-                                icon: "dollarsign.circle.fill",
-                                label: "Budget",
+                                icon: settingsManager.currencyIconName(filled: true),
+                                label: "trips.budget".localized,
                                 value: "\(settingsManager.currentCurrency.symbol)\(String(format: "%.0f", totalBudget))",
                                 color: .green
                             )
@@ -467,7 +559,7 @@ struct AddTripView: View {
                         
                         StatCard(
                             icon: "mappin.circle.fill",
-                            label: "destinations",
+                            label: "addTripView.destinations".localized,
                             value: "\(selectedDestinations.count)",
                             color: .orange
                         )
@@ -476,20 +568,27 @@ struct AddTripView: View {
                     HStack {
                         Image(systemName: "info.circle")
                             .foregroundColor(.secondary)
-                        Text("Complete the form to see trip summary")
+                        Text("addTrip.completeFormForSummary".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
+                    .padding(DesignSystem.Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                            .fill(Color(.tertiarySystemGroupedBackground))
+                    )
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Preview")
-                .font(.headline)
+            Text("addTrip.preview".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
@@ -497,19 +596,19 @@ struct AddTripView: View {
     private func getCategoryTip() -> String {
         switch selectedCategory {
         case "Adventure":
-            return "Pack light and include adventure gear. Consider travel insurance for activities."
+            return "addTrip.tipAdventure".localized
         case "Business":
-            return "Keep receipts for expenses. Plan meetings in advance and check time zones."
+            return "addTrip.tipBusiness".localized
         case "Relaxation":
-            return "Book spa appointments early. Pack comfortable clothing and don't over-schedule."
+            return "addTrip.tipRelaxation".localized
         case "Family":
-            return "Plan kid-friendly activities. Pack snacks and entertainment for travel time."
+            return "addTrip.tipFamily".localized
         case "Romantic":
-            return "Make dinner reservations in advance. Consider special experiences or surprises."
+            return "addTrip.tipRomantic".localized
         case "Solo":
-            return "Stay connected with family. Share your itinerary and check in regularly."
+            return "addTrip.tipSolo".localized
         default:
-            return "Add destinations and set a budget to get personalized AI suggestions for your trip."
+            return "addTrip.tipStartPlanning".localized
         }
     }
     
@@ -553,7 +652,7 @@ struct AddTripView: View {
         withAnimation {
             switch template {
             case .beach:
-                tripName = "Beach Vacation"
+                tripName = "addTrip.beachVacation".localized
                 selectedCategory = "Relaxation"
                 travelMode = .flight
                 accommodationType = .resort
@@ -561,7 +660,7 @@ struct AddTripView: View {
                 tags = ["beach", "relaxation", "sun"]
                 reminderDaysBefore = 3
             case .mountain:
-                tripName = "Mountain Adventure"
+                tripName = "addTrip.mountainAdventure".localized
                 selectedCategory = "Adventure"
                 travelMode = .car
                 accommodationType = .camping
@@ -569,7 +668,7 @@ struct AddTripView: View {
                 tags = ["hiking", "nature", "adventure"]
                 reminderDaysBefore = 5
             case .city:
-                tripName = "City Break"
+                tripName = "addTrip.cityBreak".localized
                 selectedCategory = "General"
                 travelMode = .flight
                 accommodationType = .hotel
@@ -577,7 +676,7 @@ struct AddTripView: View {
                 tags = ["city", "culture", "sightseeing"]
                 reminderDaysBefore = 2
             case .business:
-                tripName = "Business Trip"
+                tripName = "addTrip.businessTrip".localized
                 selectedCategory = "Business"
                 travelMode = .flight
                 accommodationType = .hotel
@@ -585,7 +684,7 @@ struct AddTripView: View {
                 tags = ["business", "work"]
                 reminderDaysBefore = 1
             case .romantic:
-                tripName = "Romantic Getaway"
+                tripName = "addTrip.romanticGetaway".localized
                 selectedCategory = "Romantic"
                 travelMode = .flight
                 accommodationType = .resort
@@ -599,85 +698,112 @@ struct AddTripView: View {
     
     // MARK: - Header Section
     private var headerSection: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: DesignSystem.Spacing.lg) {
             // Trip Name or Welcome Message
-            VStack(spacing: 4) {
+            VStack(spacing: DesignSystem.Spacing.xs) {
                 if !tripName.isEmpty {
                     Text(tripName)
-                        .font(.title2)
-                        .fontWeight(.bold)
-                        .foregroundColor(.primary)
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(themeManager.currentPalette.text)
                 } else {
-                    VStack(spacing: 4) {
-                        Text("New Adventure Awaits")
-                            .font(.title2)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.primary)
-                        Text("Fill in the details below to get started")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                    VStack(spacing: DesignSystem.Spacing.xs) {
+                        Text("addTrip.newAdventureAwaits".localized)
+                            .font(.system(size: 22, weight: .bold))
+                            .foregroundColor(themeManager.currentPalette.text)
+                        Text("addTrip.fillDetailsBelow".localized)
+                            .font(.subheadline)
+                            .foregroundColor(themeManager.currentPalette.secondaryText)
                     }
                 }
             }
             
+            // Progress bar
+            VStack(alignment: .leading, spacing: DesignSystem.Spacing.xs) {
+                HStack {
+                    Text("addTrip.progress".localized)
+                        .font(.caption)
+                        .fontWeight(.medium)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
+                    Spacer()
+                    Text("addTripView.formcompletionpercentage".localized(formCompletionPercentage))
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(formCompletionPercentage == 100 ? .green : themeManager.currentPalette.accent)
+                }
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.pill)
+                            .fill(Color(.systemGray5))
+                            .frame(height: 6)
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.pill)
+                            .fill(formCompletionPercentage == 100 ? Color.green : themeManager.currentPalette.accent)
+                            .frame(width: max(0, geo.size.width * CGFloat(formCompletionPercentage) / 100), height: 6)
+                    }
+                }
+                .frame(height: 6)
+            }
+            
             // Stats Row
-            HStack(spacing: 12) {
+            HStack(spacing: DesignSystem.Spacing.sm) {
                 if duration > 0 {
                     HStack(spacing: 6) {
                         Image(systemName: "calendar")
-                            .font(.caption)
-                        Text("\(duration) \(duration == 1 ? "day" : "days")")
+                            .font(.system(size: 12, weight: .medium))
+                        Text("\(duration) \(duration == 1 ? "trips.day".localized : "trips.days".localized)")
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .fontWeight(.semibold)
                     }
-                    .foregroundColor(.blue)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.blue.opacity(0.1))
-                    .cornerRadius(8)
+                    .foregroundColor(themeManager.currentPalette.accent)
+                    .padding(.horizontal, DesignSystem.Spacing.sm)
+                    .padding(.vertical, DesignSystem.Spacing.xs)
+                    .background(themeManager.currentPalette.accent.opacity(0.12))
+                    .clipShape(Capsule())
                 }
-                
-                // Form Completion Indicator
-                HStack(spacing: 6) {
-                    Image(systemName: formCompletionPercentage == 100 ? "checkmark.circle.fill" : "circle.fill")
-                        .font(.caption)
-                        .foregroundColor(formCompletionPercentage == 100 ? .green : (formCompletionPercentage > 50 ? .orange : .secondary))
-                    Text("\(formCompletionPercentage)%")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                }
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
                 
                 if !selectedDestinations.isEmpty {
                     HStack(spacing: 6) {
                         Image(systemName: "mappin.circle.fill")
-                            .font(.caption)
-                        Text("\(selectedDestinations.count)")
+                            .font(.system(size: 12))
+                        Text("addTripView.selecteddestinationscount".localized(selectedDestinations.count))
                             .font(.subheadline)
-                            .fontWeight(.medium)
+                            .fontWeight(.semibold)
                     }
                     .foregroundColor(.orange)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Color.orange.opacity(0.1))
-                    .cornerRadius(8)
+                    .padding(.horizontal, DesignSystem.Spacing.sm)
+                    .padding(.vertical, DesignSystem.Spacing.xs)
+                    .background(Color.orange.opacity(0.12))
+                    .clipShape(Capsule())
+                }
+                
+                if totalBudget > 0 {
+                    HStack(spacing: 6) {
+                        Image(systemName: settingsManager.currencyIconName(filled: true))
+                            .font(.system(size: 12))
+                        Text(settingsManager.formatAmount(totalBudget))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .lineLimit(1)
+                    }
+                    .foregroundColor(.green)
+                    .padding(.horizontal, DesignSystem.Spacing.sm)
+                    .padding(.vertical, DesignSystem.Spacing.xs)
+                    .background(Color.green.opacity(0.12))
+                    .clipShape(Capsule())
                 }
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 20)
-        .padding(.horizontal, 16)
+        .padding(DesignSystem.Spacing.lg)
         .background(
-            LinearGradient(
-                colors: [Color.blue.opacity(0.08), Color.purple.opacity(0.08)],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            RoundedRectangle(cornerRadius: DesignSystem.Radius.lg)
+                .fill(themeManager.currentPalette.background)
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignSystem.Radius.lg)
+                        .stroke(themeManager.currentPalette.accent.opacity(0.15), lineWidth: 1)
+                )
+                .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
         )
+        .padding(.horizontal, DesignSystem.Spacing.md)
     }
     
     // MARK: - Basic Info Section
@@ -686,18 +812,18 @@ struct AddTripView: View {
             VStack(spacing: 20) {
                 // Trip Name
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Trip Name", systemImage: "text.book.closed.fill")
+                    Label("trips.name".localized, systemImage: "text.book.closed.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     TextField("", text: $tripName)
                         .textFieldStyle(.plain)
                         .foregroundColor(.primary)
                         .font(.system(size: 17))
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 20)
+                        .padding(.horizontal, DesignSystem.Spacing.md)
+                        .padding(.vertical, DesignSystem.Spacing.lg)
                         .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color(.systemGray6))
+                            RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                                .fill(Color(.tertiarySystemGroupedBackground))
                         )
                         .accessibilityIdentifier("Trip Name")
                         .textInputAutocapitalization(.words)
@@ -735,7 +861,7 @@ struct AddTripView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "info.circle")
                                 .font(.caption2)
-                            Text("Give your trip a memorable name")
+                            Text("addTrip.giveMemorableName".localized)
                                 .font(.caption)
                         }
                         .foregroundColor(.secondary)
@@ -744,7 +870,7 @@ struct AddTripView: View {
                 
                 // Category
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Category", systemImage: "tag.fill")
+                    Label("addTrip.category".localized, systemImage: "tag.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     Menu {
@@ -753,7 +879,7 @@ struct AddTripView: View {
                                 selectedCategory = category
                             } label: {
                                 HStack {
-                                    Text(category)
+                                    Text(localizedCategory(category))
                                     if selectedCategory == category {
                                         Image(systemName: "checkmark")
                                     }
@@ -762,25 +888,27 @@ struct AddTripView: View {
                         }
                     } label: {
                         HStack {
-                            Text(selectedCategory)
+                            Text(localizedCategory(selectedCategory))
                             Spacer()
                             Image(systemName: "chevron.down")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(8)
+                        .padding(DesignSystem.Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                                .fill(Color(.tertiarySystemGroupedBackground))
+                        )
                     }
                 }
                 
                 // Dates
                 VStack(alignment: .leading, spacing: 12) {
-                    Label("Start Date", systemImage: "calendar")
+                    Label("addTrip.startDate".localized, systemImage: "calendar")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
-                    DatePicker("Start Date", selection: $startDate, displayedComponents: .date)
+                    DatePicker("trips.startDate".localized, selection: $startDate, displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .onChange(of: startDate) { _, _ in
                             Task { @MainActor in
@@ -788,7 +916,7 @@ struct AddTripView: View {
                             }
                         }
                     
-                    DatePicker("End Date", selection: $endDate, in: startDate..., displayedComponents: .date)
+                    DatePicker("trips.endDate".localized, selection: $endDate, in: startDate..., displayedComponents: .date)
                         .datePickerStyle(.compact)
                         .onChange(of: endDate) { _, _ in
                             Task { @MainActor in
@@ -810,7 +938,7 @@ struct AddTripView: View {
                         HStack {
                             Image(systemName: "exclamationmark.triangle.fill")
                                 .foregroundColor(.orange)
-                            Text("End date must be after start date")
+                            Text("addTrip.endDateAfterStart".localized)
                                 .font(.caption)
                                 .foregroundColor(.orange)
                         }
@@ -818,10 +946,15 @@ struct AddTripView: View {
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Basic Information")
-                .font(.headline)
+            Text("addTrip.basicInfo".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
@@ -830,7 +963,7 @@ struct AddTripView: View {
         Section {
             VStack(spacing: 12) {
                 Button(action: {
-                    let check = proLimiter.canAddDestination(currentDestinationCount: selectedDestinations.count, tripName: tripName.isEmpty ? "New Trip" : tripName)
+                    let check = proLimiter.canAddDestination(currentDestinationCount: selectedDestinations.count, tripName: tripName.isEmpty ? "trips.new".localized : tripName)
                     if check.allowed {
                         showingDestinationSearch = true
                     } else {
@@ -840,27 +973,31 @@ struct AddTripView: View {
                 }) {
                     HStack {
                         Image(systemName: "magnifyingglass")
-                            .foregroundColor(.blue)
-                        Text("Search Destinations")
-                            .foregroundColor(.primary)
+                            .font(.body.weight(.medium))
+                            .foregroundColor(themeManager.currentPalette.accent)
+                        Text("addTrip.searchDestinations".localized)
+                            .font(.body.weight(.medium))
+                            .foregroundColor(themeManager.currentPalette.text)
                         Spacer()
                         if !selectedDestinations.isEmpty {
-                            Text("\(selectedDestinations.count)")
+                            Text("addTripView.selecteddestinationscount".localized(selectedDestinations.count))
                                 .font(.caption)
-                                .fontWeight(.semibold)
+                                .fontWeight(.bold)
                                 .foregroundColor(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 4)
-                                .background(Color.blue)
-                                .cornerRadius(12)
+                                .padding(.horizontal, DesignSystem.Spacing.xs)
+                                .padding(.vertical, DesignSystem.Spacing.xxs)
+                                .background(themeManager.currentPalette.accent)
+                                .clipShape(Capsule())
                         }
                         Image(systemName: "chevron.right")
-                            .foregroundColor(.secondary)
-                            .font(.caption)
+                            .font(.caption.bold())
+                            .foregroundColor(themeManager.currentPalette.secondaryText)
                     }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
+                    .padding(DesignSystem.Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                            .fill(Color(.tertiarySystemGroupedBackground))
+                    )
                 }
                 .buttonStyle(.plain)
                 
@@ -868,7 +1005,7 @@ struct AddTripView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "info.circle")
                             .font(.caption2)
-                        Text("Add at least one destination to get started")
+                        Text("addTrip.addOneDestination".localized)
                             .font(.caption)
                     }
                     .foregroundColor(.secondary)
@@ -904,16 +1041,23 @@ struct AddTripView: View {
                                     .font(.title3)
                             }
                         }
-                        .padding()
-                        .background(Color(.systemGray6))
-                        .cornerRadius(10)
+                        .padding(DesignSystem.Spacing.md)
+                        .background(
+                            RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                                .fill(Color(.tertiarySystemGroupedBackground))
+                        )
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("destinations")
-                .font(.headline)
+            Text("destination.title".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
@@ -923,7 +1067,7 @@ struct AddTripView: View {
             VStack(spacing: 16) {
                 // Total Budget
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Total Budget", systemImage: "dollarsign.circle.fill")
+                    Label("addTrip.totalBudget".localized, systemImage: settingsManager.currencyIconName(filled: true))
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     HStack {
@@ -946,9 +1090,11 @@ struct AddTripView: View {
                                 }
                             }
                     }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
+                    .padding(DesignSystem.Spacing.md)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                            .fill(Color(.tertiarySystemGroupedBackground))
+                    )
                     
                     if let error = fieldErrors["budget"] {
                         HStack(spacing: 4) {
@@ -965,13 +1111,13 @@ struct AddTripView: View {
                 
                 // Budget Breakdown
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Budget Breakdown")
+                    Text("addTrip.budgetBreakdown".localized)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        BudgetRow(icon: "bed.double.fill", label: "Accommodation", amount: $accommodationBudget, currency: settingsManager.currentCurrency.symbol)
+                        BudgetRow(icon: "bed.double.fill", label: "expense.categories.accommodation".localized, amount: $accommodationBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: accommodationBudget) { _, newValue in
                                 Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
@@ -991,7 +1137,7 @@ struct AddTripView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        BudgetRow(icon: "fork.knife", label: "Food", amount: $foodBudget, currency: settingsManager.currentCurrency.symbol)
+                        BudgetRow(icon: "fork.knife", label: "expense.categories.food".localized, amount: $foodBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: foodBudget) { _, newValue in
                                 Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
@@ -1011,7 +1157,7 @@ struct AddTripView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        BudgetRow(icon: "figure.walk", label: "Activities", amount: $activitiesBudget, currency: settingsManager.currentCurrency.symbol)
+                        BudgetRow(icon: "figure.walk", label: "addTripView.activities".localized, amount: $activitiesBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: activitiesBudget) { _, newValue in
                                 Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
@@ -1031,7 +1177,7 @@ struct AddTripView: View {
                     }
                     
                     VStack(alignment: .leading, spacing: 4) {
-                        BudgetRow(icon: "airplane", label: "Transportation", amount: $transportationBudget, currency: settingsManager.currentCurrency.symbol)
+                        BudgetRow(icon: "airplane", label: "addTripView.transportation".localized, amount: $transportationBudget, currency: settingsManager.currentCurrency.symbol)
                             .onChange(of: transportationBudget) { _, newValue in
                                 Task { @MainActor in
                                 let result = FormValidator.validateBudget(newValue)
@@ -1054,7 +1200,7 @@ struct AddTripView: View {
                 if totalBudget > 0 {
                     Divider()
                     HStack {
-                        Text("Estimated Total")
+                        Text("addTrip.estimatedTotal".localized)
                             .fontWeight(.semibold)
                         Spacer()
                         Text("\(settingsManager.currentCurrency.symbol)\(String(format: "%.2f", totalBudget))")
@@ -1064,10 +1210,15 @@ struct AddTripView: View {
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Budget")
-                .font(.headline)
+            Text("trips.budget".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
@@ -1077,12 +1228,12 @@ struct AddTripView: View {
             VStack(spacing: 16) {
                 // Travel Companions
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Travel Companions", systemImage: "person.2.fill")
+                    Label("addTrip.travelCompanions".localized, systemImage: "person.2.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     Stepper(value: $travelCompanions, in: 1...50) {
                         HStack {
-                            Text("\(travelCompanions) \(travelCompanions == 1 ? "person" : "people")")
+                            Text("\(travelCompanions) \(travelCompanions == 1 ? "common.person".localized : "common.people".localized)")
                                 .fontWeight(.medium)
                             Spacer()
                         }
@@ -1113,10 +1264,10 @@ struct AddTripView: View {
                 
                 // Priority
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Priority", systemImage: "star.fill")
+                    Label("addTrip.priority".localized, systemImage: "star.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Picker("Priority", selection: $priority) {
+                    Picker("addTrip.priority".localized, selection: $priority) {
                         ForEach([TripPriority.low, .medium, .high], id: \.self) { p in
                             HStack {
                                 Image(systemName: p.icon)
@@ -1130,10 +1281,10 @@ struct AddTripView: View {
                 
                 // Travel Mode
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Travel Mode", systemImage: "car.fill")
+                    Label("addTrip.travelMode".localized, systemImage: "car.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Picker("Travel Mode", selection: $travelMode) {
+                    Picker("addTrip.travelMode".localized, selection: $travelMode) {
                         ForEach([TravelMode.flight, .car, .train, .bus, .cruise, .other], id: \.self) { mode in
                             HStack {
                                 Image(systemName: mode.icon)
@@ -1147,10 +1298,10 @@ struct AddTripView: View {
                 
                 // Accommodation Type
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Accommodation", systemImage: "house.fill")
+                    Label("addTrip.accommodation".localized, systemImage: "house.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Picker("Accommodation", selection: $accommodationType) {
+                    Picker("addTrip.accommodation".localized, selection: $accommodationType) {
                         ForEach([AccommodationType.hotel, .airbnb, .hostel, .resort, .camping, .other], id: \.self) { type in
                             HStack {
                                 Image(systemName: type.icon)
@@ -1164,10 +1315,10 @@ struct AddTripView: View {
                 
                 // Weather Preference
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Weather Preference", systemImage: "cloud.sun.fill")
+                    Label("addTrip.weatherPreference".localized, systemImage: "cloud.sun.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
-                    Picker("Weather Preference", selection: $weatherPreference) {
+                    Picker("addTrip.weatherPreference".localized, selection: $weatherPreference) {
                         ForEach([WeatherPreference.any, .sunny, .moderate, .cold], id: \.self) { pref in
                             Text(pref.displayName).tag(pref)
                         }
@@ -1175,10 +1326,15 @@ struct AddTripView: View {
                     .pickerStyle(.segmented)
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Travel Details")
-                .font(.headline)
+            Text("addTrip.travelDetails".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
@@ -1188,7 +1344,7 @@ struct AddTripView: View {
             VStack(spacing: 16) {
                 // Tags
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Tags", systemImage: "tag.fill")
+                    Label("addTrip.tags".localized, systemImage: "tag.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     
@@ -1234,7 +1390,7 @@ struct AddTripView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "info.circle")
                                 .font(.caption2)
-                            Text("Maximum 10 tags allowed")
+                            Text("addTrip.maxTags".localized)
                                 .font(.caption)
                         }
                         .foregroundColor(.orange)
@@ -1250,12 +1406,12 @@ struct AddTripView: View {
                 
                 // Reminder
                 VStack(alignment: .leading, spacing: 8) {
-                    Label("Reminder", systemImage: "bell.fill")
+                    Label("addTrip.reminder".localized, systemImage: "bell.fill")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                     Stepper(value: $reminderDaysBefore, in: 0...30) {
                         HStack {
-                            Text(String(format: "Remind me %d %@ before", reminderDaysBefore, reminderDaysBefore == 1 ? "day" : "days"))
+                            Text("addTrip.remindMeBefore".localized(reminderDaysBefore, reminderDaysBefore == 1 ? "trips.day".localized : "trips.days".localized))
                                 .fontWeight(.medium)
                             Spacer()
                         }
@@ -1267,15 +1423,20 @@ struct AddTripView: View {
                     HStack {
                         Image(systemName: "shield.fill")
                             .foregroundColor(.green)
-                        Text("Travel Insurance")
+                        Text("addTrip.travelInsurance".localized)
                             .fontWeight(.medium)
                     }
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Additional Options")
-                .font(.headline)
+            Text("addTrip.additionalOptions".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
     }
     
@@ -1283,7 +1444,7 @@ struct AddTripView: View {
     private var notesSection: some View {
         Section {
             VStack(alignment: .leading, spacing: 12) {
-                Label("Notes", systemImage: "note.text")
+                Label("addTrip.notes".localized, systemImage: "note.text")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
@@ -1302,8 +1463,8 @@ struct AddTripView: View {
                     .padding(.vertical, 16)
                     .scrollContentBackground(.hidden)
                     .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color(.systemGray6))
+                        RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                            .fill(Color(.tertiarySystemGroupedBackground))
                     )
                     .onChange(of: notes) { _, newValue in
                         Task { @MainActor in
@@ -1332,19 +1493,24 @@ struct AddTripView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "info.circle")
                             .font(.caption2)
-                        Text("Optional: Add special requests, dietary restrictions, or important reminders")
+                        Text("addTrip.notesOptional".localized)
                             .font(.caption)
                     }
                     .foregroundColor(.secondary)
                 }
             }
-            .padding(.vertical, 8)
+            .padding(.vertical, DesignSystem.Spacing.sm)
+            .listRowBackground(
+                RoundedRectangle(cornerRadius: DesignSystem.Radius.md)
+                    .fill(Color(.secondarySystemGroupedBackground))
+            )
         } header: {
-            Text("Additional Notes")
-                .font(.headline)
+            Text("addTrip.additionalNotes".localized)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         } footer: {
             if notes.isEmpty {
-                Text("You can always add notes later from the trip details page")
+                Text("addTrip.notesHint".localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -1372,11 +1538,11 @@ struct AddTripView: View {
         // Comprehensive validation
         let validation = validateForm()
         guard validation.isValid else {
-            errorMessage = validation.errorMessage ?? "Please check your trip details"
+            errorMessage = validation.errorMessage ?? "addTrip.validationMessage".localized
             
             // Show cool animated error alert
             AlertManager.shared.showError(
-                "Validation Error",
+                "addTrip.validationError".localized,
                 message: errorMessage,
                 duration: 3.0
             )
@@ -1388,33 +1554,33 @@ struct AddTripView: View {
         // Use total budget if individual budgets are set, otherwise use main budget
         let budgetValue = totalBudget > 0 ? totalBudget : (Double(budget) ?? nil)
         
-        // Build enhanced notes with additional info
+        // Build enhanced notes with additional info (localized labels)
         var enhancedNotes = notes
         if !tags.isEmpty {
             if !enhancedNotes.isEmpty {
                 enhancedNotes += "\n\n"
             }
-            enhancedNotes += "Tags: \(tags.joined(separator: ", "))"
+            enhancedNotes += "\("addTrip.notesLabelTags".localized): \(tags.joined(separator: ", "))"
         }
         if travelCompanions > 1 {
             if !enhancedNotes.isEmpty {
                 enhancedNotes += "\n"
             }
-            enhancedNotes += "Travel Companions: \(travelCompanions)"
+            enhancedNotes += "\("addTrip.notesLabelTravelCompanions".localized): \(travelCompanions)"
         }
         if !enhancedNotes.isEmpty {
             enhancedNotes += "\n"
         }
-        enhancedNotes += "Travel Mode: \(travelMode.displayName)"
-        enhancedNotes += "\nAccommodation: \(accommodationType.displayName)"
+        enhancedNotes += "\("addTrip.notesLabelTravelMode".localized): \(travelMode.displayName)"
+        enhancedNotes += "\n\("addTrip.notesLabelAccommodation".localized): \(accommodationType.displayName)"
         if hasInsurance {
-            enhancedNotes += "\n✓ Travel Insurance"
+            enhancedNotes += "\n✓ \("addTrip.travelInsurance".localized)"
         }
         if weatherPreference != .any {
-            enhancedNotes += "\nWeather Preference: \(weatherPreference.displayName)"
+            enhancedNotes += "\n\("addTrip.notesLabelWeatherPreference".localized): \(weatherPreference.displayName)"
         }
         if priority != .medium {
-            enhancedNotes += "\nPriority: \(priority.displayName)"
+            enhancedNotes += "\n\("addTrip.notesLabelPriority".localized): \(priority.displayName)"
         }
         
         let newTrip = TripModel(
@@ -1425,6 +1591,10 @@ struct AddTripView: View {
             category: selectedCategory,
             budget: budgetValue
         )
+        
+        if let coverImageData = coverImageData {
+            newTrip.coverImageData = coverImageData
+        }
         
         // Insert trip first
         modelContext.insert(newTrip)
@@ -1494,8 +1664,8 @@ struct AddTripView: View {
             
             // Show cool animated success alert
             AlertManager.shared.showSuccess(
-                "Trip Created!",
-                message: "\(newTrip.name) has been added to your trips",
+                "addTrip.tripCreated".localized,
+                message: "addTripView.newtripname.has.been.added.to".localized(newTrip.name),
                 duration: 2.0
             )
             
@@ -1510,11 +1680,11 @@ struct AddTripView: View {
             print("❌ Failed to save trip: \(error)")
             print("   Error details: \(error.localizedDescription)")
             #endif
-            errorMessage = "Failed to save trip. Please try again."
+            errorMessage = "addTrip.saveFailedMessage".localized
             
             // Show cool animated error alert
             AlertManager.shared.showError(
-                "Save Failed",
+                "addTrip.saveFailed".localized,
                 message: errorMessage,
                 duration: 3.0
             )
@@ -1528,14 +1698,5 @@ struct AddTripView: View {
 #Preview {
     AddTripView()
         .modelContainer(for: [TripModel.self, DestinationModel.self], inMemory: true)
+        .environmentObject(ThemeManager.shared)
 }
-
-
-
-//
-//  Created on 2024
-//
-
-import SwiftUI
-import SwiftData
-import UserNotifications

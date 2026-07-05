@@ -53,13 +53,13 @@ struct ExpenseInsightsView: View {
                 // Summary Cards
                 HStack(spacing: 16) {
                     ExpenseSummaryCard(
-                        title: "Total Spent",
+                        title: "analytics.totalSpent".localized,
                         value: settingsManager.formatAmount(totalSpent),
                         icon: "creditcard.fill",
                         color: .red
                     )
                     ExpenseSummaryCard(
-                        title: "Daily Average",
+                        title: "expenseInsightsView.daily.average".localized,
                         value: settingsManager.formatAmount(averageDailySpend),
                         icon: "calendar",
                         color: .blue
@@ -70,7 +70,7 @@ struct ExpenseInsightsView: View {
                 // Budget Comparison
                 if let budget = trip.budget {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Budget vs Spending")
+                        Text("expenseInsightsView.budget.vs.spending".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -90,7 +90,7 @@ struct ExpenseInsightsView: View {
                 // Category Breakdown
                 if !expensesByCategory.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Spending by Category")
+                        Text("expenseInsightsView.spending.by.category".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -110,7 +110,7 @@ struct ExpenseInsightsView: View {
                 // Spending Trend
                 if !spendingTrend.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Spending Trend")
+                        Text("expenseInsightsView.spending.trend".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -130,7 +130,7 @@ struct ExpenseInsightsView: View {
                 // Top Expense
                 if let topExpense = topExpense {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Largest Expense")
+                        Text("expenseInsightsView.largest.expense".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -158,7 +158,7 @@ struct ExpenseInsightsView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Expense Insights")
+        Text("expenseInsightsView.expense.insights".localized)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
@@ -211,7 +211,7 @@ struct BudgetProgressView: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Budget")
+                    Text("trips.budget".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(settingsManager.formatAmount(budget))
@@ -220,7 +220,7 @@ struct BudgetProgressView: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing) {
-                    Text("Spent")
+                    Text("analytics.spent".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(settingsManager.formatAmount(spent))
@@ -246,11 +246,11 @@ struct BudgetProgressView: View {
             .frame(height: 20)
             
             HStack {
-                Text("\(Int(progress * 100))% used")
+                Text("expenseInsightsView.intprogress.100.used".localized)
                     .font(.caption)
                     .foregroundColor(.secondary)
                 Spacer()
-                Text("\(settingsManager.formatAmount(remaining)) remaining")
+                Text("expenseInsightsView.settingsmanagerformatamountremaining.remaining".localized)
                     .font(.caption)
                     .fontWeight(.semibold)
                     .foregroundColor(remaining > 0 ? .green : .red)

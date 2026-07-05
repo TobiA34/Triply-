@@ -19,7 +19,7 @@ struct AIExpenseInsightsCard: View {
                 Image(systemName: "brain.head.profile")
                     .foregroundColor(.purple)
                     .symbolEffect(.pulse, options: .repeating)
-                Text("AI Expense Insights")
+                Text("aIExpenseInsightsCard.ai.expense.insights".localized)
                     .font(.headline)
                 Spacer()
             }
@@ -29,10 +29,10 @@ struct AIExpenseInsightsCard: View {
                 let remaining = budget - totalExpenses
                 let percentage = (totalExpenses / budget) * 100
                 
-                // Progress bar
+                // Progress bar + summary
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
-                        Text("Budget Usage")
+                        Text("aIExpenseInsightsCard.budget.usage".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                         Spacer()
@@ -89,7 +89,7 @@ struct AIExpenseInsightsCard: View {
                 HStack(spacing: 12) {
                     Image(systemName: "lightbulb.fill")
                         .foregroundColor(.blue)
-                    Text("AI Tip: Set a budget to get personalized spending insights")
+                    Text("aIExpenseInsightsCard.ai.tip.set.a.budget".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

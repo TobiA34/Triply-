@@ -13,7 +13,7 @@ struct PlanGeneratorView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var aiFoundation = AppleAIFoundation.shared
     @StateObject private var calendarManager = CalendarManager.shared
-    @StateObject private var iapManager = IAPManager.shared
+    @StateObject private var proLimiter = ProLimiter.shared
     @State private var isGenerating = false
     @State private var showPaywall = false
     @State private var showCalendarOptions = false
@@ -24,7 +24,7 @@ struct PlanGeneratorView: View {
     let trip: TripModel
     
     var body: some View {
-        if !iapManager.isPro {
+        if !proLimiter.isPro {
             PaywallGateView(
                 featureName: "AI Plan Generator",
                 featureDescription: "Generate complete day-by-day plans for your trip with AI-powered suggestions and calendar integration.",
@@ -137,7 +137,7 @@ struct PlanGeneratorView: View {
                 }
                 
                 // Premium Features Notice
-                if !iapManager.isPro {
+                if !proLimiter.isPro {
                     VStack(spacing: 8) {
                         HStack {
                             Image(systemName: "star.fill")
@@ -215,7 +215,7 @@ struct PlanGeneratorView: View {
     
     private func generatePlan() {
         // Check if user has Pro (or allow free users limited access)
-        let hasAccess = iapManager.isPro || (trip.itinerary?.isEmpty ?? true)
+        let hasAccess = proLimiter.isPro || (trip.itinerary?.isEmpty ?? true)
         
         if !hasAccess {
             showPaywall = true

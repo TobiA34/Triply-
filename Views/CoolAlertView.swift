@@ -140,7 +140,7 @@ struct CoolAlertView: View {
                             alert.action?()
                             alertManager.dismiss()
                         }) {
-                            Text("OK")
+                            Text("common.ok".localized)
                                 .font(.system(size: 17, weight: .semibold))
                                 .foregroundColor(alert.style.primaryColor)
                                 .frame(maxWidth: .infinity)

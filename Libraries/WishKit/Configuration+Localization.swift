@@ -100,6 +100,14 @@ extension Configuration {
 
         public var refreshing: String
 
+        public var loadErrorTitle: String
+
+        public var retry: String
+
+        public var stateAll: String
+
+        public var notSupported: String
+
         public init(
             requested: String = Localization.default().requested,
             pending: String = Localization.default().pending,
@@ -145,7 +153,11 @@ extension Configuration {
             discardEnteredInformation: String = Localization.default().discardEnteredInformation,
             addButtonInNavigationBar: String = Localization.default().addButtonInNavigationBar,
             refresh: String = Localization.default().refresh,
-            refreshing: String = Localization.default().refreshing
+            refreshing: String = Localization.default().refreshing,
+            loadErrorTitle: String = Localization.default().loadErrorTitle,
+            retry: String = Localization.default().retry,
+            stateAll: String = Localization.default().stateAll,
+            notSupported: String = Localization.default().notSupported
         ) {
             self.requested = requested
             self.pending = pending
@@ -192,6 +204,10 @@ extension Configuration {
             self.addButtonInNavigationBar = addButtonInNavigationBar
             self.refresh = refresh
             self.refreshing = refreshing
+            self.loadErrorTitle = loadErrorTitle
+            self.retry = retry
+            self.stateAll = stateAll
+            self.notSupported = notSupported
         }
 
         public static func `default`() -> Localization {
@@ -240,7 +256,11 @@ extension Configuration {
                 discardEnteredInformation: "Discard entered information?",
                 addButtonInNavigationBar: "Create",
                 refresh: "Refresh",
-                refreshing: "Refreshing.."
+                refreshing: "Refreshing..",
+                loadErrorTitle: "Unable to Load Feature Requests",
+                retry: "Retry",
+                stateAll: "All",
+                notSupported: "Not Supported"
             )
         }
     }

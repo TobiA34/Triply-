@@ -1,6 +1,6 @@
 //
 //  AppGroupsDiagnosticView.swift
-//  Itinero
+//  Triply
 //
 //  Diagnostic tool to check App Groups configuration
 //
@@ -76,12 +76,12 @@ struct AppGroupsDiagnosticView: View {
                         
                         VStack(alignment: .leading, spacing: 8) {
                             Text("1. Open Xcode")
-                            Text("2. Select 'Itinero' target")
+                            Text("2. Select 'Triply' target")
                             Text("3. Go to 'Signing & Capabilities'")
                             Text("4. Click '+ Capability'")
                             Text("5. Add 'App Groups'")
                             Text("6. Add identifier: group.com.ntriply.app")
-                            Text("7. Repeat for 'TriplyWidgetExtension' target")
+                            Text("7. Repeat for 'TriplyWidgetExtensionExtension' target")
                             Text("8. Clean build folder (Shift+⌘+K)")
                             Text("9. Rebuild and reinstall app")
                         }
@@ -108,7 +108,7 @@ struct AppGroupsDiagnosticView: View {
             ))
             
             // Check 2: Database exists in App Group
-            let dbURL = appGroupURL.appendingPathComponent("Itinero/default.store")
+            let dbURL = appGroupURL.appendingPathComponent("Triply/default.store")
             if FileManager.default.fileExists(atPath: dbURL.path) {
                 diagnosticResults.append(DiagnosticResult(
                     title: "Database Location",
@@ -131,7 +131,7 @@ struct AppGroupsDiagnosticView: View {
         }
         
         // Check 3: Entitlements file exists
-        if let entitlementsPath = Bundle.main.path(forResource: "Itinero", ofType: "entitlements") {
+        if let entitlementsPath = Bundle.main.path(forResource: "Triply", ofType: "entitlements") {
             diagnosticResults.append(DiagnosticResult(
                 title: "Entitlements File",
                 status: .success,
@@ -147,7 +147,7 @@ struct AppGroupsDiagnosticView: View {
         
         // Check 4: Application Support fallback
         if let appSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first {
-            let fallbackDB = appSupport.appendingPathComponent("Itinero/default.store")
+            let fallbackDB = appSupport.appendingPathComponent("Triply/default.store")
             if FileManager.default.fileExists(atPath: fallbackDB.path) {
                 diagnosticResults.append(DiagnosticResult(
                     title: "Fallback Database",

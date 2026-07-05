@@ -13,13 +13,13 @@ struct AddTripIntent: AppIntent {
     static var description = IntentDescription("Quickly add a new trip to Triply")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip Name")
+    @Parameter(title: "trips.name")
     var tripName: String
     
-    @Parameter(title: "Start Date")
+    @Parameter(title: "trips.startDate")
     var startDate: Date
     
-    @Parameter(title: "End Date")
+    @Parameter(title: "trips.endDate")
     var endDate: Date
     
     func perform() async throws -> some IntentResult {
