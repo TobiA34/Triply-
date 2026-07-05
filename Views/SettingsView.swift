@@ -46,8 +46,6 @@ struct SettingsView: View {
             onDrag: true,
             showDoneButton: true
         )
-        .scrollContentBackground(.hidden)
-        .background(themeBackgroundColor)
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.large)
         .onDisappear {

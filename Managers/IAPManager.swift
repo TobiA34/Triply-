@@ -38,7 +38,7 @@ final class IAPManager: NSObject, ObservableObject {
         Purchases.shared.delegate = shared
         Task {
             await shared.refreshEntitlements()
-            await shared.loadProducts()
+            await shared.loadProducts(quiet: true)
         }
     }
 
@@ -46,7 +46,10 @@ final class IAPManager: NSObject, ObservableObject {
         super.init()
     }
 
-    func loadProducts() async {
+    /// Loads offerings. Errors are only surfaced to the UI when `quiet` is
+    /// false (user-initiated flows); the background prefetch at launch stays
+    /// silent so the app never looks broken on start.
+    func loadProducts(quiet: Bool = false) async {
         isLoading = true
         defer { isLoading = false }
         do {
@@ -55,7 +58,9 @@ final class IAPManager: NSObject, ObservableObject {
             lastErrorMessage = nil
         } catch {
             print("Failed to load offerings: \(error)")
-            lastErrorMessage = "Subscriptions aren't available right now. Please check your connection and try again."
+            if !quiet {
+                lastErrorMessage = "Subscriptions aren't available right now. Please check your connection and try again."
+            }
         }
     }
 

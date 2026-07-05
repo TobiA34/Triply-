@@ -87,6 +87,17 @@ struct TripListView: View {
                 
                 if trips.isEmpty {
                     VStack(spacing: 0) {
+                        Spacer()
+                        EmptyStateView {
+                            let check = proLimiter.canCreateTrip(currentTripCount: trips.count)
+                            if check.allowed {
+                                showingAddTrip = true
+                            } else {
+                                limitAlertMessage = check.reason
+                                showLimitAlert = true
+                            }
+                        }
+                        Spacer()
                         if !iapManager.isPro {
                             ProUpsellBanner {
                                 Task {
@@ -95,10 +106,9 @@ struct TripListView: View {
                                     }
                                 }
                             }
-                                .padding(.horizontal)
-                                .padding(.top, 8)
+                            .padding(.horizontal)
+                            .padding(.bottom, 12)
                         }
-                        EmptyStateView()
                     }
                 } else {
                     ScrollView {
@@ -509,24 +519,36 @@ struct CategoryBadge: View {
 }
 
 struct EmptyStateView: View {
-    
+    var onCreateTrip: (() -> Void)? = nil
+
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 12) {
             Image(systemName: "airplane.departure")
-                .font(.system(size: 60))
-                .foregroundColor(.blue.opacity(0.6))
-            
+                .font(.system(size: 52, weight: .light))
+                .foregroundStyle(.blue.gradient)
+                .padding(.bottom, 4)
+
             Text("No Trips Yet")
-                .font(.title2)
-                .fontWeight(.semibold)
-            
-            Text("Start planning your next adventure!")
+                .font(.title2.bold())
+
+            Text("Plan your next adventure — build an itinerary,\ntrack your budget and pack smart.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
+
+            if let onCreateTrip {
+                Button(action: onCreateTrip) {
+                    Label("Create Your First Trip", systemImage: "plus")
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 12)
+                }
+                .buttonStyle(.borderedProminent)
+                .buttonBorderShape(.capsule)
+                .padding(.top, 12)
+            }
         }
-        .padding()
-        // .observeLanguage() // Method not available
+        .padding(32)
     }
 }
 
