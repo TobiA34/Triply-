@@ -44,8 +44,9 @@ struct AnalyticsView: View {
         for trip in trips {
             for expense in trip.expenses ?? [] {
                 let monthKey = calendar.dateComponents([.year, .month], from: expense.date)
-                let monthName = calendar.monthSymbols[monthKey.month! - 1]
-                let key = "\(monthName) \(monthKey.year!)"
+                guard let month = monthKey.month, let year = monthKey.year else { continue }
+                let monthName = calendar.monthSymbols[month - 1]
+                let key = "\(monthName) \(year)"
                 monthly[key, default: 0] += expense.amount
             }
         }
@@ -60,19 +61,19 @@ struct AnalyticsView: View {
                 // Summary Cards
                 HStack(spacing: 16) {
                     AnalyticsSummaryCard(
-                        title: "Total Trips",
+                        title: "trips.totalTrips".localized,
                         value: "\(trips.count)",
                         icon: "airplane",
                         color: .blue
                     )
                     AnalyticsSummaryCard(
-                        title: "Total Budget",
+                        title: "trips.totalBudgetLabel".localized,
                         value: settingsManager.formatAmount(totalBudget),
                         icon: settingsManager.currencyIconName(filled: false),
                         color: .green
                     )
                     AnalyticsSummaryCard(
-                        title: "Total Spent",
+                        title: "analytics.totalSpent".localized,
                         value: settingsManager.formatAmount(totalExpenses),
                         icon: "creditcard",
                         color: .red
@@ -83,7 +84,7 @@ struct AnalyticsView: View {
                 // Budget vs Expenses
                 if totalBudget > 0 {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Budget Overview")
+                        Text("analytics.budgetOverview".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -103,7 +104,7 @@ struct AnalyticsView: View {
                 // Trips by Category
                 if !tripsByCategory.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Trips by Category")
+                        Text("analytics.tripsByCategory".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -120,7 +121,7 @@ struct AnalyticsView: View {
                 // Expenses by Category
                 if !expensesByCategory.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Expenses by Category")
+                        Text("analytics.expensesByCategory".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -140,7 +141,7 @@ struct AnalyticsView: View {
                 // Monthly Spending
                 if !monthlySpending.isEmpty {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Monthly Spending")
+                        Text("analytics.monthlySpending".localized)
                             .font(.title2)
                             .fontWeight(.semibold)
                             .padding(.horizontal)
@@ -159,7 +160,7 @@ struct AnalyticsView: View {
             }
             .padding(.vertical)
         }
-        .navigationTitle("Analytics")
+        .navigationTitle("analytics.title".localized)
     }
 }
 
@@ -201,7 +202,7 @@ struct BudgetChartView: View {
         VStack(spacing: 16) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("Budget")
+                    Text("trips.budget".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(settingsManager.formatAmount(budget))
@@ -210,7 +211,7 @@ struct BudgetChartView: View {
                 }
                 Spacer()
                 VStack(alignment: .trailing) {
-                    Text("Spent")
+                    Text("analytics.spent".localized)
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(settingsManager.formatAmount(spent))
@@ -244,11 +245,11 @@ struct BudgetChartView: View {
             .frame(height: 20)
             
             HStack {
-                Label("Spent", systemImage: "square.fill")
+                Label("analytics.spent".localized, systemImage: "square.fill")
                     .foregroundColor(.red)
                     .font(.caption)
                 Spacer()
-                Label("Remaining", systemImage: "square.fill")
+                Label("budget.remaining".localized, systemImage: "square.fill")
                     .foregroundColor(.green)
                     .font(.caption)
             }

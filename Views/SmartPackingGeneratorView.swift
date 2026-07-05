@@ -12,7 +12,7 @@ struct SmartPackingGeneratorView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
     @StateObject private var aiFoundation = AppleAIFoundation.shared
-    @StateObject private var iap = IAPManager.shared
+    @StateObject private var proLimiter = ProLimiter.shared
     
     @State private var isGenerating = false
     @State private var generatedItems: [PackingItem] = []
@@ -21,10 +21,10 @@ struct SmartPackingGeneratorView: View {
     @State private var showingAddItem = false
     
     var body: some View {
-        if !iap.isPro {
+        if !proLimiter.isPro {
             PaywallGateView(
-                featureName: "Smart Packing Generator",
-                featureDescription: "Get AI-powered packing suggestions based on your destination, weather, trip type, and duration.",
+                featureName: "Smart Packing",
+                featureDescription: "AI-powered packing lists based on your trip, weather, and destination.",
                 icon: "suitcase.fill",
                 iconColor: .purple
             )
@@ -35,7 +35,7 @@ struct SmartPackingGeneratorView: View {
     }
     
     private var packingContent: some View {
-        ScrollView {
+        return ScrollView {
             VStack(spacing: 24) {
                 // Header
                 VStack(spacing: 12) {
@@ -43,11 +43,11 @@ struct SmartPackingGeneratorView: View {
                         .font(.system(size: 48))
                         .foregroundColor(.purple)
                     
-                    Text("Smart Packing List")
+                    Text("smartPackingGeneratorView.smart.packing.list".localized)
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("AI-powered suggestions based on your trip")
+                    Text("smartPackingGeneratorView.aipowered.suggestions.based.on.your".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -91,7 +91,7 @@ struct SmartPackingGeneratorView: View {
                     } label: {
                         HStack {
                             Image(systemName: "plus.circle.fill")
-                            Text("Add Custom Item")
+                            Text("smartPackingGeneratorView.add.custom.item".localized)
                                 .font(.headline)
                         }
                         .foregroundColor(.white)
@@ -109,7 +109,7 @@ struct SmartPackingGeneratorView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 12) {
                                 CategoryFilterButton(
-                                    title: "All",
+                                    title: "category.all".localized,
                                     isSelected: selectedCategories.contains("all")
                                 ) {
                                     if selectedCategories.contains("all") {
@@ -148,7 +148,7 @@ struct SmartPackingGeneratorView: View {
                             } label: {
                                 HStack {
                                     Image(systemName: "plus.circle.fill")
-                                    Text("Add All (\(unaddedFilteredItemsCount) items)")
+                                    Text("smartPackingGeneratorView.add.all.unaddedfiltereditemscount.items".localized)
                                         .fontWeight(.medium)
                                 }
                                 .font(.subheadline)
@@ -175,10 +175,10 @@ struct SmartPackingGeneratorView: View {
                         Image(systemName: "suitcase")
                             .font(.system(size: 40))
                             .foregroundColor(.secondary.opacity(0.5))
-                        Text("No packing list yet")
+                        Text("smartPackingGeneratorView.no.packing.list.yet".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        Text("Generate AI-powered suggestions or add your own items")
+                        Text("smartPackingGeneratorView.generate.aipowered.suggestions.or.add".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
@@ -200,7 +200,7 @@ struct SmartPackingGeneratorView: View {
             }
             .padding(.bottom)
         }
-        .navigationTitle("Smart Packing")
+        Text("tripDetail.smartPacking".localized)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingAddItem) {
             AddPackingItemView(trip: trip)
@@ -438,7 +438,7 @@ struct PackingItemRow: View {
                 HStack(spacing: 4) {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundColor(.green)
-                    Text("Added")
+                    Text("smartPackingGeneratorView.added".localized)
                         .font(.subheadline)
                         .foregroundColor(.green)
                 }
@@ -448,7 +448,7 @@ struct PackingItemRow: View {
                 } label: {
                     HStack(spacing: 6) {
                         Image(systemName: "plus.circle.fill")
-                        Text("Add to List")
+                        Text("smartPackingGeneratorView.add.to.list".localized)
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }

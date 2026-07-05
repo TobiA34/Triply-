@@ -94,7 +94,7 @@ struct EnhancedTripProvider: TimelineProvider {
         let activeTrip = WidgetDataLoader.getActiveTrip()
         
         let trip = activeTrip ?? upcomingTrip
-        let tripData = trip != nil ? WidgetDataLoader.convertToWidgetData(trip!) : nil
+        let tripData = trip.map { WidgetDataLoader.convertToWidgetData($0) }
         
         // Default configuration
         let entry = EnhancedTripEntry(
@@ -141,7 +141,7 @@ struct EnhancedTripWidgetView: View {
                 EnhancedSmallWidget(entry: entry)
             }
         }
-        .widgetURL(entry.trip != nil ? URL(string: "itinero://trip/\(entry.trip!.id.uuidString)") : nil)
+        .widgetURL(entry.trip.flatMap { URL(string: "itinero://trip/\($0.id.uuidString)") })
     }
 }
 

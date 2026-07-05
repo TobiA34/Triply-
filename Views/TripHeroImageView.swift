@@ -150,7 +150,7 @@ struct TripHeroImageView: View {
                         // Title and category row
                         VStack(alignment: .leading, spacing: 10) {
                             Text(tripName)
-                                .font(.system(size: 28, weight: .bold))
+                                .font(.system(size: 32, weight: .bold, design: .serif))
                                 .foregroundColor(.white)
                                 .shadow(color: .black.opacity(0.6), radius: 4, x: 0, y: 2)
                                 .lineLimit(2)
@@ -269,14 +269,16 @@ struct TripHeroImageView: View {
     
     private func gradientColors(for category: String) -> [Color] {
         switch category.lowercased() {
-        case "adventure":
-            return [Color(red: 0.2, green: 0.6, blue: 0.8), Color(red: 0.4, green: 0.8, blue: 0.6)]
         case "business":
-            return [Color(red: 0.3, green: 0.3, blue: 0.5), Color(red: 0.5, green: 0.5, blue: 0.7)]
-        case "leisure", "vacation":
-            return [Color(red: 1.0, green: 0.6, blue: 0.4), Color(red: 1.0, green: 0.8, blue: 0.4)]
+            return [Color(red: 0.35, green: 0.55, blue: 0.95), Color(red: 0.5, green: 0.65, blue: 1.0)]
+        case "relaxation", "vacation", "leisure":
+            return [Color(red: 1.0, green: 0.65, blue: 0.45), Color(red: 1.0, green: 0.5, blue: 0.6)]
+        case "adventure":
+            return [Color(red: 0.25, green: 0.75, blue: 0.55), Color(red: 0.4, green: 0.8, blue: 0.65)]
+        case "family":
+            return [Color(red: 1.0, green: 0.55, blue: 0.7), Color(red: 0.95, green: 0.5, blue: 0.85)]
         default:
-            return [Color.blue, Color.purple]
+            return [Color(red: 0.95, green: 0.5, blue: 0.35), Color(red: 1.0, green: 0.65, blue: 0.45)]
         }
     }
     

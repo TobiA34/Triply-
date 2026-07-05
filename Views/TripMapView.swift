@@ -50,7 +50,7 @@ struct TripMapView: View {
                             Image(systemName: "location.circle.fill")
                                 .foregroundColor(.blue)
                                 .font(.title)
-                            Text("You")
+                            Text("tripMapView.you".localized)
                                 .font(.caption)
                                 .padding(4)
                                 .background(Color.blue.opacity(0.1))
@@ -65,7 +65,7 @@ struct TripMapView: View {
                         .stroke(.blue, lineWidth: 3)
                 }
                 
-                // Show trip destination annotations
+                // Show trip destination annotations, numbered in route order
                 ForEach(Array(annotations.enumerated()), id: \.element.id) { index, annotation in
                     Annotation(annotation.title, coordinate: annotation.coordinate) {
                         Button {
@@ -87,6 +87,7 @@ struct TripMapView: View {
                                 }
                                 Text(annotation.title)
                                     .font(.caption)
+                                    .foregroundColor(.black) // ensure label is visible on white pill
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 4)
                                     .background(Color.white)
@@ -156,10 +157,10 @@ struct TripMapView: View {
                     Image(systemName: "mappin.slash")
                         .font(.system(size: 50))
                         .foregroundColor(.secondary)
-                    Text("No Destinations")
+                    Text("tripMapView.no.destinations".localized)
                         .font(.title2)
                         .fontWeight(.semibold)
-                    Text("Add destinations with locations to see them on the map")
+                    Text("tripMapView.add.destinations.with.locations.to".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -172,13 +173,13 @@ struct TripMapView: View {
             }
         }
         .id(refreshID)
-        .navigationTitle("Trip Map")
+        Text("tripMapView.trip.map".localized)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 // Show location status - only show warning for actual errors, not just no location yet
                 HStack(spacing: 4) {
-                    if let error = locationManager.locationError,
+                    if locationManager.locationError != nil,
                        locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
                         Button {
                             // Could show alert about enabling location
@@ -203,7 +204,7 @@ struct TripMapView: View {
             }
             
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Done") {
+                Button("common.done".localized) {
                     dismiss()
                 }
             }

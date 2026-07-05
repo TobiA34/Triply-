@@ -162,7 +162,7 @@ class AppleAIFoundation: ObservableObject {
         // Always add a welcome suggestion
         suggestions.append(AISuggestion(
             type: .tip,
-            title: "Trip: \(trip.name)",
+            title: "appleAIFoundation.trip.tripname".localized,
             description: "Your \(trip.duration)-day trip is planned. Here are some personalized recommendations to make it amazing!",
             priority: .high,
             action: nil
@@ -172,7 +172,7 @@ class AppleAIFoundation: ObservableObject {
         if !analysis.extractedLocations.isEmpty {
             suggestions.append(AISuggestion(
                 type: .location,
-                title: "Location Insights",
+                title: "appleAIFoundation.location.insights".localized,
                 description: "Found \(analysis.extractedLocations.count) location\(analysis.extractedLocations.count > 1 ? "s" : "") in your notes: \(analysis.extractedLocations.prefix(3).joined(separator: ", ")). Consider creating dedicated itinerary items for each.",
                 priority: .high,
                 action: "Add to Itinerary"
@@ -180,7 +180,7 @@ class AppleAIFoundation: ObservableObject {
         } else if !trip.notes.isEmpty {
             suggestions.append(AISuggestion(
                 type: .location,
-                title: "Add Destinations",
+                title: "appleAIFoundation.add.destinations".localized,
                 description: "Consider adding specific destinations to your trip notes for better planning and recommendations.",
                 priority: .medium,
                 action: nil
@@ -190,7 +190,7 @@ class AppleAIFoundation: ObservableObject {
         if analysis.sentiment == .positive {
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Exciting Trip Ahead!",
+                title: "appleAIFoundation.exciting.trip.ahead".localized,
                 description: "Your notes show enthusiasm. Make sure to capture memories with photos during your trip.",
                 priority: .medium,
                 action: nil
@@ -206,7 +206,7 @@ class AppleAIFoundation: ObservableObject {
             if percentage > 80 {
                 suggestions.append(AISuggestion(
                     type: .budget,
-                    title: "Budget Alert",
+                    title: "appleAIFoundation.budget.alert".localized,
                     description: "You've used \(Int(percentage))% of your budget. \(remaining > 0 ? "\(formatCurrency(remaining)) remaining." : "Consider reviewing expenses.")",
                     priority: .high,
                     action: "View Expenses"
@@ -214,7 +214,7 @@ class AppleAIFoundation: ObservableObject {
             } else if percentage > 0 {
                 suggestions.append(AISuggestion(
                     type: .budget,
-                    title: "Budget Tracking",
+                    title: "appleAIFoundation.budget.tracking".localized,
                     description: "You've spent \(formatCurrency(totalExpenses)) of your \(formatCurrency(budget)) budget. \(formatCurrency(remaining)) remaining.",
                     priority: .medium,
                     action: "View Expenses"
@@ -222,7 +222,7 @@ class AppleAIFoundation: ObservableObject {
             } else {
                 suggestions.append(AISuggestion(
                     type: .budget,
-                    title: "Budget Set",
+                    title: "appleAIFoundation.budget.set".localized,
                     description: "Your budget is \(formatCurrency(budget)). Start tracking expenses to stay on budget.",
                     priority: .medium,
                     action: "View Expenses"
@@ -231,7 +231,7 @@ class AppleAIFoundation: ObservableObject {
         } else {
             suggestions.append(AISuggestion(
                 type: .budget,
-                title: "Set a Budget",
+                title: "appleAIFoundation.set.a.budget".localized,
                 description: "Adding a budget helps you track expenses and stay on track financially.",
                 priority: .low,
                 action: nil
@@ -243,7 +243,7 @@ class AppleAIFoundation: ObservableObject {
         if days > 14 {
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Extended Trip Tips",
+                title: "appleAIFoundation.extended.trip.tips".localized,
                 description: "For a \(days)-day trip, consider packing versatile clothing, planning rest days, and booking accommodations in advance.",
                 priority: .medium,
                 action: nil
@@ -251,7 +251,7 @@ class AppleAIFoundation: ObservableObject {
         } else if days > 7 {
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Week-Long Trip",
+                title: "appleAIFoundation.weeklong.trip".localized,
                 description: "For a \(days)-day trip, pack versatile clothing and plan a mix of activities and relaxation time.",
                 priority: .medium,
                 action: nil
@@ -259,7 +259,7 @@ class AppleAIFoundation: ObservableObject {
         } else if days > 3 {
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Short Getaway",
+                title: "appleAIFoundation.short.getaway".localized,
                 description: "For a \(days)-day trip, focus on 2-3 key experiences. Book popular spots in advance.",
                 priority: .medium,
                 action: nil
@@ -271,7 +271,7 @@ class AppleAIFoundation: ObservableObject {
         case "business":
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Business Trip Tips",
+                title: "appleAIFoundation.business.trip.tips".localized,
                 description: "Keep receipts organized for expense reports. Consider time zone differences for meetings. Pack professional attire.",
                 priority: .medium,
                 action: nil
@@ -279,7 +279,7 @@ class AppleAIFoundation: ObservableObject {
         case "vacation", "leisure":
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Vacation Mode",
+                title: "appleAIFoundation.vacation.mode".localized,
                 description: "Relax and enjoy! Don't over-schedule. Leave time for spontaneous discoveries and local experiences.",
                 priority: .low,
                 action: nil
@@ -287,7 +287,7 @@ class AppleAIFoundation: ObservableObject {
         case "adventure":
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Adventure Ready",
+                title: "appleAIFoundation.adventure.ready".localized,
                 description: "Check weather conditions and pack appropriate gear. Share your itinerary with someone back home for safety.",
                 priority: .high,
                 action: nil
@@ -295,7 +295,7 @@ class AppleAIFoundation: ObservableObject {
         default:
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Trip Planning",
+                title: "appleAIFoundation.trip.planning".localized,
                 description: "Make the most of your trip by planning activities, tracking expenses, and capturing memories.",
                 priority: .low,
                 action: nil
@@ -306,7 +306,7 @@ class AppleAIFoundation: ObservableObject {
         if trip.isUpcoming {
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Upcoming Trip",
+                title: "appleAIFoundation.upcoming.trip".localized,
                 description: "Your trip starts \(formatDaysUntil(trip.startDate)). Make sure your packing list is ready and accommodations are confirmed.",
                 priority: .medium,
                 action: nil
@@ -314,7 +314,7 @@ class AppleAIFoundation: ObservableObject {
         } else if trip.isCurrent {
             suggestions.append(AISuggestion(
                 type: .tip,
-                title: "Currently Traveling",
+                title: "appleAIFoundation.currently.traveling".localized,
                 description: "You're on your trip now! Track expenses in real-time and capture photos for memories.",
                 priority: .high,
                 action: nil
@@ -429,6 +429,18 @@ class AppleAIFoundation: ObservableObject {
         for trip: TripModel,
         conversationHistory: [ChatMessage] = []
     ) async -> AIStructuredResponse {
+        // 1) Prefer real ChatGPT when an OpenAI API key is configured.
+        if let chatGPTResponse = await generateStructuredChatGPTResponse(
+            userMessage: userMessage,
+            trip: trip,
+            history: conversationHistory
+        ) {
+            return chatGPTResponse
+        }
+        
+        // 2) Fallback: on-device, heuristic "ChatGPT-like" engine using Apple frameworks
+        //    so the feature still works without any external API key.
+        
         // Simulate thinking time for more natural conversation
         try? await Task.sleep(nanoseconds: 800_000_000 + UInt64.random(in: 0...600_000_000)) // 0.8-1.4 seconds
         
@@ -634,6 +646,111 @@ class AppleAIFoundation: ObservableObject {
         }
         
         return insights
+    }
+    
+    // MARK: - ChatGPT (OpenAI) Integration
+    
+    /// If an OpenAI API key is configured, use ChatGPT to generate a rich,
+    /// structured response for the given message and trip context.
+    /// Falls back to `nil` on any error so the on-device engine can handle it.
+    private func generateStructuredChatGPTResponse(
+        userMessage: String,
+        trip: TripModel,
+        history: [ChatMessage]
+    ) async -> AIStructuredResponse? {
+        guard ChatGPTClient.shared.isConfigured else {
+            return nil
+        }
+        
+        // Compact summary of the trip for the model.
+        var tripSummary = """
+        Trip name: \(trip.name)
+        Category: \(trip.category)
+        Duration: \(trip.duration) days
+        Start date: \(formatDate(trip.startDate))
+        End date: \(formatDate(trip.endDate))
+        """
+        
+        if let budget = trip.budget {
+            tripSummary += "\nBudget: \(formatCurrency(budget))"
+        }
+        
+        if let destinations = trip.destinations, !destinations.isEmpty {
+            let names = destinations.prefix(6).map { $0.name }.joined(separator: ", ")
+            tripSummary += "\nDestinations: \(names)\(destinations.count > 6 ? " (and more)" : "")"
+        }
+        
+        // We only include the last few user messages to keep prompts small.
+        let recentHistory = history.suffix(4)
+        let historyText = recentHistory.map { msg in
+            let role = msg.isUser ? "user" : "assistant"
+            return "[\(role)] \(msg.text)"
+        }.joined(separator: "\n")
+        
+        let systemPrompt = """
+        You are ChatGPT acting as an AI travel assistant inside an iOS app called Itinero.
+        Always answer as a friendly, practical travel planner.
+        
+        Important: You MUST reply in **pure JSON** that can be decoded into this Swift structure:
+        
+        {
+          "text": "Short natural-language reply to show in the UI.",
+          "structuredData": {
+            "itineraryItems": [
+              {
+                "id": "string-uuid",
+                "day": 1,
+                "date": "YYYY-MM-DD",
+                "title": "Activity title",
+                "details": "Optional longer description",
+                "time": "HH:mm",
+                "location": "Optional location name",
+                "order": 0,
+                "isBooked": false,
+                "bookingReference": null
+              }
+            ],
+            "suggestions": [],
+            "documents": [],
+            "actions": []
+          }
+        }
+        
+        - If you don't need some arrays, return them as empty arrays ([]) rather than null.
+        - "structuredData" itself may be null if you only have a textual answer.
+        - Prefer concise but helpful "text".
+        - When generating itineraries, keep them realistic and aligned with the trip dates.
+        """
+        
+        let userPrompt = """
+        Current trip context:
+        \(tripSummary)
+        
+        Recent conversation (most recent last):
+        \(historyText)
+        
+        User message:
+        \(userMessage)
+        
+        Respond with valid JSON only. Do not include any extra commentary or markdown.
+        """
+        
+        do {
+            let raw = try await ChatGPTClient.shared.generateReply(
+                systemPrompt: systemPrompt,
+                userPrompt: userPrompt
+            )
+            
+            if let parsed = AIResponseParser.parseJSON(from: raw) {
+                return parsed
+            } else {
+                // If parsing fails, still return the text so the UI has something to show.
+                return AIStructuredResponse(text: raw, structuredData: nil)
+            }
+        } catch {
+            print("ChatGPT error: \(error)")
+            return nil
+        }
     }
     
     private struct ConversationContext {
@@ -1624,13 +1741,13 @@ class AppleAIFoundation: ObservableObject {
         
         if shouldGenerate {
             items = generateStructuredItineraryItems(for: trip, message: message, context: context)
-            if items != nil && !items!.isEmpty {
+            if let generatedItems = items, !generatedItems.isEmpty {
                 actions = [
                     StructuredAction(
                         id: UUID().uuidString,
                         type: "create_itinerary",
-                        data: ["count": "\(items!.count)"],
-                        label: "Save \(items!.count) itinerary items"
+                        data: ["count": "\(generatedItems.count)"],
+                        label: String(format: "appleAIFoundation.save.itemscount.itinerary.items".localized, generatedItems.count)
                     )
                 ]
             }
@@ -1745,7 +1862,7 @@ class AppleAIFoundation: ObservableObject {
             suggestions.append(StructuredSuggestion(
                 id: UUID().uuidString,
                 type: "location",
-                title: "Add Destinations",
+                title: "appleAIFoundation.add.destinations".localized,
                 description: "Add destinations to your trip to get personalized suggestions",
                 priority: "high",
                 action: "add_destination",
@@ -1757,7 +1874,7 @@ class AppleAIFoundation: ObservableObject {
             suggestions.append(StructuredSuggestion(
                 id: UUID().uuidString,
                 type: "activity",
-                title: "Create Itinerary",
+                title: "appleAIFoundation.create.itinerary".localized,
                 description: "Plan your daily activities for a well-organized trip",
                 priority: "high",
                 action: "create_itinerary",
@@ -1770,7 +1887,7 @@ class AppleAIFoundation: ObservableObject {
             suggestions.append(StructuredSuggestion(
                 id: UUID().uuidString,
                 type: "budget",
-                title: "Set Budget",
+                title: "appleAIFoundation.set.budget".localized,
                 description: "Set a budget to track your spending",
                 priority: "medium",
                 action: "set_budget",
@@ -1792,7 +1909,7 @@ class AppleAIFoundation: ObservableObject {
             suggestions.append(StructuredSuggestion(
                 id: UUID().uuidString,
                 type: "budget",
-                title: "Daily Budget: \(formatCurrency(dailyBudget))",
+                title: "appleAIFoundation.daily.budget.formatcurrencydailybudget".localized,
                 description: "Your daily budget allocation for \(trip.duration) days",
                 priority: "medium",
                 action: "view_budget",
@@ -1816,7 +1933,7 @@ class AppleAIFoundation: ObservableObject {
                 suggestions.append(StructuredSuggestion(
                     id: UUID().uuidString,
                     type: "location",
-                    title: "Add \(location)",
+                    title: "appleAIFoundation.add.location".localized,
                     description: "Add \(location) as a destination to your trip",
                     priority: "medium",
                     action: "add_destination",
@@ -1915,8 +2032,93 @@ struct ReceiptAnalysis {
     var merchant: String?
     var items: [String] = []
 }
-
-
-
-
+ 
+// MARK: - ChatGPT Client (OpenAI)
+//
+// Lightweight wrapper for the OpenAI Chat Completions API used by
+// `AppleAIFoundation` when an `OpenAIAPIKey` is present in Info.plist.
+@MainActor
+final class ChatGPTClient {
+    static let shared = ChatGPTClient()
+    
+    /// API key loaded from Info.plist key `OpenAIAPIKey`.
+    private let apiKey: String?
+    
+    /// Whether the client is configured with a usable API key.
+    var isConfigured: Bool {
+        guard let apiKey,
+              !apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return false
+        }
+        return true
+    }
+    
+    private init() {
+        apiKey = Bundle.main.object(forInfoDictionaryKey: "OpenAIAPIKey") as? String
+    }
+    
+    /// Send a chat request to ChatGPT and return the assistant's message text.
+    /// - Parameters:
+    ///   - systemPrompt: High‑level instructions for the assistant (role, format, etc.).
+    ///   - userPrompt: The concrete user request / question.
+    func generateReply(systemPrompt: String, userPrompt: String) async throws -> String {
+        guard isConfigured, let apiKey else {
+            throw ChatGPTErrors.missingAPIKey
+        }
+        
+        struct ChatMessage: Codable {
+            let role: String
+            let content: String
+        }
+        
+        struct ChatRequest: Codable {
+            let model: String
+            let messages: [ChatMessage]
+            let temperature: Double
+        }
+        
+        struct ChatResponse: Codable {
+            struct Choice: Codable {
+                let message: ChatMessage
+            }
+            let choices: [Choice]
+        }
+        
+        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        
+        let body = ChatRequest(
+            model: "gpt-4.1-mini", // You can change the model in one place here
+            messages: [
+                ChatMessage(role: "system", content: systemPrompt),
+                ChatMessage(role: "user", content: userPrompt)
+            ],
+            temperature: 0.7
+        )
+        
+        request.httpBody = try JSONEncoder().encode(body)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
+            let message = String(data: data, encoding: .utf8) ?? "Unknown error"
+            throw ChatGPTErrors.httpError(statusCode: http.statusCode, message: message)
+        }
+        
+        let decoded = try JSONDecoder().decode(ChatResponse.self, from: data)
+        guard let message = decoded.choices.first?.message.content else {
+            throw ChatGPTErrors.emptyResponse
+        }
+        return message
+    }
+    
+    enum ChatGPTErrors: Error {
+        case missingAPIKey
+        case httpError(statusCode: Int, message: String)
+        case emptyResponse
+    }
+}
 

@@ -1,0 +1,24 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -scheme Itinero -destination generic/platform=iOS "-skip-testing:ItineroUITests" test
+
+Resolve Package Graph
+
+
+Resolved source packages:
+  GoogleAppMeasurement: https://github.com/google/GoogleAppMeasurement.git @ 12.10.0
+  GoogleUtilities: https://github.com/google/GoogleUtilities.git @ 8.1.0
+  abseil: https://github.com/google/abseil-cpp-binary.git @ 1.2024072200.0
+  gRPC: https://github.com/google/grpc-binary.git @ 1.69.1
+  GTMSessionFetcher: https://github.com/google/gtm-session-fetcher.git @ 5.1.0
+  InteropForGoogle: https://github.com/google/interop-ios-for-google-sdks.git @ 101.0.0
+  GoogleDataTransport: https://github.com/google/GoogleDataTransport.git @ 10.1.0
+  RevenueCat: https://github.com/RevenueCat/purchases-ios.git @ 5.61.0
+  wishkit-ios: https://github.com/wishkit/wishkit-ios.git @ 4.7.0
+  leveldb: https://github.com/firebase/leveldb.git @ 1.22.5
+  GoogleAdsOnDeviceConversion: https://github.com/googleads/google-ads-on-device-conversion-ios-sdk @ 3.3.0
+  nanopb: https://github.com/firebase/nanopb.git @ 2.30910.0
+  wishkit-ios-shared: https://github.com/wishkit/wishkit-ios-shared.git @ 1.5.0
+  Promises: https://github.com/google/promises.git @ 2.4.0
+  AppCheck: https://github.com/google/app-check.git @ 11.2.0
+  Firebase: https://github.com/firebase/firebase-ios-sdk @ 12.10.0
+

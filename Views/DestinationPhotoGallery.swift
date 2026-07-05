@@ -25,7 +25,7 @@ struct DestinationPhotoGallery: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 30))
                             .foregroundColor(.blue)
-                        Text("Add Photo")
+                        Text("itinerary.addPhoto".localized)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }

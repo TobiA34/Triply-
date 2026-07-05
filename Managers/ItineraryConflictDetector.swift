@@ -75,7 +75,7 @@ class ItineraryConflictDetector {
                 activity1: activity1,
                 activity2: activity2,
                 conflictType: .overlapping,
-                message: "\(activity1.title) and \(activity2.title) overlap in time"
+                message: "itineraryConflictDetector.activity1title.and.activity2title.overlap.in".localized
             )
         }
         
@@ -106,7 +106,7 @@ class ItineraryConflictDetector {
                 activity1: activity1,
                 activity2: activity2,
                 conflictType: .tooClose,
-                message: "\(activity1.title) and \(activity2.title) are too close together (only \(Int(timeDifference / 60)) min apart)"
+                message: "itineraryConflictDetector.activity1title.and.activity2title.are.too".localized
             )
         }
         

@@ -12,7 +12,7 @@ struct CollaborativeTripView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \TripCollaborator.invitedAt, order: .reverse) private var allCollaborators: [TripCollaborator]
-    @StateObject private var iap = IAPManager.shared
+    @StateObject private var proLimiter = ProLimiter.shared
     
     @State private var showingInviteSheet = false
     @State private var newCollaboratorName = ""
@@ -26,10 +26,10 @@ struct CollaborativeTripView: View {
     }
     
     var body: some View {
-        if !iap.isPro {
+        if !proLimiter.isPro {
             PaywallGateView(
                 featureName: "Collaborative Planning",
-                featureDescription: "Invite friends and family to plan trips together. Share itineraries and vote on activities.",
+                featureDescription: "Invite others to plan trips together and manage roles.",
                 icon: "person.2.fill",
                 iconColor: .blue
             )
@@ -48,11 +48,11 @@ struct CollaborativeTripView: View {
                         .font(.system(size: 48))
                         .foregroundColor(.blue)
                     
-                    Text("Collaborative Planning")
+                    Text("collab.planning".localized)
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("Invite others to plan and manage this trip together")
+                    Text("collab.inviteDescription".localized)
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
@@ -64,13 +64,13 @@ struct CollaborativeTripView: View {
                     HStack {
                         Image(systemName: "link")
                             .foregroundColor(.blue)
-                        Text("Share Trip Link")
+                        Text("collab.shareLink".localized)
                             .font(.headline)
                         Spacer()
                     }
                     
                     HStack {
-                        Text(shareLink.isEmpty ? "Generate share link" : shareLink)
+                        Text(shareLink.isEmpty ? "collab.generateLink".localized : shareLink)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
@@ -98,7 +98,7 @@ struct CollaborativeTripView: View {
                 // Collaborators List
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
-                        Text("Collaborators")
+                        Text("collab.collaborators".localized)
                             .font(.headline)
                         Spacer()
                         Button {
@@ -106,7 +106,7 @@ struct CollaborativeTripView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "person.badge.plus")
-                                Text("Invite")
+                                Text("collab.invite".localized)
                             }
                             .font(.subheadline)
                             .foregroundColor(.blue)
@@ -119,10 +119,10 @@ struct CollaborativeTripView: View {
                             Image(systemName: "person.2.slash")
                                 .font(.system(size: 40))
                                 .foregroundColor(.secondary.opacity(0.5))
-                            Text("No collaborators yet")
+                            Text("collab.noCollaborators".localized)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
-                            Text("Invite friends to plan together")
+                            Text("collab.inviteFriends".localized)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
@@ -138,37 +138,37 @@ struct CollaborativeTripView: View {
                 
                 // Features Section
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Collaboration Features")
+                    Text("collab.features".localized)
                         .font(.headline)
                         .padding(.horizontal)
                     
                     CollaborationFeatureCard(
                         icon: "checkmark.circle.fill",
                         iconColor: .green,
-                        title: "Vote on Activities",
-                        description: "Let collaborators vote on which activities to include in the itinerary"
+                        title: "collab.voteOnActivities".localized,
+                        description: "collab.voteOnActivitiesDesc".localized
                     )
                     
                     
                     CollaborationFeatureCard(
                         icon: "doc.text.fill",
                         iconColor: .blue,
-                        title: "Shared Documents",
-                        description: "Share tickets, reservations, and important documents with the group"
+                        title: "collab.sharedDocuments".localized,
+                        description: "collab.sharedDocumentsDesc".localized
                     )
                     
                     CollaborationFeatureCard(
                         icon: "message.fill",
                         iconColor: .purple,
-                        title: "Trip Chat",
-                        description: "Communicate with your travel companions directly in the app"
+                        title: "collab.tripChat".localized,
+                        description: "collab.communicateDesc".localized
                     )
                 }
                 .padding(.horizontal)
                 .padding(.bottom)
             }
         }
-        .navigationTitle("Collaborate")
+        .navigationTitle("collab.navTitle".localized)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: $showingInviteSheet) {
             InviteCollaboratorSheet(
@@ -268,7 +268,7 @@ struct CollaboratorRow: View {
                 Button(role: .destructive, action: {
                     showingDeleteAlert = true
                 }) {
-                    Label("Remove", systemImage: "trash")
+                    Label("collab.remove".localized, systemImage: "trash")
                 }
             } label: {
                 Image(systemName: "ellipsis")
@@ -279,14 +279,14 @@ struct CollaboratorRow: View {
         .background(Color(.systemBackground))
         .cornerRadius(12)
         .shadow(color: .black.opacity(0.05), radius: 5, x: 0, y: 2)
-        .alert("Remove Collaborator", isPresented: $showingDeleteAlert) {
-            Button("Cancel", role: .cancel) { }
-            Button("Remove", role: .destructive) {
+        .alert("collab.removeCollaborator".localized, isPresented: $showingDeleteAlert) {
+            Button("common.cancel".localized, role: .cancel) { }
+            Button("collab.remove".localized, role: .destructive) {
                 modelContext.delete(collaborator)
                 try? modelContext.save()
             }
         } message: {
-            Text("Are you sure you want to remove \(collaborator.name) from this trip?")
+            Text("collab.removeConfirm".localized(collaborator.name))
         }
     }
     
@@ -320,35 +320,35 @@ struct InviteCollaboratorSheet: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Name", text: $name)
-                    TextField("Email (optional)", text: $email)
+                    TextField("common.name".localized, text: $name)
+                    TextField("collab.emailOptional".localized, text: $email)
                         .keyboardType(.emailAddress)
                         .autocapitalization(.none)
                 } header: {
-                    Text("Collaborator Details")
+                    Text("collab.details".localized)
                 }
                 
                 Section {
-                    Picker("Role", selection: $role) {
-                        Text("Viewer").tag("viewer")
-                        Text("Editor").tag("editor")
+                    Picker("collab.role".localized, selection: $role) {
+                        Text("collab.viewer".localized).tag("viewer")
+                        Text("collab.editor".localized).tag("editor")
                     }
                 } header: {
-                    Text("Role")
+                    Text("collab.role".localized)
                 } footer: {
-                    Text(role == "viewer" ? "Can view trip details but cannot make changes" : "Can view and edit trip details, add activities, and manage expenses")
+                    Text(role == "viewer" ? "collab.viewerDesc".localized : "collab.editorDesc".localized)
                 }
             }
-            .navigationTitle("Invite Collaborator")
+            .navigationTitle("collab.inviteCollaborator".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("common.cancel".localized) {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Invite") {
+                    Button("collab.invite".localized) {
                         onInvite(name, email, role)
                         dismiss()
                     }

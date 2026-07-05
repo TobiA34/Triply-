@@ -73,8 +73,7 @@ struct ItineroApp: App {
                 return try ModelContainer(for: Schema([TripModel.self]))
             } catch {
                 print("❌ CRITICAL: Final fallback failed: \(error)")
-                // Return a minimal in-memory container that won't crash
-                return try! ModelContainer(for: Schema([TripModel.self]))
+                fatalError("ModelContainer creation failed: \(error). The app cannot continue without SwiftData.")
             }
         }
     }

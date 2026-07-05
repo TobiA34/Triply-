@@ -48,6 +48,10 @@ struct AddTripView: View {
     @State private var limitAlertMessage: String?
     @State private var showLimitAlert = false
     
+    // Cover Photo
+    @State private var coverImageData: Data? = nil
+    @State private var showingImagePicker = false
+
     // Additional Fields
     @State private var travelCompanions: Int = 1
     @State private var priority: TripPriority = .medium
@@ -178,7 +182,7 @@ struct AddTripView: View {
     
     var formCompletionPercentage: Int {
         var completed = 0
-        let total = 8
+        let total = 9
         
         if !tripName.isEmpty { completed += 1 }
         if selectedCategory != "General" { completed += 1 }
@@ -188,6 +192,8 @@ struct AddTripView: View {
         if !notes.isEmpty { completed += 1 }
         if !tags.isEmpty { completed += 1 }
         if hasInsurance || reminderDaysBefore > 0 { completed += 1 }
+        
+        if coverImageData != nil { completed += 1 }
         
         return Int((Double(completed) / Double(total)) * 100)
     }
@@ -200,6 +206,38 @@ struct AddTripView: View {
             }
             .listRowInsets(EdgeInsets())
             .listRowBackground(Color.clear)
+            
+            // Cover Photo Section
+            Section {
+                Button(action: { showingImagePicker = true }) {
+                    ZStack {
+                        if let data = coverImageData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .frame(height: 160)
+                                .clipped()
+                                .overlay(Color.black.opacity(0.3))
+                        } else {
+                            Rectangle()
+                                .fill(themeManager.currentPalette.accent.opacity(0.1))
+                                .frame(height: 160)
+                        }
+                        
+                        VStack(spacing: 8) {
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 32))
+                            Text(coverImageData == nil ? "Add Cover Photo" : "Change Photo")
+                                .font(.headline)
+                        }
+                        .foregroundColor(coverImageData == nil ? themeManager.currentPalette.accent : .white)
+                    }
+                }
+            }
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+            .cornerRadius(16)
+            .padding(.bottom, 8)
             .listRowSeparator(.hidden)
             
             // Quick Templates
@@ -270,6 +308,13 @@ struct AddTripView: View {
                 Text(message)
             }
         }
+        .sheet(isPresented: $showingImagePicker) {
+            ImagePickerView(onImageSelected: { image in
+                if let imageData = image.jpegData(compressionQuality: 0.8) {
+                    coverImageData = imageData
+                }
+            })
+        }
         .sheet(isPresented: $showingPaywall) {
             NavigationStack {
                 PaywallView()
@@ -278,7 +323,10 @@ struct AddTripView: View {
         .keyboardDoneButton()
         .fullScreenCover(isPresented: $showingTemplateLibrary) {
             SmartTemplateLibraryView { template in
-                applySmartTemplate(template)
+                Task { @MainActor in
+                    applySmartTemplate(template)
+                    showingTemplateLibrary = false
+                }
             }
         }
         .fullScreenCover(isPresented: $showingDestinationSearch) {
@@ -1541,6 +1589,10 @@ struct AddTripView: View {
             category: selectedCategory,
             budget: budgetValue
         )
+        
+        if let coverImageData = coverImageData {
+            newTrip.coverImageData = coverImageData
+        }
         
         // Insert trip first
         modelContext.insert(newTrip)

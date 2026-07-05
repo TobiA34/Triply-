@@ -22,25 +22,28 @@ struct TemplateCard: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
-            VStack(spacing: 10) {
+        Button(action: {
+            HapticManager.shared.selection()
+            action()
+        }) {
+            VStack(spacing: 12) {
                 Image(systemName: icon)
-                    .font(.title2)
+                    .font(.system(size: 28, weight: .medium))
                     .foregroundColor(color)
                 Text(title)
-                    .font(.caption)
+                    .font(.subheadline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
-            .frame(width: 110, height: 90)
+            .frame(width: 100, height: 88)
             .background(
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(color.opacity(0.1))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(color.opacity(0.3), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(color.opacity(0.25), lineWidth: 1)
                     )
             )
         }
@@ -54,11 +57,11 @@ struct TipRow: View {
     let color: Color
     
     var body: some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .top, spacing: 14) {
             Image(systemName: icon)
+                .font(.system(size: 14))
                 .foregroundColor(color)
-                .font(.caption)
-                .padding(.top, 2)
+                .frame(width: 24, alignment: .center)
             
             Text(text)
                 .font(.subheadline)
@@ -67,10 +70,12 @@ struct TipRow: View {
             
             Spacer()
         }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 12)
-        .background(color.opacity(0.05))
-        .cornerRadius(8)
+        .padding(.vertical, 12)
+        .padding(.horizontal, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(color.opacity(0.08))
+        )
     }
 }
 
@@ -81,23 +86,27 @@ struct StatCard: View {
     let color: Color
     
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 10) {
             Image(systemName: icon)
-                .font(.title3)
+                .font(.system(size: 22))
                 .foregroundColor(color)
             
             Text(value)
-                .font(.headline)
-                .fontWeight(.bold)
+                .font(.system(size: 17, weight: .bold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
             
             Text(label)
                 .font(.caption)
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity)
-        .padding()
-        .background(color.opacity(0.1))
-        .cornerRadius(12)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 14)
+                .fill(color.opacity(0.1))
+        )
     }
 }
 

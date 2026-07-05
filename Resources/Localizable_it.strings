@@ -954,7 +954,6 @@
 "smartPackingGeneratorView.generate.aipowered.suggestions.or.add" = "Generate AI-powered suggestions or add your own items";
 "smartPackingGeneratorView.added" = "Added";
 "smartPackingGeneratorView.add.to.list" = "Add to List";
-"smartTemplateLibraryView.index.1" = "\\\\(index + 1)";
 "statisticsView.total.days" = "Total Days";
 "statisticsView.budget.summary" = "Budget Summary";
 "statisticsView.categorydistributioncategory.0" = "\\\\(categoryDistribution[category] ?? 0)";

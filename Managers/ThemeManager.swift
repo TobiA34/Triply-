@@ -7,24 +7,30 @@
 
 import SwiftUI
 import SwiftData
+#if canImport(UIKit)
+import UIKit
+#endif
 
 enum AppTheme: String, CaseIterable {
     case system = "System"
     case light = "Light"
+    case dark = "Dark"
     case custom = "Custom"
     
     var isCustom: Bool { self == .custom }
     
     var colorScheme: ColorScheme? {
         switch self {
-        case .system: return .light // Force light mode
+        case .system: return nil  // Use system appearance
         case .light: return .light
-        case .custom: return .light // Force light mode for custom themes too
+        case .dark: return .dark
+        case .custom: return nil  // Use system for custom palette
         }
     }
 }
 
 enum DefaultPalette: String, CaseIterable, Identifiable {
+    case warm
     case classic
     case ocean
     case forest
@@ -34,6 +40,7 @@ enum DefaultPalette: String, CaseIterable, Identifiable {
     var id: String { rawValue }
     var title: String {
         switch self {
+        case .warm: return "Sky"
         case .classic: return "Classic"
         case .ocean: return "Ocean"
         case .forest: return "Forest"
@@ -43,19 +50,32 @@ enum DefaultPalette: String, CaseIterable, Identifiable {
     }
     
     func palette(for scheme: ColorScheme) -> CustomTheme.Palette {
-        // Always use light mode colors
+        let isDark = scheme == .dark
         switch self {
+        case .warm:
+            return isDark
+                ? .init(accent: Color(red: 0.45, green: 0.72, blue: 1.0), background: Color(red: 0.09, green: 0.11, blue: 0.16), text: .white, secondaryText: Color(.systemGray2))
+                : .init(accent: Color(red: 0.22, green: 0.52, blue: 0.96), background: Color(red: 0.95, green: 0.97, blue: 1.0), text: Color(red: 0.1, green: 0.14, blue: 0.22), secondaryText: Color(red: 0.42, green: 0.48, blue: 0.55))
         case .classic:
-            return .init(accent: .blue, background: .white, text: .primary, secondaryText: .secondary)
+            return isDark
+                ? .init(accent: .blue, background: Color(red: 0.11, green: 0.11, blue: 0.12), text: .white, secondaryText: Color(.systemGray2))
+                : .init(accent: .blue, background: .white, text: .primary, secondaryText: .secondary)
         case .ocean:
-            return .init(accent: .teal, background: Color(red: 0.95, green: 0.98, blue: 1.0), text: .black, secondaryText: .gray)
+            return isDark
+                ? .init(accent: .teal, background: Color(red: 0.08, green: 0.12, blue: 0.18), text: .white, secondaryText: Color(.systemGray2))
+                : .init(accent: .teal, background: Color(red: 0.95, green: 0.98, blue: 1.0), text: .black, secondaryText: .gray)
         case .forest:
-            return .init(accent: .green, background: Color(red: 0.95, green: 0.99, blue: 0.96), text: .black, secondaryText: .gray)
+            return isDark
+                ? .init(accent: .green, background: Color(red: 0.08, green: 0.14, blue: 0.10), text: .white, secondaryText: Color(.systemGray2))
+                : .init(accent: .green, background: Color(red: 0.95, green: 0.99, blue: 0.96), text: .black, secondaryText: .gray)
         case .sunset:
-            return .init(accent: .orange, background: Color(red: 1.0, green: 0.97, blue: 0.95), text: .black, secondaryText: .gray)
+            return isDark
+                ? .init(accent: .orange, background: Color(red: 0.18, green: 0.10, blue: 0.08), text: .white, secondaryText: Color(.systemGray2))
+                : .init(accent: .orange, background: Color(red: 1.0, green: 0.97, blue: 0.95), text: .black, secondaryText: .gray)
         case .midnight:
-            // Keep dark for midnight theme but force light mode
-            return .init(accent: .indigo, background: Color(red: 0.95, green: 0.95, blue: 0.98), text: .black, secondaryText: .gray)
+            return isDark
+                ? .init(accent: .indigo, background: Color(red: 0.09, green: 0.09, blue: 0.14), text: .white, secondaryText: Color(.systemGray2))
+                : .init(accent: .indigo, background: Color(red: 0.95, green: 0.95, blue: 0.98), text: .black, secondaryText: .gray)
         }
     }
 }
@@ -65,7 +85,7 @@ class ThemeManager: ObservableObject {
     static let shared = ThemeManager()
     
     @Published var currentTheme: AppTheme = .system
-    @Published var customAccentColor: Color = .blue
+    @Published var customAccentColor: Color? = nil
     
     // Custom themes
     @Published private(set) var customThemes: [CustomTheme] = []
@@ -92,7 +112,7 @@ class ThemeManager: ObservableObject {
         // Use selected default palette
         let base = defaultPalette.palette(for: resolvedColorScheme)
         return CustomTheme.Palette(
-            accent: customAccentColor, // user default accent dominates
+            accent: customAccentColor ?? base.accent, // user default accent dominates if set
             background: base.background,
             text: base.text,
             secondaryText: base.secondaryText
@@ -100,31 +120,38 @@ class ThemeManager: ObservableObject {
     }
     
     private var resolvedColorScheme: ColorScheme {
-        // Always return light mode
-        return .light
+        switch currentTheme {
+        case .dark: return .dark
+        case .light: return .light
+        case .system:
+            #if canImport(UIKit)
+            return UITraitCollection.current.userInterfaceStyle == .dark ? .dark : .light
+            #else
+            return .light
+            #endif
+        case .custom:
+            #if canImport(UIKit)
+            return UITraitCollection.current.userInterfaceStyle == .dark ? .dark : .light
+            #else
+            return .light
+            #endif
+        }
     }
     
     private let themeKey = "app_theme"
-    private let accentColorKey = "accent_color"
+    private let accentColorKey = "accent_color_v2"
     private let activeCustomThemeKey = "active_custom_theme_id"
     private let userTierKey = "user_tier"
-    private let defaultPaletteKey = "default_palette"
+    private let defaultPaletteKey = "default_palette_v2"
     
     private init() {
         loadTheme()
     }
     
     func loadTheme() {
-        if let savedTheme = UserDefaults.standard.string(forKey: themeKey) {
-            // Migrate old dark mode preference to light mode
-            if savedTheme == "Dark" {
-                currentTheme = .light
-                UserDefaults.standard.set("Light", forKey: themeKey)
-            } else if let theme = AppTheme(rawValue: savedTheme) {
-                currentTheme = theme
-            } else {
-                currentTheme = .light // Default to light
-            }
+        if let savedTheme = UserDefaults.standard.string(forKey: themeKey),
+           let theme = AppTheme(rawValue: savedTheme) {
+            currentTheme = theme
         }
         
         if let colorData = UserDefaults.standard.data(forKey: accentColorKey),
@@ -307,3 +334,36 @@ extension Color {
     }
 }
 
+// MARK: - Design System (spacing, radius, animation for consistent UI/UX)
+enum DesignSystem {
+    enum Spacing {
+        static let xxs: CGFloat = 4
+        static let xs: CGFloat = 8
+        static let sm: CGFloat = 12
+        static let md: CGFloat = 16
+        static let lg: CGFloat = 20
+        static let xl: CGFloat = 24
+        static let xxl: CGFloat = 32
+    }
+    enum Radius {
+        static let sm: CGFloat = 10
+        static let md: CGFloat = 14
+        static let lg: CGFloat = 18
+        static let xl: CGFloat = 22
+        static let card: CGFloat = 20
+        static let pill: CGFloat = 100
+    }
+    enum Animation {
+        static let quick = SwiftUI.Animation.easeOut(duration: 0.2)
+        static let spring = SwiftUI.Animation.spring(response: 0.35, dampingFraction: 0.8)
+        static let springBouncy = SwiftUI.Animation.spring(response: 0.5, dampingFraction: 0.72)
+    }
+    enum Shadow {
+        static func card(opacity: Double = 0.08) -> (color: Color, radius: CGFloat, x: CGFloat, y: CGFloat) {
+            (Color.black.opacity(opacity), 14, 0, 6)
+        }
+        static func cardSubtle(opacity: Double = 0.05) -> (color: Color, radius: CGFloat, x: CGFloat, y: CGFloat) {
+            (Color.black.opacity(opacity), 6, 0, 2)
+        }
+    }
+}

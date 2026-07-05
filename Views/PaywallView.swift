@@ -2,137 +2,129 @@
 //  PaywallView.swift
 //  Itinero
 //
-//  Created on 2025
+//  Shows the RevenueCat hosted paywall configured in the dashboard.
 //
 
 import SwiftUI
-import StoreKit
 
 struct PaywallView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var iap = IAPManager.shared
     @State private var isPurchasing = false
-    @State private var showFeatures = false
-    
+    @State private var showingError = false
+
+    private var privacyURL: URL {
+        URL(string: (Bundle.main.object(forInfoDictionaryKey: "AppPrivacyPolicyURL") as? String) ?? "https://example.com/privacy")!
+    }
+
+    private var termsURL: URL {
+        URL(string: (Bundle.main.object(forInfoDictionaryKey: "AppTermsOfUseURL") as? String) ?? "https://example.com/terms")!
+    }
+
     var body: some View {
         ScrollView {
-            VStack(spacing: 20) {
-                Image(systemName: "crown.fill")
-                    .font(.system(size: 56))
-                    .foregroundColor(.yellow)
-                    .padding(.top, 24)
-                
-                Text("Itinero Pro")
-                    .font(.largeTitle).bold()
-                
-                VStack(alignment: .leading, spacing: 12) {
-                    featureRow("AI Chat Assistant", "message.fill")
-                    featureRow("Smart Suggestions", "lightbulb.fill")
-                    featureRow("Trip Analysis", "brain.head.profile")
-                    featureRow("Receipt Scanner", "doc.text.viewfinder")
-                    featureRow("Budget Insights", "chart.pie.fill")
-                    featureRow("Itinerary Optimizer", "calendar.badge.clock")
-                    featureRow("AI Plan Generator", "calendar.badge.plus")
-                    featureRow("Unlimited custom themes", "paintpalette.fill")
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
-                .background(.ultraThinMaterial)
-                .cornerRadius(16)
-                
-                Button {
-                    showFeatures = true
-                } label: {
-                    HStack {
-                        Text("View All Pro Features")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                    }
-                    .foregroundColor(.blue)
-                }
-                .padding(.horizontal)
-                
-                if let pro = iap.products.first(where: { $0.id == IAPManager.ProductID.pro.rawValue }) {
-                    Text(pro.displayPrice)
-                        .font(.title2).bold()
-                } else {
-                    VStack(spacing: 6) {
-                        Text("Loading price...")
-                            .foregroundColor(.secondary)
-                        if let info = iap.lastInfoMessage {
-                            Text(info).font(.footnote).foregroundColor(.secondary)
-                        }
-                    }
-                }
-                
-                VStack(spacing: 12) {
-                    Button {
-                        Task {
-                            isPurchasing = true
-                            let success = await iap.purchasePro()
-                            isPurchasing = false
-                            if success { dismiss() }
-                        }
-                    } label: {
-                        HStack {
-                            if isPurchasing { ProgressView().tint(.white) }
-                            Text(isPurchasing ? "Purchasing..." : "Unlock Pro")
-                                .bold()
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(isPurchasing)
-                    
-                    Button("Restore Purchases") {
-                        Task { await iap.restorePurchases() }
-                    }
-                    .buttonStyle(.bordered)
-                }
-                
-                if let msg = iap.lastErrorMessage {
-                    Text(msg).foregroundColor(.red).font(.footnote)
-                }
-                
-                #if DEBUG
-                Divider().padding(.vertical, 8)
-                Button {
-                    iap.debugUnlockPro()
-                    dismiss()
-                } label: {
-                    Text("Debug: Unlock Pro (no charge)").bold()
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                #endif
-                
-                Text("One-time purchase. No subscription.\nManage purchases in App Store settings.")
-                    .font(.footnote)
-                    .multilineTextAlignment(.center)
+            VStack(alignment: .leading, spacing: 16) {
+                Text("Unlock Triply Pro")
+                    .font(.title2.bold())
+                Text("AI planning, advanced exports, templates, and premium productivity tools.")
                     .foregroundColor(.secondary)
-                    .padding(.top, 8)
+
+                if iap.isLoading {
+                    ProgressView("Loading plans...")
+                        .padding(.vertical, 12)
+                } else if iap.availablePackages.isEmpty {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Plans are temporarily unavailable.")
+                            .font(.headline)
+                        Text("Please try again in a moment.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                        Button("Retry") {
+                            Task { await iap.loadProducts() }
+                        }
+                        .buttonStyle(.borderedProminent)
+                    }
+                    .padding(.vertical, 8)
+                } else {
+                    ForEach(iap.availablePackages) { package in
+                        Button {
+                            Task {
+                                isPurchasing = true
+                                let ok = await iap.purchasePackage(identifier: package.id)
+                                isPurchasing = false
+                                if ok {
+                                    dismiss()
+                                } else if !(iap.lastErrorMessage ?? "").isEmpty {
+                                    showingError = true
+                                }
+                            }
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(package.title)
+                                        .font(.headline)
+                                        .foregroundColor(.primary)
+                                    if let intro = package.introPrice, package.introEligible {
+                                        Text("Intro: \(intro)")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                Spacer()
+                                Text(package.price)
+                                    .font(.headline)
+                                    .foregroundColor(.primary)
+                            }
+                            .padding(14)
+                            .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemGroupedBackground)))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+
+                Button("Restore Purchases") {
+                    Task {
+                        await iap.restorePurchases()
+                        if !(iap.lastErrorMessage ?? "").isEmpty {
+                            showingError = true
+                        }
+                    }
+                }
+                .padding(.top, 6)
+
+                if let info = iap.lastInfoMessage, !info.isEmpty {
+                    Text(info)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                }
+
+                HStack(spacing: 8) {
+                    Link("Privacy Policy", destination: privacyURL)
+                    Text("•")
+                    Link("Terms of Use", destination: termsURL)
+                }
+                .font(.footnote)
+                .foregroundColor(.secondary)
+                .padding(.top, 8)
             }
             .padding()
         }
-        .navigationTitle("Upgrade to Pro")
-        .sheet(isPresented: $showFeatures) {
-            NavigationStack {
-                ProFeaturesView()
-            }
-        }
+        .navigationTitle("Triply Pro")
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             await iap.loadProducts()
-            iap.observeTransactions()
         }
-    }
-    
-    private func featureRow(_ title: String, _ systemImage: String) -> some View {
-        HStack(spacing: 12) {
-            Image(systemName: systemImage)
-                .foregroundColor(.accentColor)
-            Text(title)
+        .overlay {
+            if isPurchasing {
+                ProgressView()
+                    .padding()
+                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+            }
+        }
+        .alert("Error", isPresented: $showingError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text((iap.lastErrorMessage?.isEmpty == false ? iap.lastErrorMessage! : "Something went wrong. Please try again."))
         }
     }
 }
@@ -142,5 +134,4 @@ struct PaywallView: View {
         PaywallView()
     }
 }
-
 

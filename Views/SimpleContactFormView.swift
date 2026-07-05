@@ -1,6 +1,6 @@
 //
 //  SimpleContactFormView.swift
-//  Itinero
+//  Triply
 //
 //  Created on 2025
 //
@@ -34,7 +34,7 @@ struct SimpleContactFormView: View {
                 
                 Section {
                     TextEditor(text: $message)
-                        .frame(height: 250)
+                        .frame(height: 200)
                         .overlay(
                             RoundedRectangle(cornerRadius: 8)
                                 .stroke(Color(.systemGray4), lineWidth: 1)
@@ -42,7 +42,7 @@ struct SimpleContactFormView: View {
                 } header: {
                     Text("Message")
                 } footer: {
-                    Text("Describe your feedback, issue, or feature request.")
+                    Text("Please describe your feedback, issue, or feature request.")
                 }
                 
                 Section {

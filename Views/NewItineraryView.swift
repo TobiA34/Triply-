@@ -13,6 +13,7 @@ struct NewItineraryView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
     @StateObject private var locationManager = EnhancedLocationManager.shared
+    @EnvironmentObject var themeManager: ThemeManager
     
     @State private var selectedDay: Int = 1
     @State private var showingAddSheet = false
@@ -48,7 +49,7 @@ struct NewItineraryView: View {
                 activitiesList
             }
         }
-        .background(Color(.systemGroupedBackground))
+        .background(themeManager.currentPalette.background)
         .sheet(isPresented: $showingAddSheet) {
             NewAddActivitySheet(trip: trip, day: selectedDay, date: days[selectedDay - 1])
         }
@@ -78,7 +79,7 @@ struct NewItineraryView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
         }
-        .background(Color(.systemBackground))
+        .background(themeManager.currentPalette.background)
     }
     
     private func dayActivityCount(_ day: Int) -> Int {
@@ -97,7 +98,7 @@ struct NewItineraryView: View {
                     Circle()
                         .fill(
                             LinearGradient(
-                                colors: [.blue.opacity(0.2), .purple.opacity(0.2)],
+                                colors: [themeManager.currentPalette.accent.opacity(0.2), themeManager.currentPalette.accent.opacity(0.1)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -108,7 +109,7 @@ struct NewItineraryView: View {
                         .font(.system(size: 50))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [.blue, .purple],
+                                colors: [themeManager.currentPalette.accent, themeManager.currentPalette.accent.opacity(0.8)],
                                 startPoint: .topLeading,
                                 endPoint: .bottomTrailing
                             )
@@ -118,11 +119,11 @@ struct NewItineraryView: View {
                 VStack(spacing: 8) {
                     Text("No Activities Yet")
                         .font(.title2.bold())
-                        .foregroundColor(.primary)
+                        .foregroundColor(themeManager.currentPalette.text)
                     
                     Text("Start building your itinerary by adding activities")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 40)
                 }
@@ -142,7 +143,7 @@ struct NewItineraryView: View {
                     .padding()
                     .background(
                         LinearGradient(
-                            colors: [.blue, .purple],
+                            colors: [themeManager.currentPalette.accent, themeManager.currentPalette.accent.opacity(0.8)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
@@ -188,11 +189,11 @@ struct NewItineraryView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Day \(selectedDay)")
                         .font(.title.bold())
-                        .foregroundColor(.primary)
+                        .foregroundColor(themeManager.currentPalette.text)
                     
                     Text(days[selectedDay - 1], style: .date)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
                 }
                 
                 Spacer()
@@ -200,10 +201,10 @@ struct NewItineraryView: View {
                 if !currentDayActivities.isEmpty {
                     Text("\(currentDayActivities.count)")
                         .font(.title3.bold())
-                        .foregroundColor(.blue)
+                        .foregroundColor(themeManager.currentPalette.accent)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.blue.opacity(0.1))
+                        .background(themeManager.currentPalette.accent.opacity(0.1))
                         .clipShape(Capsule())
                 }
             }
@@ -218,7 +219,7 @@ struct NewItineraryView: View {
                     .padding(.vertical, 14)
                     .background(
                         LinearGradient(
-                            colors: [.blue, .purple],
+                            colors: [themeManager.currentPalette.accent, themeManager.currentPalette.accent.opacity(0.8)],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
@@ -227,22 +228,22 @@ struct NewItineraryView: View {
             }
         }
         .padding()
-        .background(Color(.systemBackground))
+        .background(themeManager.currentPalette.background)
     }
     
     private var emptyDayState: some View {
         VStack(spacing: 16) {
             Image(systemName: "calendar.badge.plus")
                 .font(.system(size: 48))
-                .foregroundColor(.secondary.opacity(0.5))
+                .foregroundColor(themeManager.currentPalette.accent.opacity(0.5))
             
             Text("No activities for this day")
                 .font(.headline)
-                .foregroundColor(.secondary)
+                .foregroundColor(themeManager.currentPalette.secondaryText)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 60)
-        .background(Color(.systemBackground))
+        .background(themeManager.currentPalette.background)
     }
     
     // MARK: - Actions
@@ -272,6 +273,7 @@ struct NewItineraryView: View {
 
 // MARK: - Day Button
 struct DayButton: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let day: Int
     let date: Date
     let isSelected: Bool
@@ -289,27 +291,32 @@ struct DayButton: View {
                 
                 if activityCount > 0 {
                     Circle()
-                        .fill(isSelected ? Color.white : Color.blue)
+                        .fill(isSelected ? Color.white : themeManager.currentPalette.accent)
                         .frame(width: 6, height: 6)
                 }
             }
-            .foregroundColor(isSelected ? .white : .primary)
+            .foregroundColor(isSelected ? .white : themeManager.currentPalette.text)
             .frame(width: 70)
             .padding(.vertical, 12)
             .background(
                 Group {
                     if isSelected {
                         LinearGradient(
-                            colors: [.blue, .purple],
+                            colors: [themeManager.currentPalette.accent, themeManager.currentPalette.accent.opacity(0.8)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         )
                     } else {
-                        Color(.systemGray6)
+                        themeManager.currentPalette.background
                     }
                 }
             )
             .cornerRadius(12)
+            .shadow(color: isSelected ? themeManager.currentPalette.accent.opacity(0.3) : themeManager.currentPalette.accent.opacity(0.05), radius: 8, x: 0, y: 4)
+            .overlay(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(isSelected ? Color.clear : themeManager.currentPalette.accent.opacity(0.1), lineWidth: 1)
+            )
         }
         .buttonStyle(.plain)
     }
@@ -317,6 +324,7 @@ struct DayButton: View {
 
 // MARK: - Activity Row
 struct ActivityRow: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let activity: ItineraryItem
     let onTap: () -> Void
     let onDelete: () -> Void
@@ -337,7 +345,7 @@ struct ActivityRow: View {
                         Circle()
                             .fill(
                                 LinearGradient(
-                                    colors: activity.isBooked ? [.green, .green.opacity(0.8)] : [.blue, .purple],
+                                    colors: activity.isBooked ? [.green, .green.opacity(0.8)] : [themeManager.currentPalette.accent, themeManager.currentPalette.accent.opacity(0.8)],
                                     startPoint: .topLeading,
                                     endPoint: .bottomTrailing
                                 )
@@ -361,7 +369,7 @@ struct ActivityRow: View {
                     HStack {
                         Text(activity.title)
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(themeManager.currentPalette.text)
                             .lineLimit(1)
                         
                         Spacer()
@@ -370,6 +378,21 @@ struct ActivityRow: View {
                             Image(systemName: "checkmark.circle.fill")
                                 .foregroundColor(.green)
                                 .font(.title3)
+                                .scaleEffect(1.1)
+                        } else {
+                            Image(systemName: "circle")
+                                .foregroundColor(themeManager.currentPalette.secondaryText.opacity(0.5))
+                                .font(.title3)
+                        }
+                    }
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                            onToggleBooked()
+                            if !activity.isBooked {
+                                HapticManager.shared.success()
+                            } else {
+                                HapticManager.shared.selection()
+                            }
                         }
                     }
                     
@@ -380,7 +403,7 @@ struct ActivityRow: View {
                             Text(activity.location)
                                 .font(.subheadline)
                         }
-                        .foregroundColor(.secondary)
+                        .foregroundColor(themeManager.currentPalette.secondaryText)
                     }
                     
                     // Tags
@@ -391,7 +414,7 @@ struct ActivityRow: View {
                             }
                             
                             if let duration = activity.estimatedDuration {
-                                Tag(text: "\(duration) min", color: .blue)
+                                Tag(text: "\(duration) min", color: themeManager.currentPalette.accent)
                             }
                             
                             if !activity.category.isEmpty && activity.category != "Activity" {
@@ -402,7 +425,7 @@ struct ActivityRow: View {
                 }
             }
             .padding()
-            .background(Color(.systemBackground))
+            .background(themeManager.currentPalette.background)
         }
         .buttonStyle(.plain)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -428,7 +451,7 @@ struct ActivityRow: View {
         case "shopping": return .pink
         case "hotel": return .indigo
         case "transport": return .gray
-        default: return .blue
+        default: return themeManager.currentPalette.accent
         }
     }
 }

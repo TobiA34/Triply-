@@ -39,6 +39,11 @@
 "app.landing.title" = "Itinero";
 "app.landing.subtitle" = "Plan your trips";
 
+/* Home / Pro banner */
+"home.proBanner.title" = "Unlock Itinero Pro";
+"home.proBanner.subtitle" = "Unlimited trips, AI planning, smart packing, exports, and more.";
+"home.proBanner.cta" = "Upgrade";
+
 /* Trips */
 "trips.title" = "My Trips";
 "trips.addTrip" = "Add Trip";
@@ -46,6 +51,7 @@
 "trips.empty.description" = "Start planning your next adventure!";
 "trips.empty.description.long" = "Start planning your next adventure by creating your first trip.";
 "trips.empty.createFirst" = "Create your first trip";
+"trips.hero.tagline" = "Where to next?";
 "trips.new" = "New Trip";
 "trips.edit" = "Edit Trip";
 "trips.delete" = "Delete Trip";
@@ -65,6 +71,12 @@
 "trips.current" = "Current Trips";
 "trips.upcoming" = "Upcoming";
 "trips.past" = "Past Trips";
+"trips.sort" = "Sort";
+"trips.sort.startDateAsc" = "Start date (earliest first)";
+"trips.sort.startDateDesc" = "Start date (latest first)";
+"trips.sort.nameAZ" = "Name A–Z";
+"trips.sort.nameZA" = "Name Z–A";
+"trips.openTrip" = "Open trip";
 "trips.totalTrips" = "Total Trips";
 "trips.totalBudgetLabel" = "Total Budget";
 "trips.statusActive" = "Active";
@@ -322,6 +334,7 @@
 "pro.features" = "Pro Features";
 "pro.viewAllFeatures" = "View All Pro Features";
 "pro.thisIsProFeature" = "Pro feature";
+"pro.powerStatement" = "One purchase unlocks every Pro feature—yours forever, on all your devices.";
 "pro.moreDestinationsSubtitle" = "Add more destinations per trip with Pro.";
 "pro.socialImportSubtitle" = "Import saved posts from Instagram and Pinterest.";
 "pro.restorePurchases" = "Restore Purchases";
@@ -338,6 +351,15 @@
 "pro.footerFull" = "You have full access to Pro features.";
 "pro.freeVsPro" = "Free vs Pro";
 "pro.proTools" = "Pro tools";
+
+/* What's New / v2 */
+"settings.whatsNew" = "What's New";
+"v2.title" = "What's new in v2";
+"v2.lead" = "Smoother planning, clearer Pro upgrades, and quality-of-life updates.";
+"v2.item1" = "Pull down on My Trips to refresh and sync home screen widgets.";
+"v2.item2" = "Sort trips by start date or name from the Sort menu next to your list.";
+"v2.item3" = "Long-press a trip card for Open, Duplicate, and Delete—beyond swipe actions.";
+"v2.item4" = "Settings shows your real app version; open What's New anytime for highlights.";
 
 /* Settings – Feedback / About */
 "settings.featureRequests" = "Feature Requests";
@@ -878,6 +900,15 @@
 "social.saveAsLocation" = "Save as a location to visit";
 "social.addToItinerary" = "Add to Itinerary";
 "social.addAsActivity" = "Add as an activity with video info";
+"onboarding.whatsNew.title" = "What's New";
+"onboarding.whatsNew.subtitle" = "Here's what's new in this version.";
+"onboarding.whatsNew.item1" = "Rotate and flip cover photos when adding or viewing trips";
+"onboarding.whatsNew.item2" = "Expenses and packing in one place under Smart Packing";
+"onboarding.whatsNew.item3" = "Better destination activities with improved place search";
+"onboarding.whatsNew.item4" = "Save edits to your cover photo (filters, rotate, flip) from full-screen view";
+"onboarding.whatsNew.continue" = "Continue";
+"onboarding.whatsNew.continueTitle" = "You're All Set";
+"onboarding.whatsNew.continueDesc" = "Your app is up to date. Happy planning!";
 "onboarding.planTrips" = "Plan Your Trips";
 "onboarding.trackEverything" = "Track Everything";
 "onboarding.aiInsights" = "AI-Powered Insights";
@@ -981,7 +1012,7 @@
 "appleAIFoundation.trip.planning" = "Trip Planning";
 "appleAIFoundation.upcoming.trip" = "Upcoming Trip";
 "appleAIFoundation.currently.traveling" = "Currently Traveling";
-"appleAIFoundation.save.itemscount.itinerary.items" = "Save \\(items!.count) itinerary items";
+"appleAIFoundation.save.itemscount.itinerary.items" = "Save %d itinerary items";
 "appleAIFoundation.create.itinerary" = "Create Itinerary";
 "appleAIFoundation.set.budget" = "Set Budget";
 "appleAIFoundation.daily.budget.formatcurrencydailybudget" = "Daily Budget: \\(formatCurrency(dailyBudget))";
@@ -1158,7 +1189,6 @@
 "smartPackingGeneratorView.generate.aipowered.suggestions.or.add" = "Generate AI-powered suggestions or add your own items";
 "smartPackingGeneratorView.added" = "Added";
 "smartPackingGeneratorView.add.to.list" = "Add to List";
-"smartTemplateLibraryView.index.1" = "\\(index + 1)";
 "statisticsView.total.days" = "Total Days";
 "statisticsView.budget.summary" = "Budget Summary";
 "statisticsView.categorydistributioncategory.0" = "\\(categoryDistribution[category] ?? 0)";

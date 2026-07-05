@@ -12,7 +12,7 @@ import SwiftData
 class SettingsManager: ObservableObject {
     static let shared = SettingsManager()
     
-    @Published var currentCurrency: Currency = Currency.currency(for: "USD")
+    @Published var currentCurrency: Currency = Currency.currency(for: "GBP")
     
     private init() {
         // Load from UserDefaults as fallback
@@ -37,8 +37,8 @@ class SettingsManager: ObservableObject {
                 if existing == nil {
                     let defaultSettings = AppSettings(
                         id: AppSettings.singletonID,
-                        currencyCode: "USD",
-                        currencySymbol: "$"
+                        currencyCode: "GBP",
+                        currencySymbol: "£"
                     )
                     context.insert(defaultSettings)
                     try context.save()
@@ -144,7 +144,7 @@ class SettingsManager: ObservableObject {
         if let settings = try? context.fetch(descriptor).first {
             context.delete(settings)
             try? context.save()
-            currentCurrency = Currency.currency(for: "USD")
+            currentCurrency = Currency.currency(for: "GBP")
             objectWillChange.send()
         }
     }

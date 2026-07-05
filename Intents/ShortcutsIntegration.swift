@@ -48,7 +48,7 @@ struct GetTripCountdownAction: AppIntent {
     static var description = IntentDescription("Get days until your next trip")
     static var openAppWhenRun: Bool = false
     
-    @Parameter(title: "Trip Name")
+    @Parameter("trips.name".localized)
     var tripName: String?
     
     func perform() async throws -> some ReturnsValue<Int> {
@@ -77,16 +77,16 @@ struct AddExpenseToTripAction: AppIntent {
     static var description = IntentDescription("Add an expense to a trip")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip Name")
+    @Parameter("trips.name".localized)
     var tripName: String
     
-    @Parameter(title: "Amount")
+    @Parameter("expense.amount".localized)
     var amount: Double
     
-    @Parameter(title: "Category")
+    @Parameter("trips.category".localized)
     var category: String?
     
-    @Parameter(title: "Description")
+    @Parameter("itinerary.activity.description".localized)
     var description: String?
     
     func perform() async throws -> some IntentResult {
@@ -220,7 +220,7 @@ struct GetTripCountdownAction: AppIntent {
     static var description = IntentDescription("Get days until your next trip")
     static var openAppWhenRun: Bool = false
     
-    @Parameter(title: "Trip Name")
+    @Parameter("trips.name".localized)
     var tripName: String?
     
     func perform() async throws -> some ReturnsValue<Int> {
@@ -249,16 +249,16 @@ struct AddExpenseToTripAction: AppIntent {
     static var description = IntentDescription("Add an expense to a trip")
     static var openAppWhenRun: Bool = true
     
-    @Parameter(title: "Trip Name")
+    @Parameter("trips.name".localized)
     var tripName: String
     
-    @Parameter(title: "Amount")
+    @Parameter("expense.amount".localized)
     var amount: Double
     
-    @Parameter(title: "Category")
+    @Parameter("trips.category".localized)
     var category: String?
     
-    @Parameter(title: "Description")
+    @Parameter("itinerary.activity.description".localized)
     var description: String?
     
     func perform() async throws -> some IntentResult {

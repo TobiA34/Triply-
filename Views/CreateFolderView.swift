@@ -11,7 +11,6 @@ import SwiftData
 struct CreateFolderView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @StateObject private var iapManager = IAPManager.shared
     
     let trip: TripModel
     
@@ -49,7 +48,7 @@ struct CreateFolderView: View {
     ]
     
     var folderIcons: [String] {
-        iapManager.isPro ? proIcons : basicIcons
+        ProLimiter.shared.isPro ? proIcons : basicIcons
     }
     
     // Preset folder templates for different group types
@@ -151,7 +150,7 @@ struct CreateFolderView: View {
                 
                 Section {
                     // Free tier: limited colors, Pro: color picker
-                    if iapManager.isPro {
+                    if ProLimiter.shared.isPro {
                         // Pro: Color Picker
                         VStack(alignment: .leading, spacing: 12) {
                             ColorPicker("Select Folder Color", selection: $selectedColorPicker, supportsOpacity: false)
@@ -227,7 +226,7 @@ struct CreateFolderView: View {
                 } header: {
                     Text("Color")
                 } footer: {
-                    if !iapManager.isPro {
+                    if !ProLimiter.shared.isPro {
                         Text("Free Colors")
                     }
                 }
@@ -257,9 +256,9 @@ struct CreateFolderView: View {
                         }
                         .padding(.vertical, 8)
                     }
-                    .frame(maxHeight: iapManager.isPro ? 400 : 200)
+                    .frame(maxHeight: ProLimiter.shared.isPro ? 400 : 200)
                     
-                    if !iapManager.isPro {
+                    if !ProLimiter.shared.isPro {
                         Button {
                             showPaywall = true
                         } label: {
@@ -283,14 +282,14 @@ struct CreateFolderView: View {
                     HStack {
                         Text("Icon")
                         Spacer()
-                        if iapManager.isPro {
+                        if ProLimiter.shared.isPro {
                             Text(String(format: "%d icons available", folderIcons.count))
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
                     }
                 } footer: {
-                    if !iapManager.isPro {
+                    if !ProLimiter.shared.isPro {
                         Text(String(format: "%d free, %d pro", basicIcons.count, proIcons.count))
                     } else {
                         Text(String(format: "%d pro icons available", proIcons.count))

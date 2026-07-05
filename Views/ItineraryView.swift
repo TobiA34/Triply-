@@ -19,6 +19,7 @@ enum ItineraryViewMode {
 struct ItineraryView: View {
     @Bindable var trip: TripModel
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject var themeManager: ThemeManager
     @StateObject private var proLimiter = ProLimiter.shared
     @State private var showingAddActivity = false
     @State private var selectedDay: Int = 1
@@ -57,7 +58,7 @@ struct ItineraryView: View {
             .padding(.horizontal, 16)
             .padding(.top, 16)
             .padding(.bottom, 8)
-            .background(Color(.systemBackground))
+            .background(themeManager.currentPalette.background)
             
             // Content based on view mode
             switch viewMode {
@@ -69,7 +70,7 @@ struct ItineraryView: View {
                 mapView
             }
         }
-        .background(Color(.systemBackground))
+        .background(themeManager.currentPalette.background)
         .alert("Limit Reached", isPresented: $showLimitAlert) {
             Button("Upgrade to Pro") {
                 showingPaywall = true
@@ -287,6 +288,7 @@ struct ItineraryView: View {
 
 // MARK: - Day Navigation Pill
 struct DayNavigationPill: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let day: Int
     let date: Date
     let isSelected: Bool
@@ -313,23 +315,24 @@ struct DayNavigationPill: View {
                 Group {
                     if isSelected {
                         LinearGradient(
-                            colors: [Color.blue, Color.purple],
+                            colors: [themeManager.currentPalette.accent.opacity(0.8), themeManager.currentPalette.accent],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
                     } else {
-                        Color(.systemGray6)
+                        themeManager.currentPalette.accent.opacity(0.08)
                     }
                 }
             )
             .cornerRadius(20)
-            .shadow(color: isSelected ? Color.blue.opacity(0.3) : Color.clear, radius: 8, x: 0, y: 4)
+            .shadow(color: isSelected ? themeManager.currentPalette.accent.opacity(0.3) : Color.clear, radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
     }
 }
 
 struct DayCardView: View {
+    @EnvironmentObject var themeManager: ThemeManager
     let day: Int
     let date: Date
     let activities: [ItineraryItem]
@@ -582,9 +585,9 @@ struct DayCardView: View {
                     }
                 }
             }
-            .background(Color(.systemBackground))
+            .background(themeManager.currentPalette.background)
             .cornerRadius(dayHasPhotos ? 0 : 20)
-            .shadow(color: Color.black.opacity(0.1), radius: 15, x: 0, y: 5)
+            .shadow(color: themeManager.currentPalette.accent.opacity(0.08), radius: 15, x: 0, y: 5)
             .padding(.horizontal, dayHasPhotos ? 0 : 16)
             .padding(.vertical, dayHasPhotos ? 0 : 16)
         }
@@ -653,6 +656,7 @@ struct DayCardView: View {
 }
 
 struct ActivityCardView: View {
+        @EnvironmentObject var themeManager: ThemeManager
         @Bindable var activity: ItineraryItem
         let modelContext: ModelContext
         @State private var showingEdit = false
@@ -842,8 +846,13 @@ struct ActivityCardView: View {
                 }
             }
             .padding()
-            .background(Color(.systemGray6))
-            .cornerRadius(12)
+            .background(themeManager.currentPalette.background)
+            .cornerRadius(16)
+            .shadow(color: themeManager.currentPalette.accent.opacity(0.06), radius: 8, x: 0, y: 2)
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(themeManager.currentPalette.accent.opacity(0.12), lineWidth: 1)
+            )
             .fullScreenCover(isPresented: $showingEdit) {
                 EditItineraryItemView(activity: activity)
             }
@@ -1184,8 +1193,8 @@ struct EditItineraryItemView: View {
             _isBooked = State(initialValue: activity.isBooked)
             _bookingReference = State(initialValue: activity.bookingReference)
             _reminderDate = State(initialValue: activity.reminderDate)
-            _estimatedCost = State(initialValue: activity.estimatedCost != nil ? String(format: "%.2f", activity.estimatedCost!) : "")
-            _estimatedDuration = State(initialValue: activity.estimatedDuration != nil ? String(activity.estimatedDuration!) : "")
+            _estimatedCost = State(initialValue: activity.estimatedCost.map { String(format: "%.2f", $0) } ?? "")
+            _estimatedDuration = State(initialValue: activity.estimatedDuration.map { String($0) } ?? "")
             _category = State(initialValue: activity.category.isEmpty ? "Activity" : activity.category)
             _selectedPhoto = State(initialValue: activity.photo)
         }

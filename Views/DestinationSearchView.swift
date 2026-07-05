@@ -20,7 +20,7 @@ struct DestinationSearchView: View {
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.secondary)
-                    TextField("Search destinations...", text: $searchText)
+                    TextField("search.destinationsPlaceholder".localized, text: $searchText)
                         .textFieldStyle(.plain)
                         .onChange(of: searchText) { _, newValue in
                             searchManager.searchDestinations(query: newValue)
@@ -47,9 +47,9 @@ struct DestinationSearchView: View {
                         Image(systemName: "magnifyingglass")
                             .font(.system(size: 40))
                             .foregroundColor(.secondary.opacity(0.5))
-                        Text("No destinations found")
+                        Text("search.noDestinations".localized)
                             .font(.headline)
-                        Text("Try a different search term")
+                        Text("search.tryDifferent".localized)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -58,7 +58,7 @@ struct DestinationSearchView: View {
                     // Scrollable list of popular destinations when there is no active search
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
-                            Text("Popular Destinations")
+                            Text("search.popularDestinations".localized)
                                 .font(.headline)
                                 .padding(.horizontal)
                                 .padding(.top)
@@ -87,11 +87,11 @@ struct DestinationSearchView: View {
                     }
                 }
             }
-            .navigationTitle("Search Destinations")
+            .navigationTitle("search.destinationsTitle".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
+                    Button("common.done".localized) {
                         dismiss()
                     }
                 }

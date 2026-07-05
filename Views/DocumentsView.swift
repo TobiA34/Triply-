@@ -1,6 +1,6 @@
 //
 //  DocumentsView.swift
-//  Itinero
+//  Triply
 //
 //  Created on 2024
 //
@@ -28,7 +28,9 @@ struct DocumentsView: View {
     @State private var permissionAlertMessage = ""
     @State private var showingCreateFolder = false
     @State private var selectedFolder: DocumentFolder?
-    // Batch scanning removed - use single receipt scanning in Expenses instead
+    @State private var showingBatchScan = false
+    @State private var batchScannedImages: [UIImage] = []
+    @State private var batchScanFolder: DocumentFolder?
     
     let trip: TripModel
     
@@ -48,155 +50,142 @@ struct DocumentsView: View {
             folder.trip?.id == trip.id
         }
     }
+
+    private var documentsScrollContent: some View {
+        VStack(spacing: 20) {
+            documentsActionButtons
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+            if !tripFolders.isEmpty {
+                documentsFoldersSection
+            }
+            if !tripDocuments.isEmpty || !tripFolders.isEmpty {
+                documentsListSection
+            } else {
+                EmptyDocumentsView()
+                    .padding(.top, 40)
+            }
+        }
+        .padding(.vertical, 16)
+    }
+
+    private var documentsActionButtons: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                Button { showingDocumentPicker = true } label: {
+                    VStack(spacing: 8) {
+                        Image(systemName: "doc.fill").font(.title2)
+                        Text("documents.addDetails".localized).font(.subheadline).fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.blue)
+                    .cornerRadius(12)
+                }
+                Button {
+                    shouldShowFormAfterImageCapture = true
+                    Task { await requestCameraAccess() }
+                } label: {
+                    VStack(spacing: 8) {
+                        Image(systemName: "camera.fill").font(.title2)
+                        Text("documents.takePhoto".localized).font(.subheadline).fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 16)
+                    .background(Color.purple)
+                    .cornerRadius(12)
+                }
+                .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+            }
+            HStack(spacing: 12) {
+                Button { showingBatchScan = true } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "camera.on.rectangle").font(.headline)
+                        Text("documents.scanMultiple".localized).font(.subheadline).fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(LinearGradient(colors: [Color.orange, Color.pink], startPoint: .leading, endPoint: .trailing))
+                    .cornerRadius(12)
+                }
+                .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
+                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "photo.on.rectangle").font(.headline)
+                        Text("documents.fromLibrary".localized).font(.subheadline).fontWeight(.semibold)
+                    }
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(LinearGradient(colors: [Color.blue, Color.purple], startPoint: .leading, endPoint: .trailing))
+                    .cornerRadius(12)
+                }
+            }
+        }
+    }
+
+    private var documentsFoldersSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Text("documents.folders".localized).font(.title3).fontWeight(.semibold)
+                Spacer()
+                Text(tripFolders.count == 1 ? String(format: "documents.folder.count".localized, tripFolders.count) : String(format: "documents.folders.count".localized, tripFolders.count))
+                    .font(.caption).foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 20)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 12) {
+                    ForEach(tripFolders) { folder in
+                        FolderCard(folder: folder)
+                            .onTapGesture { selectedFolder = folder }
+                    }
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+        .padding(.top, 8)
+    }
+
+    private var documentsListSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            if !tripDocuments.isEmpty {
+                HStack {
+                    Text("documents.all".localized).font(.title3).fontWeight(.semibold)
+                    Spacer()
+                    Text(tripDocuments.count == 1 ? String(format: "documents.document.count".localized, tripDocuments.count) : String(format: "documents.documents.count".localized, tripDocuments.count))
+                        .font(.caption).foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 20)
+                ForEach(tripDocuments) { document in
+                    DocumentCard(document: document)
+                        .onTapGesture { selectedDocument = document }
+                        .padding(.horizontal, 20)
+                }
+            }
+        }
+        .padding(.top, 8)
+    }
     
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
-                    // Add Document Buttons Section
-                    VStack(spacing: 12) {
-                        // Primary Actions Row
-                        HStack(spacing: 12) {
-                            Button {
-                                showingDocumentPicker = true
-                            } label: {
-                                VStack(spacing: 8) {
-                                    Image(systemName: "doc.fill")
-                                        .font(.title2)
-                                    Text("Add Details")
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(Color.blue)
-                                .cornerRadius(12)
-                            }
-                            
-                            Button {
-                                shouldShowFormAfterImageCapture = true
-                                Task {
-                                    await requestCameraAccess()
-                                }
-                            } label: {
-                                VStack(spacing: 8) {
-                                    Image(systemName: "camera.fill")
-                                        .font(.title2)
-                                    Text("Take Photo")
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(Color.purple)
-                                .cornerRadius(12)
-                            }
-                            .disabled(!UIImagePickerController.isSourceTypeAvailable(.camera))
-                        }
-                        
-                        // Secondary Actions Row
-                        HStack(spacing: 12) {
-                            // Batch scanning removed - use single receipt scanning in Expenses instead
-                            
-                            PhotosPicker(
-                                selection: $selectedPhotoItem,
-                                matching: .images
-                            ) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "photo.on.rectangle")
-                                        .font(.headline)
-                                    Text("From Library")
-                                        .font(.subheadline)
-                                        .fontWeight(.semibold)
-                                }
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(
-                                    LinearGradient(
-                                        colors: [Color.blue, Color.purple],
-                                        startPoint: .leading,
-                                        endPoint: .trailing
-                                    )
-                                )
-                                .cornerRadius(12)
-                            }
-                        }
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 8)
-                    
-                    // Folders Section
-                    if !tripFolders.isEmpty {
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack {
-                                Text("Folders")
-                                    .font(.title3)
-                                    .fontWeight(.semibold)
-                                Spacer()
-                                Text(tripFolders.count == 1 ? String(format: "%d folder", tripFolders.count) : String(format: "%d folders", tripFolders.count))
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.horizontal, 20)
-                            
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 12) {
-                                    ForEach(tripFolders) { folder in
-                                        FolderCard(folder: folder)
-                                            .onTapGesture {
-                                                selectedFolder = folder
-                                            }
-                                    }
-                                }
-                                .padding(.horizontal, 20)
-                            }
-                        }
-                        .padding(.top, 8)
-                    }
-                    
-                    // Documents List
-                    if !tripDocuments.isEmpty || !tripFolders.isEmpty {
-                        VStack(alignment: .leading, spacing: 16) {
-                            if !tripDocuments.isEmpty {
-                                HStack {
-                                    Text("All")
-                                        .font(.title3)
-                                        .fontWeight(.semibold)
-                                    Spacer()
-                                    Text(tripDocuments.count == 1 ? String(format: "%d document", tripDocuments.count) : String(format: "%d documents", tripDocuments.count))
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                .padding(.horizontal, 20)
-                                
-                                ForEach(tripDocuments) { document in
-                                    DocumentCard(document: document)
-                                        .onTapGesture {
-                                            selectedDocument = document
-                                        }
-                                        .padding(.horizontal, 20)
-                                }
-                            }
-                        }
-                        .padding(.top, 8)
-                    } else {
-                        EmptyDocumentsView()
-                            .padding(.top, 40)
-                    }
-                }
-                .padding(.vertical, 16)
+                documentsScrollContent
             }
             .navigationTitle("Documents")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        showingCreateFolder = true
+                    Menu {
+                        Button {
+                            showingCreateFolder = true
+                        } label: {
+                            Label("New Folder", systemImage: "folder.badge.plus")
+                        }
                     } label: {
-                        Image(systemName: "folder.badge.plus")
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
             }
@@ -207,7 +196,7 @@ struct DocumentsView: View {
                 CameraImagePicker(image: $selectedImage, shouldShowForm: $showingImageDocumentForm, sourceType: .camera)
                     .interactiveDismissDisabled(false) // Allow swipe to dismiss
             }
-            .fullScreenCover(isPresented: $showingImageDocumentForm) {
+            .sheet(isPresented: $showingImageDocumentForm) {
                 if let image = selectedImage {
                     ImageDocumentFormView(trip: trip, image: image)
                         .onDisappear {
@@ -220,13 +209,15 @@ struct DocumentsView: View {
             .sheet(item: $selectedDocument) { document in
                 DocumentDetailView(document: document)
             }
-            .fullScreenCover(isPresented: $showingCreateFolder) {
+            .sheet(isPresented: $showingCreateFolder) {
                 CreateFolderView(trip: trip)
             }
             .sheet(item: $selectedFolder) { folder in
                 FolderDetailView(folder: folder)
             }
-            // Batch scanning removed - use single receipt scanning in Expenses instead
+            .sheet(isPresented: $showingBatchScan) {
+                BatchTicketScanView(trip: trip, scannedImages: $batchScannedImages, selectedFolder: $batchScanFolder)
+            }
             .onChange(of: selectedPhotoItem) { _, newValue in
                 Task {
                     if let item = newValue {
@@ -479,11 +470,11 @@ struct EmptyDocumentsView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.secondary)
             
-            Text("No documents yet")
+            Text("documents.empty".localized)
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Add tickets, receipts, and important documents for your trip")
+            Text("documents.empty.description".localized)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -527,10 +518,9 @@ struct DocumentPickerView: View {
                     }
                 }
                 
-                Section("Details") {
+                Section("documents.details".localized) {
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("", text: $title)
-                            .foregroundColor(.primary)
                             .textInputAutocapitalization(.words)
                         
                         if title.isEmpty {
@@ -538,7 +528,7 @@ struct DocumentPickerView: View {
                                 Image(systemName: "exclamationmark.circle.fill")
                                     .font(.caption)
                                     .foregroundColor(.red)
-                                Text("Title is required")
+                                Text("helper.titleRequired".localized)
                                     .font(.caption)
                                     .foregroundColor(.red)
                             }
@@ -547,7 +537,6 @@ struct DocumentPickerView: View {
                     }
                     
                     TextField("", text: $description, axis: .vertical)
-                        .foregroundColor(.primary)
                         .lineLimit(3...6)
                     
                     HStack {
@@ -555,7 +544,6 @@ struct DocumentPickerView: View {
                             .foregroundColor(.secondary)
                             .font(.headline)
                         TextField("", text: $amountText)
-                            .foregroundColor(.primary)
                             .keyboardType(.decimalPad)
                             .onChange(of: amountText) { _, newValue in
                                 amount = Double(newValue)
@@ -644,7 +632,7 @@ struct DocumentDetailView: View {
                             Image(uiImage: image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(maxHeight: 350)
+                                .frame(maxHeight: 300)
                                 .cornerRadius(12)
                                 .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                         } else if let imageData = document.fileData {
@@ -691,7 +679,7 @@ struct DocumentDetailView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "pencil")
-                                Text("Edit Document")
+                                Text("documents.editDocument".localized)
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -706,7 +694,7 @@ struct DocumentDetailView: View {
                             } label: {
                                 HStack {
                                     Image(systemName: "folder")
-                                    Text("Move to Folder")
+                                    Text("documents.moveToFolder".localized)
                                 }
                                 .frame(maxWidth: .infinity)
                                 .padding()
@@ -721,7 +709,7 @@ struct DocumentDetailView: View {
                         } label: {
                             HStack {
                                 Image(systemName: "trash")
-                                Text("Delete Document")
+                                Text("documents.deleteDocument".localized)
                             }
                             .frame(maxWidth: .infinity)
                             .padding()
@@ -734,7 +722,7 @@ struct DocumentDetailView: View {
                 }
                 .padding(.vertical)
             }
-            .navigationTitle("Documents")
+            .navigationTitle("documents.title".localized)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -743,18 +731,18 @@ struct DocumentDetailView: View {
                     }
                 }
             }
-            .fullScreenCover(isPresented: $showingEditSheet) {
+            .sheet(isPresented: $showingEditSheet) {
                 if let trip = document.trip {
                     EditDocumentView(document: document, trip: trip)
                 }
             }
-            .alert("Delete Document", isPresented: $showingDeleteAlert) {
-                Button("Cancel", role: .cancel) { }
-                Button("Delete", role: .destructive) {
+            .alert("documents.deleteDocument".localized, isPresented: $showingDeleteAlert) {
+                Button("common.cancel".localized, role: .cancel) { }
+                Button("common.delete".localized, role: .destructive) {
                     deleteDocument()
                 }
             } message: {
-                Text("Are you sure you want to delete this document?")
+                Text("documents.deleteConfirm".localized)
             }
         }
     }
@@ -775,6 +763,35 @@ struct DocumentDetailView: View {
             dismiss()
         } catch {
             print("Failed to delete document: \(error)")
+        }
+    }
+}
+
+// MARK: - Batch Ticket Scan (placeholder: multi-doc scan flow)
+struct BatchTicketScanView: View {
+    @Environment(\.dismiss) private var dismiss
+    let trip: TripModel
+    @Binding var scannedImages: [UIImage]
+    @Binding var selectedFolder: DocumentFolder?
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 16) {
+                Text("documents.scanMultiple".localized)
+                    .font(.headline)
+                Text("Scan tickets or documents; results will appear here.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                Spacer()
+            }
+            .padding()
+            .navigationTitle("Batch Scan")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close") { dismiss() }
+                }
+            }
         }
     }
 }
@@ -810,7 +827,7 @@ struct ImageDocumentFormView: View {
                         Image(uiImage: image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(maxHeight: 250)
+                            .frame(maxHeight: 200)
                             .cornerRadius(8)
                             .overlay(
                                 ScanningOverlay(isScanning: $ticketScanner.isProcessing)
@@ -839,7 +856,7 @@ struct ImageDocumentFormView: View {
                             }
                         }
                     }
-                    .frame(maxHeight: 250)
+                    .frame(maxHeight: 200)
                     
                     if !hasScanned {
                         Button {
@@ -875,7 +892,7 @@ struct ImageDocumentFormView: View {
                     
                     if let ticketInfo = ticketScanner.ticketInfo {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Scanned Information")
+                            Text("documents.scannedInfo".localized)
                                 .font(.headline)
                                 .padding(.bottom, 4)
                             
@@ -931,10 +948,9 @@ struct ImageDocumentFormView: View {
                     }
                 }
                 
-                Section("Details") {
+                Section("documents.details".localized) {
                     VStack(alignment: .leading, spacing: 4) {
                         TextField("", text: $title)
-                            .foregroundColor(.primary)
                             .textInputAutocapitalization(.words)
                         
                         if title.isEmpty {
@@ -942,7 +958,7 @@ struct ImageDocumentFormView: View {
                                 Image(systemName: "exclamationmark.circle.fill")
                                     .font(.caption)
                                     .foregroundColor(.red)
-                                Text("Title is required")
+                                Text("helper.titleRequired".localized)
                                     .font(.caption)
                                     .foregroundColor(.red)
                             }
@@ -951,7 +967,6 @@ struct ImageDocumentFormView: View {
                     }
                     
                     TextField("", text: $notes, axis: .vertical)
-                        .foregroundColor(.primary)
                         .lineLimit(3...6)
                     
                     HStack {
@@ -959,11 +974,10 @@ struct ImageDocumentFormView: View {
                             .foregroundColor(.secondary)
                             .font(.headline)
                         TextField("", text: $amountText)
-                            .foregroundColor(.primary)
                             .keyboardType(.decimalPad)
                     }
                     
-                    DatePicker("Date", selection: $date, displayedComponents: .date)
+                    DatePicker("documents.date".localized, selection: $date, displayedComponents: .date)
                 }
             }
             .navigationTitle("Add Document")
@@ -1336,7 +1350,7 @@ struct DocumentInfoRow: View {
 }
 
 
-//  Itinero
+//  Triply
 //
 //  Created on 2024
 //
@@ -1363,7 +1377,7 @@ import AVFoundation
 
 
 
-//  Itinero
+//  Triply
 //
 //  Created on 2024
 //

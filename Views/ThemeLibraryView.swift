@@ -15,7 +15,7 @@ struct ThemeLibraryView: View {
     
     var body: some View {
         List {
-            Section(header: Text("Active Theme")) {
+            Section(header: Text("theme.activeTheme".localized)) {
                 Picker("Appearance", selection: $themeManager.currentTheme) {
                     ForEach(AppTheme.allCases, id: \.self) { theme in
                         Text(theme.rawValue).tag(theme)
@@ -36,7 +36,7 @@ struct ThemeLibraryView: View {
                 }
             }
             
-            Section(header: Text("My Themes"),
+            Section(header: Text("theme.myThemes".localized),
                     footer: tierFooter) {
                 ForEach(themeManager.customThemes, id: \.id) { theme in
                     HStack {
@@ -65,12 +65,12 @@ struct ThemeLibraryView: View {
                         Button(role: .destructive) {
                             themeManager.deleteTheme(id: theme.id)
                         } label: {
-                            Label("Delete", systemImage: "trash")
+                            Label("common.delete".localized, systemImage: "trash")
                         }
                         Button {
                             editingTheme = theme
                         } label: {
-                            Label("Edit", systemImage: "pencil")
+                            Label("common.edit".localized, systemImage: "pencil")
                         }
                     }
                 }
@@ -79,32 +79,32 @@ struct ThemeLibraryView: View {
                     Button {
                         showingCreate = true
                     } label: {
-                        Label("Create Theme", systemImage: "plus.circle.fill")
+                        Label("theme.createTheme".localized, systemImage: "plus.circle.fill")
                     }
                 } else {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
                             Image(systemName: "lock.fill").foregroundColor(.orange)
-                            Text("Upgrade to unlock unlimited themes")
+                            Text("theme.upgradeUnlimited".localized)
                         }
                         Button {
                             showingPaywall = true
                         } label: {
-                            Label("Upgrade to Pro", systemImage: "crown.fill")
+                            Label("pro.upgrade".localized, systemImage: "crown.fill")
                         }
                         .buttonStyle(.borderedProminent)
                     }
                 }
             }
             
-            Section(header: Text("Accent Color")) {
+            Section(header: Text("theme.accentColor".localized)) {
                 ColorPicker("Accent", selection: Binding(
                     get: { themeManager.customAccentColor },
                     set: { themeManager.setAccentColor($0) }
                 ), supportsOpacity: true)
             }
         }
-        .navigationTitle("Themes")
+        .navigationTitle("theme.title".localized)
         .sheet(isPresented: $showingCreate) {
             NavigationStack {
                 ThemeCreatorView()

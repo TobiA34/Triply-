@@ -1,6 +1,6 @@
 //
 //  TripCalendarDisplayView.swift
-//  Itinero
+//  Triply
 //
 //  Calendar view for displaying trip timeline and itinerary
 //
@@ -56,7 +56,7 @@ struct TripCalendarDisplayView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showingAddActivity) {
+        .sheet(isPresented: $showingAddActivity) {
             AddItineraryItemSheet(trip: trip, selectedDate: selectedDate)
         }
         .gesture(
@@ -327,7 +327,7 @@ struct TripCalendarDisplayView: View {
                 .foregroundColor(.orange)
             Text("Date outside trip range")
                 .font(.headline)
-            Text(String(format: "Select a date between %@ and %@", formatDateShort(trip.startDate), formatDateShort(trip.endDate)))
+            Text("Select a date between \(formatDateShort(trip.startDate)) and \(formatDateShort(trip.endDate))")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -823,13 +823,12 @@ struct AddItineraryItemSheet: View {
     
     private func saveActivity() {
         let calendar = Calendar.current
-        let dayComponents = calendar.dateComponents([.day], from: trip.startDate, to: selectedDate)
-        let calculatedDay = max(1, (dayComponents.day ?? 0) + 1)
+        let day = calendar.dateComponents([.day], from: trip.startDate, to: selectedDate).day ?? 1
         let order = (trip.itinerary?.count ?? 0)
         let timeString = timeFormatter.string(from: time)
         
         let newActivity = ItineraryItem(
-            day: calculatedDay,
+            day: max(1, day),
             date: selectedDate,
             title: title,
             details: details,
