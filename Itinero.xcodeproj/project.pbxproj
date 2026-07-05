@@ -174,9 +174,7 @@
 		BD4DE8612F1A8422004CB35D /* CreateWishResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4DE81C2F1A8422004CB35D /* CreateWishResponse.swift */; };
 		BD4DE8622F1A8422004CB35D /* Enum+Compat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4DE7D52F1A8422004CB35D /* Enum+Compat.swift */; };
 		BD4DE8632F1A8422004CB35D /* WishKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD4DE8022F1A8422004CB35D /* WishKit.swift */; };
-		BD4DE8652F1A8422004CB35D /* xcschememanagement.plist in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE8042F1A8422004CB35D /* xcschememanagement.plist */; };
 		BD4DE8662F1A8422004CB35D /* swift.yml in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7BF2F1A8422004CB35D /* swift.yml */; };
-		BD4DE8672F1A8422004CB35D /* package.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE8082F1A8422004CB35D /* package.xcworkspace */; };
 		BD4DE8692F1A8422004CB35D /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7FE2F1A8422004CB35D /* LICENSE */; };
 		BD4DE86A2F1A8422004CB35D /* banner-min.png in Resources */ = {isa = PBXBuildFile; fileRef = BD4DE7E62F1A8422004CB35D /* banner-min.png */; };
 		BD4DE90D2F2AAAFD004CB35D /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BD4DE90C2F2AAAFC004CB35D /* WidgetKit.framework */; };
@@ -419,8 +417,6 @@
 		BD4DE8002F1A8422004CB35D /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		BD4DE8012F1A8422004CB35D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		BD4DE8022F1A8422004CB35D /* WishKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishKit.swift; sourceTree = "<group>"; };
-		BD4DE8042F1A8422004CB35D /* xcschememanagement.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = xcschememanagement.plist; sourceTree = "<group>"; };
-		BD4DE8082F1A8422004CB35D /* package.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = package.xcworkspace; sourceTree = "<group>"; };
 		BD4DE80B2F1A8422004CB35D /* CreateCommentRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCommentRequest.swift; sourceTree = "<group>"; };
 		BD4DE80D2F1A8422004CB35D /* CommentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommentResponse.swift; sourceTree = "<group>"; };
 		BD4DE8102F1A8422004CB35D /* WishState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishState.swift; sourceTree = "<group>"; };
@@ -972,47 +968,6 @@
 			path = WishKit;
 			sourceTree = "<group>";
 		};
-		BD4DE8052F1A8422004CB35D /* xcschemes */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8042F1A8422004CB35D /* xcschememanagement.plist */,
-			);
-			path = xcschemes;
-			sourceTree = "<group>";
-		};
-		BD4DE8062F1A8422004CB35D /* Martin.Lasek@alaskaair.com.xcuserdatad */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8052F1A8422004CB35D /* xcschemes */,
-			);
-			path = "Martin.Lasek@alaskaair.com.xcuserdatad";
-			sourceTree = "<group>";
-		};
-		BD4DE8072F1A8422004CB35D /* xcuserdata */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8062F1A8422004CB35D /* Martin.Lasek@alaskaair.com.xcuserdatad */,
-			);
-			path = xcuserdata;
-			sourceTree = "<group>";
-		};
-		BD4DE8092F1A8422004CB35D /* xcode */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8072F1A8422004CB35D /* xcuserdata */,
-				BD4DE8082F1A8422004CB35D /* package.xcworkspace */,
-			);
-			path = xcode;
-			sourceTree = "<group>";
-		};
-		BD4DE80A2F1A8422004CB35D /* .swiftpm */ = {
-			isa = PBXGroup;
-			children = (
-				BD4DE8092F1A8422004CB35D /* xcode */,
-			);
-			path = .swiftpm;
-			sourceTree = "<group>";
-		};
 		BD4DE80C2F1A8422004CB35D /* Request */ = {
 			isa = PBXGroup;
 			children = (
@@ -1111,7 +1066,6 @@
 		BD4DE8232F1A8422004CB35D /* WishKitShared */ = {
 			isa = PBXGroup;
 			children = (
-				BD4DE80A2F1A8422004CB35D /* .swiftpm */,
 				BD4DE80F2F1A8422004CB35D /* Comment */,
 				BD4DE8112F1A8422004CB35D /* Enum */,
 				BD4DE8132F1A8422004CB35D /* Error */,
@@ -1278,9 +1232,7 @@
 				B1C12A3B5A644E26654E8385 /* build.sh in Resources */,
 				FB576931AC3FEF99F53A232B /* create_icon.sh in Resources */,
 				F48B13325FD3573091AB391C /* quick_build.sh in Resources */,
-				BD4DE8652F1A8422004CB35D /* xcschememanagement.plist in Resources */,
 				BD4DE8662F1A8422004CB35D /* swift.yml in Resources */,
-				BD4DE8672F1A8422004CB35D /* package.xcworkspace in Resources */,
 				BD4DE8692F1A8422004CB35D /* LICENSE in Resources */,
 				BD4DE86A2F1A8422004CB35D /* banner-min.png in Resources */,
 				735C56A82CE09E7439698994 /* quick_run.sh in Resources */,
