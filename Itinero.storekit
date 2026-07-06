@@ -1,81 +1,87 @@
 {
-  "identifier" : "Triply",
-  "nonRenewingSubscriptions" : [
-
-  ],
-  "products" : [
+  "identifier": "Itinero",
+  "nonRenewingSubscriptions": [],
+  "products": [],
+  "settings": {
+    "_failTransactionsEnabled": false
+  },
+  "subscriptionGroups": [
     {
-      "displayPrice" : "9.99",
-      "familyShareable" : false,
-      "identifier" : "com.triply.app.pro",
-      "localizations" : [
+      "id": "22015257",
+      "localizations": [],
+      "name": "Itinero Pro",
+      "subscriptions": [
         {
-          "description" : "Unlock unlimited custom themes and all Pro features",
-          "displayName" : "Triply Pro",
-          "locale" : "en_US"
+          "adHocOffers": [],
+          "displayPrice": "1.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6761684843",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Weekly access to Itinero Pro",
+              "displayName": "Itinero Pro Weekly",
+              "locale": "en_GB"
+            }
+          ],
+          "productID": "itinero_pro_weekly_sub",
+          "recurringSubscriptionPeriod": "P1W",
+          "referenceName": "Itinero Pro Weekly",
+          "subscriptionGroupID": "22015257",
+          "type": "RecurringSubscription",
+          "codeOffers": [],
+          "winbackOffers": []
+        },
+        {
+          "adHocOffers": [],
+          "displayPrice": "4.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6761684798",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "Monthly access to Itinero Pro",
+              "displayName": "Itinero Pro Monthly",
+              "locale": "en_GB"
+            }
+          ],
+          "productID": "triply_pro_monthly_sub",
+          "recurringSubscriptionPeriod": "P1M",
+          "referenceName": "Itinero Pro Monthly",
+          "subscriptionGroupID": "22015257",
+          "type": "RecurringSubscription",
+          "codeOffers": [],
+          "winbackOffers": []
+        },
+        {
+          "adHocOffers": [],
+          "displayPrice": "29.99",
+          "familyShareable": false,
+          "groupNumber": 1,
+          "internalID": "6761684845",
+          "introductoryOffer": null,
+          "localizations": [
+            {
+              "description": "A full year of Itinero Pro",
+              "displayName": "Itinero Pro Yearly",
+              "locale": "en_GB"
+            }
+          ],
+          "productID": "triply_pro_annual_sub",
+          "recurringSubscriptionPeriod": "P1Y",
+          "referenceName": "Itinero Pro Yearly",
+          "subscriptionGroupID": "22015257",
+          "type": "RecurringSubscription",
+          "codeOffers": [],
+          "winbackOffers": []
         }
-      ],
-      "productID" : "com.triply.app.pro",
-      "referenceName" : "Triply Pro",
-      "type" : "NonConsumable"
+      ]
     }
   ],
-  "settings" : {
-    "_failTransactionsEnabled" : false,
-    "_storeKitErrors" : [
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Load Products"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Purchase"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Verification"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "App Store Sync"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Subscription Status"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "App Transaction"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Manage Subscriptions Sheet"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Refund Request Sheet"
-      },
-      {
-        "current" : null,
-        "enabled" : false,
-        "name" : "Offer Code Redeem Sheet"
-      }
-    ]
-  },
-  "subscriptionGroups" : [
-
-  ],
-  "version" : {
-    "major" : 2,
-    "minor" : 0
+  "version": {
+    "major": 2,
+    "minor": 0
   }
 }
-

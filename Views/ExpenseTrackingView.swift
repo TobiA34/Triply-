@@ -241,6 +241,7 @@ struct AddExpenseView: View {
     @StateObject private var ocrManager = ReceiptOCRManager()
     private let settingsManager = SettingsManager.shared
     @State private var title = ""
+    @State private var limitMessage: String?
     @State private var amount: String = ""
     @State private var category = "Other"
     @State private var expenseDate = Date()
@@ -491,6 +492,14 @@ struct AddExpenseView: View {
                     }
                 }
             }
+            .alert("Limit Reached", isPresented: Binding(
+                get: { limitMessage != nil },
+                set: { if !$0 { limitMessage = nil } }
+            )) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(limitMessage ?? "")
+            }
         }
     }
     
@@ -505,6 +514,15 @@ struct AddExpenseView: View {
             return
         }
         
+        let limitCheck = ProLimiter.shared.canAddExpense(
+            currentExpenseCount: trip.expenses?.count ?? 0,
+            tripName: trip.name
+        )
+        guard limitCheck.allowed else {
+            limitMessage = limitCheck.reason
+            return
+        }
+
         let amountValue = Double(amount) ?? 0
         let imageData = receiptImage?.jpegData(compressionQuality: 0.8)
         

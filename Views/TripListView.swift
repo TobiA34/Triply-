@@ -117,7 +117,11 @@ struct TripListView: View {
                 .padding(.top, DesignSystem.Spacing.xs)
             if !proLimiter.isPro {
                 ProHomePaywallBanner {
-                    showingPaywall = true
+                    Task {
+                        if await IAPManager.shared.preparePaywall() {
+                            showingPaywall = true
+                        }
+                    }
                 }
                 .environmentObject(themeManager)
             }
@@ -297,7 +301,11 @@ struct TripListView: View {
             }
             .alert("alert.limitReached".localized, isPresented: $showLimitAlert) {
                 Button("pro.upgrade".localized) {
-                    showingPaywall = true
+                    Task {
+                        if await IAPManager.shared.preparePaywall() {
+                            showingPaywall = true
+                        }
+                    }
                 }
                 Button("common.cancel".localized, role: .cancel) { }
             } message: {

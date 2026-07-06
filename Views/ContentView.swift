@@ -14,6 +14,7 @@ struct ContentView: View {
     @StateObject private var localizationManager = LocalizationManager.shared
     @State private var refreshID = UUID()
     @State private var showOnboarding = false
+    @State private var showPostOnboardingPaywall = false
     @State private var landingComplete = false
     @State private var landingPhase: LandingPhase = .hidden
 
@@ -74,11 +75,26 @@ struct ContentView: View {
             UserDefaults.standard.set(true, forKey: "has_seen_onboarding")
             UserDefaults.standard.set(currentVersion, forKey: "last_seen_app_version")
             startLandingIfNeeded()
+            // One-time post-onboarding paywall — only when packages actually
+            // loaded, so new users never see a configuration error.
+            let hasSeenPaywall = UserDefaults.standard.bool(forKey: "itinero_has_seen_post_onboarding_paywall")
+            if !hasSeenPaywall && !IAPManager.shared.isPro {
+                Task {
+                    try? await Task.sleep(nanoseconds: 2_500_000_000)
+                    if await IAPManager.shared.preparePaywall() {
+                        showPostOnboardingPaywall = true
+                        UserDefaults.standard.set(true, forKey: "itinero_has_seen_post_onboarding_paywall")
+                    }
+                }
+            }
         }) {
             let lastSeenVersion = UserDefaults.standard.string(forKey: "last_seen_app_version")
             let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
             let isUpdateFlow = lastSeenVersion != nil && lastSeenVersion != currentVersion
             OnboardingView(isPresented: $showOnboarding, isUpdateFlow: isUpdateFlow)
+        }
+        .sheet(isPresented: $showPostOnboardingPaywall) {
+            PaywallView()
         }
         .onOpenURL { url in
             handleDeepLink(url)

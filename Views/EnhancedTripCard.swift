@@ -49,17 +49,19 @@ struct EnhancedTripCard: View {
                     
                     VStack(alignment: .leading, spacing: 6) {
                         Text(trip.name)
-                            .font(.system(size: 24, weight: .bold, design: .serif))
+                            .font(.title3.bold())
                             .foregroundColor(.white)
                             .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 1)
                             .accessibilityIdentifier("trip_name")
                             .accessibilityLabel(trip.name)
-                        
+                            .lineLimit(2)
+
                         HStack(spacing: 6) {
                             Image(systemName: "calendar")
-                                .font(.system(size: 13, weight: .medium))
+                                .font(.caption.weight(.medium))
                             Text(trip.formattedDateRange)
-                                .font(.system(size: 14, weight: .medium))
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
                         .foregroundColor(.white.opacity(0.95))
                         .shadow(color: .black.opacity(0.15), radius: 1, x: 0, y: 1)
@@ -253,9 +255,9 @@ struct CountdownBadge: View {
     var body: some View {
         HStack(spacing: 5) {
             Image(systemName: "clock.fill")
-                .font(.system(size: 10, weight: .bold))
-            Text("enhancedTripCard.daysuntiltripd".localized)
-                .font(.system(size: 12, weight: .bold))
+                .font(.caption2.weight(.bold))
+            Text("in \(daysUntilTrip)d")
+                .font(.caption.weight(.bold))
         }
         .foregroundColor(.white)
         .padding(.horizontal, 10)

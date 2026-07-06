@@ -51,9 +51,9 @@ struct OnboardingView: View {
                 description: "onboarding.trackEverythingDesc".localized
             ),
             OnboardingPage(
-                icon: "brain.head.profile",
-                title: "onboarding.aiInsights".localized,
-                description: "onboarding.aiInsightsDesc".localized
+                icon: "creditcard.fill",
+                title: "onboarding.budgets".localized,
+                description: "onboarding.budgetsDesc".localized
             ),
             OnboardingPage(
                 icon: "crown.fill",

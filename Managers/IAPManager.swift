@@ -6,319 +6,145 @@
 //
 
 import Foundation
-import StoreKit
-
-#if canImport(RevenueCat)
 import RevenueCat
-#endif
-
-/// RevenueCat entitlement identifier for Pro access. Must match the identifier in RevenueCat dashboard.
-private let revenueCatProEntitlementId = "pro"
-
-/// Display model for a RevenueCat package (avoids exposing RevenueCat types to views).
-struct ProPackageDisplay: Identifiable {
-    let id: String
-    let title: String
-    let price: String
-    let introPrice: String?
-    let introEligible: Bool
-}
 
 @MainActor
-class IAPManager: ObservableObject {
+final class IAPManager: NSObject, ObservableObject {
     static let shared = IAPManager()
 
-    enum ProductID: String, CaseIterable {
-        case pro = "com.triply.app.pro"
-    }
+    /// RevenueCat public SDK key for the production App Store app.
+    private static let revenueCatAPIKey = "appl_hCVOroIcXfOaoshwTdYHYnnpzvU"
+
+    /// Entitlement identifier configured in the RevenueCat dashboard.
+    static let proEntitlementID = "Itinero Pro"
+
+    static let termsOfUseURL = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+    static let privacyPolicyURL = URL(string: "https://gist.github.com/tunds/fb42e2abd3bbd61336d1bee99dbcafec")!
 
     @Published private(set) var isPro: Bool = false
-    @Published private(set) var products: [Product] = []
+    @Published private(set) var currentOffering: Offering?
     @Published var isLoading: Bool = false
     @Published var lastErrorMessage: String?
     @Published var lastInfoMessage: String?
 
-    /// Primary price string for backward compatibility (first package or single package).
-    @Published private(set) var proPriceString: String?
-
-    /// All RevenueCat packages from current offering (e.g. monthly, annual, lifetime) for paywall.
-    @Published private(set) var availablePackages: [ProPackageDisplay] = []
-
-    private var configuredProId: String {
-        if let id = Bundle.main.object(forInfoDictionaryKey: "IAPProductProId") as? String, !id.isEmpty {
-            return id
-        }
-        return ProductID.pro.rawValue
-    }
-
-    #if canImport(RevenueCat)
-    private var packageByIdentifier: [String: Package] = [:]
-    private let revenueCatAPIKey = (Bundle.main.object(forInfoDictionaryKey: "RevenueCatAPIKey") as? String) ?? ""
-    #endif
-
-    private init() {
-        #if canImport(RevenueCat)
-        configureRevenueCatIfNeeded()
+    /// Call once at app launch, before any other IAPManager use.
+    static func configure() {
+        #if DEBUG
+        Purchases.logLevel = .debug
+        #else
+        Purchases.logLevel = .error
         #endif
-        // Do not unlock Pro when RevenueCat is not configured (e.g. first launch before .onAppear).
-        // Pro state is set only after fetching customerInfo or after a successful purchase/restore.
-        #if canImport(RevenueCat)
-        if RevenueCat.Purchases.isConfigured {
-            Task { await refreshEntitlementsFromRevenueCat() }
+        Purchases.configure(withAPIKey: revenueCatAPIKey)
+        Purchases.shared.delegate = shared
+        Task {
+            await shared.refreshEntitlements()
+            await shared.loadProducts(quiet: true)
         }
-        #endif
     }
 
-    #if canImport(RevenueCat)
-    private func configureRevenueCatIfNeeded() {
-        if RevenueCat.Purchases.isConfigured { return }
-        let key = revenueCatAPIKey.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard key.hasPrefix("appl_") || key.hasPrefix("rcapp_") else {
-            lastInfoMessage = "Purchases are temporarily unavailable."
-            return
-        }
-        RevenueCat.Purchases.logLevel = .warn
-        RevenueCat.Purchases.configure(withAPIKey: key)
+    private override init() {
+        super.init()
     }
-    #endif
 
-    func loadProducts() async {
+    /// Loads offerings. Errors are only surfaced to the UI when `quiet` is
+    /// false (user-initiated flows); the background prefetch at launch stays
+    /// silent so the app never looks broken on start.
+    func loadProducts(quiet: Bool = false) async {
         isLoading = true
-        lastErrorMessage = nil
-        lastInfoMessage = nil
-
-        #if canImport(RevenueCat)
-        if RevenueCat.Purchases.isConfigured {
-            do {
-                let offerings = try await RevenueCat.Purchases.shared.offerings()
-                // Prefer "current", but fall back to first available offering to avoid
-                // empty paywall UI when dashboard "current offering" isn't selected yet.
-                let offering = offerings.current ?? offerings.all.values.first
-                guard let offering else {
-                    availablePackages = []
-                    proPriceString = nil
-                    isLoading = false
-                    return
-                }
-                let packages = orderedPackages(from: offering)
-                let productIds = packages.map { $0.storeProduct.productIdentifier }
-                let eligibility = await RevenueCat.Purchases.shared.checkTrialOrIntroDiscountEligibility(productIdentifiers: productIds)
-                var display: [ProPackageDisplay] = []
-                var byId: [String: Package] = [:]
-                for pkg in packages {
-                    byId[pkg.identifier] = pkg
-                    let status = eligibility[pkg.storeProduct.productIdentifier]?.status ?? .unknown
-                    let introEligible = (status == .eligible)
-                    let introPrice: String? = pkg.localizedIntroductoryPriceString
-                    display.append(ProPackageDisplay(
-                        id: pkg.identifier,
-                        title: packageTitle(pkg),
-                        price: pkg.localizedPriceString,
-                        introPrice: introPrice,
-                        introEligible: introEligible
-                    ))
-                }
-                availablePackages = display
-                packageByIdentifier = byId
-                proPriceString = display.first?.price
-                await refreshEntitlementsFromRevenueCat()
-            } catch {
-                lastErrorMessage = Self.sanitizedErrorMessage(error.localizedDescription)
-                availablePackages = []
+        defer { isLoading = false }
+        do {
+            let offerings = try await Purchases.shared.offerings()
+            currentOffering = offerings.current
+            lastErrorMessage = nil
+        } catch {
+            print("Failed to load offerings: \(error)")
+            if !quiet {
+                lastErrorMessage = "Subscriptions aren't available right now. Please check your connection and try again."
             }
-            isLoading = false
-            return
-        }
-        #endif
-
-        products = []
-        lastInfoMessage = nil
-        isLoading = false
-    }
-
-    #if canImport(RevenueCat)
-    private func orderedPackages(from offering: Offering) -> [Package] {
-        var list: [Package] = []
-        if let p = offering.lifetime { list.append(p) }
-        if let p = offering.annual { list.append(p) }
-        if let p = offering.sixMonth { list.append(p) }
-        if let p = offering.threeMonth { list.append(p) }
-        if let p = offering.twoMonth { list.append(p) }
-        if let p = offering.monthly { list.append(p) }
-        if let p = offering.weekly { list.append(p) }
-        let added = Set(list.map(\.identifier))
-        for p in offering.availablePackages where !added.contains(p.identifier) {
-            list.append(p)
-        }
-        return list
-    }
-
-    private func packageTitle(_ pkg: Package) -> String {
-        switch pkg.packageType {
-        case .lifetime: return "Lifetime"
-        case .annual: return "Annual"
-        case .sixMonth: return "6 Months"
-        case .threeMonth: return "3 Months"
-        case .twoMonth: return "2 Months"
-        case .monthly: return "Monthly"
-        case .weekly: return "Weekly"
-        default: return pkg.identifier
         }
     }
-    #endif
 
-    /// Purchase Pro by selecting a package (RevenueCat). Use the package's `id` from `availablePackages`.
-    func purchasePackage(identifier: String) async -> Bool {
-        #if canImport(RevenueCat)
-        guard RevenueCat.Purchases.isConfigured, let package = packageByIdentifier[identifier] else {
-            lastErrorMessage = "Package not available."
+    /// Loads offerings if needed. Returns true when the paywall has packages
+    /// to sell — callers must not present the paywall otherwise, so users
+    /// never see a configuration error alert.
+    func preparePaywall() async -> Bool {
+        if currentOffering?.availablePackages.isEmpty == false {
+            return true
+        }
+        await loadProducts()
+        return currentOffering?.availablePackages.isEmpty == false
+    }
+
+    /// Purchases the first available package of the current offering.
+    /// The paywall UI normally drives purchases; this is a programmatic fallback.
+    func purchasePro() async -> Bool {
+        if currentOffering == nil {
+            await loadProducts()
+        }
+        guard let package = currentOffering?.availablePackages.first else {
+            lastErrorMessage = "Subscription options are unavailable right now."
             return false
         }
+        isLoading = true
+        defer { isLoading = false }
         do {
-            let result = try await RevenueCat.Purchases.shared.purchase(package: package)
-            applyCustomerInfo(result.customerInfo)
-            if result.customerInfo.entitlements[revenueCatProEntitlementId]?.isActive == true {
-                lastInfoMessage = "Pro unlocked."
-                lastErrorMessage = nil
-                return true
-            }
-            lastErrorMessage = "Purchase completed but entitlement not active yet."
+            let result = try await Purchases.shared.purchase(package: package)
+            apply(customerInfo: result.customerInfo)
+            return isPro
+        } catch let error as RevenueCat.ErrorCode where error == .purchaseCancelledError {
             return false
         } catch {
-            let ns = error as NSError
-            if ns.domain == RevenueCat.ErrorCode.errorDomain && ns.code == RevenueCat.ErrorCode.purchaseCancelledError.rawValue {
-                lastInfoMessage = nil
-                lastErrorMessage = nil
-                return false
-            }
-            lastErrorMessage = Self.sanitizedErrorMessage(error.localizedDescription)
+            lastErrorMessage = "Purchase failed. Please try again."
             return false
         }
-        #endif
-        setProEntitlement(true)
-        return true
-    }
-
-    func purchasePro() async -> Bool {
-        if let first = availablePackages.first {
-            return await purchasePackage(identifier: first.id)
-        }
-        #if canImport(RevenueCat)
-        if RevenueCat.Purchases.isConfigured, let package = packageByIdentifier.values.first {
-            return await purchasePackage(identifier: package.identifier)
-        }
-        #endif
-        lastInfoMessage = "Pro is unlocked. In-app purchases are disabled in this build."
-        lastErrorMessage = nil
-        setProEntitlement(true)
-        return true
     }
 
     func restorePurchases() async {
-        #if canImport(RevenueCat)
-        if RevenueCat.Purchases.isConfigured {
-            do {
-                let customerInfo = try await RevenueCat.Purchases.shared.restorePurchases()
-                applyCustomerInfo(customerInfo)
-                if isPro {
-                    lastInfoMessage = "Purchases restored."
-                } else {
-                    lastInfoMessage = "No Pro purchase found to restore."
-                }
-                lastErrorMessage = nil
-            } catch {
-                lastErrorMessage = Self.sanitizedErrorMessage(error.localizedDescription)
-                lastInfoMessage = nil
-            }
-            return
-        }
-        #endif
-        setProEntitlement(true)
-        lastInfoMessage = "Restore not needed. Pro is already unlocked."
-        lastErrorMessage = nil
-    }
-
-    /// Presents the system manage subscriptions sheet (RevenueCat). Call when user is Pro.
-    func showManageSubscriptions() async {
-        #if canImport(RevenueCat)
-        guard RevenueCat.Purchases.isConfigured else { return }
+        isLoading = true
+        defer { isLoading = false }
         do {
-            try await RevenueCat.Purchases.shared.showManageSubscriptions()
+            let customerInfo = try await Purchases.shared.restorePurchases()
+            apply(customerInfo: customerInfo)
+            lastInfoMessage = isPro
+                ? "Your Itinero Pro subscription has been restored."
+                : "No previous purchases were found for this Apple Account."
+            lastErrorMessage = nil
         } catch {
-            lastErrorMessage = Self.sanitizedErrorMessage(error.localizedDescription)
+            lastErrorMessage = "Restore failed. Please try again."
         }
-        #endif
-    }
-
-    /// In release builds, avoid showing sandbox or technical errors to users.
-    private static func sanitizedErrorMessage(_ raw: String) -> String {
-        let lower = raw.lowercased()
-        if lower.contains("credentials") || lower.contains("configuration") || lower.contains("error 11") || lower.contains("error 23") {
-            return "Purchases are temporarily unavailable. Please try again later."
-        }
-        if lower.contains("sandbox") || lower.contains("unavailable") || lower.contains("could not connect") {
-            return "Unable to load offers. Check your connection and try again."
-        }
-        if lower.contains("cancelled") || lower.contains("canceled") { return "" }
-        return "Something went wrong. Please try again or restore purchases."
-    }
-
-    /// Set subscriber email for receipts and support (RevenueCat).
-    func setUserEmail(_ email: String?) {
-        #if canImport(RevenueCat)
-        guard RevenueCat.Purchases.isConfigured else { return }
-        RevenueCat.Purchases.shared.attribution.setEmail(email)
-        #endif
     }
 
     func observeTransactions() {
-        #if canImport(RevenueCat)
-        if RevenueCat.Purchases.isConfigured {
-            Task { await refreshEntitlementsFromRevenueCat() }
-        }
-        #endif
+        // RevenueCat observes transactions itself; updates arrive via the delegate.
     }
 
     func refreshEntitlements() async {
-        #if canImport(RevenueCat)
-        if RevenueCat.Purchases.isConfigured {
-            await refreshEntitlementsFromRevenueCat()
-            return
-        }
-        #endif
-        setProEntitlement(true)
-    }
-
-    #if canImport(RevenueCat)
-    private func refreshEntitlementsFromRevenueCat() async {
-        guard RevenueCat.Purchases.isConfigured else { return }
-        do {
-            let customerInfo = try await RevenueCat.Purchases.shared.customerInfo()
-            applyCustomerInfo(customerInfo)
-        } catch {
-            // Keep previous isPro state on fetch error
+        if let customerInfo = try? await Purchases.shared.customerInfo() {
+            apply(customerInfo: customerInfo)
         }
     }
 
-    private func applyCustomerInfo(_ customerInfo: CustomerInfo) {
-        let active = customerInfo.entitlements[revenueCatProEntitlementId]?.isActive == true
-        setProEntitlement(active)
-    }
-    #endif
-
-    private func setProEntitlement(_ enabled: Bool) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.isPro = enabled
-            UserDefaults.standard.set(enabled, forKey: "iap_is_pro")
-            ThemeManager.shared.setUserTier(enabled ? .pro : .free)
-        }
+    func apply(customerInfo: CustomerInfo) {
+        let active = customerInfo.entitlements[Self.proEntitlementID]?.isActive == true
+        isPro = active
+        UserDefaults.standard.set(active, forKey: "iap_is_pro")
+        ThemeManager.shared.setUserTier(active ? .pro : .free)
     }
 
     #if DEBUG
     func debugUnlockPro() {
-        setProEntitlement(true)
+        isPro = true
+        UserDefaults.standard.set(true, forKey: "iap_is_pro")
+        ThemeManager.shared.setUserTier(.pro)
         lastInfoMessage = "Debug: Pro unlocked locally (no real purchase)."
     }
     #endif
+}
+
+extension IAPManager: PurchasesDelegate {
+    nonisolated func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
+        Task { @MainActor in
+            self.apply(customerInfo: customerInfo)
+        }
+    }
 }
