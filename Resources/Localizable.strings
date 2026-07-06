@@ -912,6 +912,8 @@
 "onboarding.planTrips" = "Plan Your Trips";
 "onboarding.trackEverything" = "Track Everything";
 "onboarding.aiInsights" = "AI-Powered Insights";
+"onboarding.budgets" = "Track Budgets & Expenses";
+"onboarding.budgetsDesc" = "Keep tabs on spending and make the most of your travel budget";
 "onboarding.readyToStart" = "Ready to Start";
 "onboarding.planTripsDesc" = "Organize all your travel plans in one beautiful place";
 "onboarding.trackEverythingDesc" = "Manage destinations, expenses, and itineraries effortlessly";
