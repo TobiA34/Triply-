@@ -94,3 +94,6 @@ iOSInjectionProject/
 
 
 
+
+# Xcode project backups
+project.pbxproj.backup*

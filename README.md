@@ -75,15 +75,13 @@ Built with modern iOS development practices:
    cd Triply
    ```
 
-2. **Open the workspace**
+2. **Open the project**
    ```bash
-   open Itinero.xcworkspace
+   open Itinero.xcodeproj
    ```
-   > Note: Use the `.xcworkspace` file, not `.xcodeproj`
 
 3. **Install dependencies**
-   - CocoaPods dependencies will be installed automatically
-   - If needed, run: `pod install`
+   - Swift Package Manager dependencies resolve automatically on first open
 
 4. **Configure the project**
    - Update the Bundle Identifier in Xcode if needed
@@ -139,10 +137,10 @@ The project includes comprehensive UI tests:
 
 ```bash
 # Run all tests
-xcodebuild test -workspace Itinero.xcworkspace -scheme Itinero
+xcodebuild test -project Itinero.xcodeproj -scheme Itinero
 
 # Run specific test suite
-xcodebuild test -workspace Itinero.xcworkspace -scheme Itinero \
+xcodebuild test -project Itinero.xcodeproj -scheme Itinero \
   -only-testing:ItineroUITests/ScreenshotUITests
 ```
 
