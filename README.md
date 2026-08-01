@@ -231,4 +231,16 @@ For issues, questions, or feature requests:
 
 ---
 
+## Support
+
+If you need help with Itinero, please contact:
+
+**Email:** Tobi_adegoroye@yahoo.com
+
+### Subscriptions
+You can manage or cancel your subscription from your Apple ID subscription settings.
+
+### Restore Purchases
+Open Itinero and tap **Restore Purchases**.
+
 Made with ❤️ using SwiftUI
