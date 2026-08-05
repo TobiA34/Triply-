@@ -12,6 +12,7 @@ import SwiftData
 struct ItineroApp: App {
     init() {
         IAPManager.configure()
+        WatchSyncManager.shared.activateIfNeeded()
     }
 
     @StateObject private var themeManager = ThemeManager.shared
@@ -139,4 +140,3 @@ private struct RootThemeView: View {
         }
     }
 }
-
